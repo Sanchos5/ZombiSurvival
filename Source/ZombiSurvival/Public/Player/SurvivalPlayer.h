@@ -4,26 +4,63 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
-UCLASS()
+class UCameraComponent;
+class UInputComponent;
+class USurvivalInputConfig;
+struct FInputActionValue;
+class UInputMappingContext;
+
+UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	ASurvivalPlayer();
+	ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer);
+
+	/** Returns FirstPersonCameraComponent subobject **/
+	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
+
+	/** The input config that maps Input Actions to Input Tags*/
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	USurvivalInputConfig* InputConfig;
+
+	//Input
+	/** Handles moving forward/backward */
+	void Input_Move(const FInputActionValue& InputActionValue);
+
+	/** Handles mouse and stick look */
+	void Input_Look(const FInputActionValue& InputActionValue);
+
+	/** Handles Jumping */
+	void Input_Jump(const FInputActionValue& InputActionValue);
+
+	/** Handles Pew Pew */
+	//void Input_Fire(const FInputActionValue& InputActionValue);
+
+	// End Enhanced Input Sample changes
+
+	//FAttachmentTransformRules AttachmentRule;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UCameraComponent* FPSCamera;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	mutable const UInputMappingContext* InputMappingContext;
 };
