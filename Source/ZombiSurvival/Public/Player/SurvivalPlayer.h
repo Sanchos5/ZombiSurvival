@@ -44,7 +44,8 @@ public:
 
 	// End Enhanced Input Sample changes
 
-	//FAttachmentTransformRules AttachmentRule;
+	UPROPERTY(EditDefaultsOnly)
+	FName CameraSocketName;
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,7 +58,6 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 
