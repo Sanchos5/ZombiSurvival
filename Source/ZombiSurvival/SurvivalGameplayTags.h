@@ -20,12 +20,16 @@ public:
 	static void InitializeNativeTags();
 
 	///////////////////////////////////////
-	//Input Tags
+	//Input Action Tags
 	FGameplayTag InputTag_Move;
 	FGameplayTag InputTag_Look_Mouse;
 	FGameplayTag InputTag_Jump;
 	FGameplayTag InputTag_Sprint;
 	//FGameplayTag InputTag_Fire;
+
+	//////////////////////////////////////
+	//Item Tags
+
 
 protected:
 

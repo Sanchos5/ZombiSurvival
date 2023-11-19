@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Player/SurvivalBaseCharacter.h"
 #include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
@@ -14,7 +14,7 @@ struct FInputActionValue;
 class UInputMappingContext;
 
 UCLASS(config = game)
-class ZOMBISURVIVAL_API ASurvivalPlayer : public ACharacter
+class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
 {
 	GENERATED_BODY()
 
@@ -44,9 +44,6 @@ public:
 
 	// End Enhanced Input Sample changes
 
-	UPROPERTY(EditDefaultsOnly)
-	FName CameraSocketName;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,6 +55,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 

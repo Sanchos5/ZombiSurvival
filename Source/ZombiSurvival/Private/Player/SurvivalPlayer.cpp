@@ -7,12 +7,12 @@
 #include "Input/SurvivalInputComponent.h"
 #include "ZombiSurvival/SurvivalGameplayTags.h"
 #include "Camera/CameraComponent.h"
-//#include "Components/PlayerMovementComponent.h"
+#include "Components/SurvivalCharMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer/*.SetDefaultSubobjectClass<UPlayerMovementComponent>(ACharacter::CharacterMovementComponentName)*/)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USurvivalCharMovementComponent>(ASurvivalBaseCharacter::CharacterMovementComponentName))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -23,9 +23,8 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	// Create a CameraComponent	
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FPSCamera->bUsePawnControlRotation = true;
-	//FPSCamera->SetupAttachment(GetMesh());
-	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, ("Head"));
-
+	//FPSCamera->SetupAttachment(GetMesh(), "Head");
+	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "head");
 }
 
 void ASurvivalPlayer::BeginPlay()
@@ -45,7 +44,6 @@ void ASurvivalPlayer::BeginPlay()
 void ASurvivalPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input

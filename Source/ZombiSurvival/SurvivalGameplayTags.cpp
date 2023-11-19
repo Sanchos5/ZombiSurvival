@@ -21,7 +21,7 @@ void FSurvivalGameplayTags::AddAllTags(UGameplayTagsManager& Manager)
 	AddTag(InputTag_Look_Mouse, "InputTag.Look.Mouse", "Look (mouse) input.");
 	AddTag(InputTag_Jump, "InputTag.Jump", "Jump input");
 	AddTag(InputTag_Sprint, "InputTag.Sprint", "Sprint input");
-	//AddTag(InputTag_Fire, "InputTag.Fire", "Fire input.");
+	//AddTag(InputTag_Fire, "InputTag.Fire", "Fire input");
 }
 
 void FSurvivalGameplayTags::AddTag(FGameplayTag& OutTag, const ANSICHAR* TagName, const ANSICHAR* TagComment)

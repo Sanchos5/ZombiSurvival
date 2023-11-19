@@ -13,25 +13,4 @@ void USurvivalInputComponent::AddInputMappings(const USurvivalInputConfig* Input
 {
 	check(InputConfig);
 	check(InputSubsystem);
-
-	//ULyraLocalPlayer* LocalPlayer = InputSubsystem->GetLocalPlayer<ULyraLocalPlayer>();
-	//check(LocalPlayer);
 }
-
-//void USurvivalInputComponent::AddInputConfig(const FLoadedMappableConfigPair& ConfigPair, UEnhancedInputLocalPlayerSubsystem* InputSubsystem)
-//{
-//	check(InputSubsystem);
-//	if (ensure(ConfigPair.bIsActive))
-//	{
-//		InputSubsystem->AddPlayerMappableConfig(ConfigPair.Config);
-//	}
-//}
-//
-//void USurvivalInputComponent::RemoveInputConfig(const FLoadedMappableConfigPair& ConfigPair, UEnhancedInputLocalPlayerSubsystem* InputSubsystem)
-//{
-//	check(InputSubsystem);
-//	if (!ConfigPair.bIsActive)
-//	{
-//		InputSubsystem->AddPlayerMappableConfig(ConfigPair.Config);
-//	}
-//}
