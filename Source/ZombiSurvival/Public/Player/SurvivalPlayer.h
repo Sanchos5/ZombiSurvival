@@ -53,6 +53,9 @@ protected:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Camera")
+	FName CameraSocketName = "CameraSocket";
 
 private:
 
@@ -61,4 +64,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	mutable const UInputMappingContext* InputMappingContext;
+
+
 };

@@ -23,13 +23,14 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	// Create a CameraComponent	
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FPSCamera->bUsePawnControlRotation = true;
-	//FPSCamera->SetupAttachment(GetMesh(), "Head");
-	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "head");
+	FPSCamera->SetupAttachment(GetMesh());
 }
 
 void ASurvivalPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, CameraSocketName);
 	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
