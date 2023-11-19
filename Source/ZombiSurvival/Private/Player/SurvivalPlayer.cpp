@@ -31,6 +31,7 @@ void ASurvivalPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, CameraSocketName);
+	FPSCamera->SetRelativeLocation(FVector(0.0f, 15.0f, 0.0f));
 	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
