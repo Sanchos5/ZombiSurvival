@@ -12,6 +12,7 @@ class UInputComponent;
 class USurvivalInputConfig;
 struct FInputActionValue;
 class UInputMappingContext;
+class USkeletalMeshComponent;
 
 UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
@@ -58,12 +59,12 @@ protected:
 	FName CameraSocketName = "CameraSocket";
 
 private:
-
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	mutable const UInputMappingContext* InputMappingContext;
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Mesh", meta=(AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* MeshComponent;
 };
