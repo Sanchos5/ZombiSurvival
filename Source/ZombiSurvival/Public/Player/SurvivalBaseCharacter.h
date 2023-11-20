@@ -15,12 +15,15 @@ public:
 	// Sets default values for this character's properties
 	ASurvivalBaseCharacter(const class FObjectInitializer& ObjectInitializer);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable, Category = "Default Stats")
+	float GetHealth() const;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Default Stats")
+	float Health;
+
+	//Damage
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 };

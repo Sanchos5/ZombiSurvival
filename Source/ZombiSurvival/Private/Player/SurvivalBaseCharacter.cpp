@@ -10,18 +10,26 @@ ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& O
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	Health = 100.0f;
+
 }
 
-// Called when the game starts or when spawned
-void ASurvivalBaseCharacter::BeginPlay()
+float ASurvivalBaseCharacter::GetHealth() const
 {
-	Super::BeginPlay();
-	
+	return Health;
 }
 
-// Called every frame
-void ASurvivalBaseCharacter::Tick(float DeltaTime)
+float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
-	Super::Tick(DeltaTime);
+	if (Health <= 0.f)
+	{
+		return 0.f;
+	}
 
+	if(Damage > 0.f)
+	{
+		Health -= Damage;
+	}
+
+	return Damage;
 }
