@@ -20,10 +20,13 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Default Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Default Stats", meta = (ClampMin = "0.0"))
 	float Health;
 
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
+	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+
+	bool bIsDying = false;
 };

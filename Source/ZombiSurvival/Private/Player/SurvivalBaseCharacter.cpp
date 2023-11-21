@@ -2,6 +2,7 @@
 
 
 #include "Player/SurvivalBaseCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& ObjectInitializer) 
@@ -21,15 +22,33 @@ float ASurvivalBaseCharacter::GetHealth() const
 
 float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
-	if (Health <= 0.f)
-	{
-		return 0.f;
-	}
-
 	if(Damage > 0.f)
 	{
 		Health -= Damage;
-	}
 
+		if (Health <= 0.f)
+		{
+			Health = 0.0f;
+			bIsDying = true;
+			OnDeath(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : NULL, DamageCauser);
+		}
+	}
 	return Damage;
+}
+
+void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
+{
+	/*if (bIsDying)
+	{
+		return;
+	}*/
+	bIsDying = true;
+
+	/* Disable all collision on capsule */
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	DisableInput(nullptr);
+
 }
