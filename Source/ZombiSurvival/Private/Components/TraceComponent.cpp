@@ -3,7 +3,9 @@
 
 #include "Components/TraceComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Player/SurvivalBaseCharacter.h"
 #include "Weapon/BaseMeleeWeapon.h"
 
 UTraceComponent::UTraceComponent()
@@ -15,29 +17,33 @@ UTraceComponent::UTraceComponent()
 void UTraceComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MeleeWeapon = Cast<ABaseMeleeWeapon>(GetOwner());
 }
 
 void UTraceComponent::TraceHit()
 {
-	if (Weapon == nullptr) return;
+	if (MeleeWeapon == nullptr) return;
 
-	FVector Start = Weapon->GetWeaponSocketLocation(StartTraceName);
-	FVector End = Weapon->GetWeaponSocketLocation(EndTraceName);
+	FVector Start = MeleeWeapon->GetWeaponSocketLocation(StartTraceName);
+	FVector End = MeleeWeapon->GetWeaponSocketLocation(EndTraceName);
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 	Objects.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
-	ActorsToIgnore.Add(GetOwner());
+	ActorsToIgnore.Add(MeleeWeapon->GetOwner());
 	TArray<FHitResult> SphereHitResults;
 	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
-		ActorsToIgnore, EDrawDebugTrace::None, SphereHitResults, true);
+		ActorsToIgnore, EDrawDebugTrace::ForDuration, SphereHitResults, true);
 
 	for (FHitResult HitResult : SphereHitResults)
 	{
-		AActor* Enemy = HitResult.GetActor();
+		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
-		{	
+		{
+			ASurvivalBaseCharacter* WeaponOwner = Cast<ASurvivalBaseCharacter>(MeleeWeapon->GetOwner());
+			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
 			ActorsToIgnore.Add(Enemy);
 		}
 	}

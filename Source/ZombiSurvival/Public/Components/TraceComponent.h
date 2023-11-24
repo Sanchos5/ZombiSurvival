@@ -17,7 +17,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY()
-	class ABaseMeleeWeapon* Weapon;
+	class ABaseMeleeWeapon* MeleeWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool WeaponActive = false;
@@ -26,7 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 	void TraceHit();
 
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	float TraceRadius;
 
 	UPROPERTY(BlueprintReadWrite, Category="TraceComponent")
@@ -35,9 +35,14 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="TraceComponent")
 	void ClearActorsToIgnore();
 
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	FName StartTraceName;
 
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	FName EndTraceName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
+	float Damage;
+
+	TSubclassOf<class UDamageType> DamageTypeClass;
 };
