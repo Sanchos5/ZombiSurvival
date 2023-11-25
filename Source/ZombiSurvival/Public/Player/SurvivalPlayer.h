@@ -13,6 +13,7 @@ class USurvivalInputConfig;
 struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
+class UPlayerStatsComponent;
 
 UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
@@ -45,6 +46,9 @@ public:
 
 	// End Enhanced Input Sample changes
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
+	UPlayerStatsComponent* PlayerStats;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -67,4 +71,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Mesh", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
+
+	
 };

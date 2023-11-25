@@ -12,7 +12,6 @@ ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& O
 	PrimaryActorTick.bCanEverTick = false;
 
 	Health = 100.0f;
-
 }
 
 float ASurvivalBaseCharacter::GetHealth() const

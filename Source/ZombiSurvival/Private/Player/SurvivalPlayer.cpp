@@ -8,7 +8,9 @@
 #include "ZombiSurvival/SurvivalGameplayTags.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SurvivalCharMovementComponent.h"
+#include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -27,6 +29,8 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FPSCamera->bUsePawnControlRotation = true;
 	FPSCamera->SetupAttachment(MeshComponent, CameraSocketName);
+
+	PlayerStats = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStats"));
 }
 
 void ASurvivalPlayer::BeginPlay()
