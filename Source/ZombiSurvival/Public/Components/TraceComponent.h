@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "TraceComponent.generated.h"
 
 
@@ -40,6 +41,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	FName EndTraceName;
+
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
+	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
 	float Damage;
