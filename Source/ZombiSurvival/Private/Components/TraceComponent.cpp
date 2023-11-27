@@ -2,7 +2,6 @@
 
 
 #include "Components/TraceComponent.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Player/SurvivalBaseCharacter.h"
@@ -35,7 +34,7 @@ void UTraceComponent::TraceHit()
 	TArray<FHitResult> SphereHitResults;
 	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
-		ActorsToIgnore, EDrawDebugTrace::ForDuration, SphereHitResults, true);
+		ActorsToIgnore, DrawDebugTrace, SphereHitResults, true);
 
 	for (FHitResult HitResult : SphereHitResults)
 	{
