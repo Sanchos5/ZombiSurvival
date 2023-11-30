@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
+class UInteractionComponent;
+class UInventoryComponent;
 class UCameraComponent;
 class UInputComponent;
 class USurvivalInputConfig;
@@ -41,9 +43,12 @@ public:
 	/** Handles Jumping */
 	void Input_Jump(const FInputActionValue& InputActionValue);
 
-	/** Handles Pew Pew */
-	//void Input_Fire(const FInputActionValue& InputActionValue);
+	/** Open Inventory Widget */
+	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
+	/** Interact with object */
+	void Input_PrimaryInteract(const FInputActionValue& InputActionValue);
+	
 	// End Enhanced Input Sample changes
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
@@ -72,5 +77,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Mesh", meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
+	UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
+	UInteractionComponent* InteractionComponent;
 };
