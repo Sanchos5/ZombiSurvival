@@ -14,6 +14,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -25,7 +26,7 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->InitCapsuleSize(40.0f, 90.0f);
 
-	MeshComponent = GetMesh();
+	USkeletalMeshComponent* MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
 
 	// Create a CameraComponent	
@@ -134,9 +135,20 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	if (InventoryComponent->InventoryWidget != nullptr)
+	UUserWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
+	
+	if (IsValid(InventoryWidgetref))
 	{
-		InventoryComponent->InventoryWidget->AddToViewport();
+		InventoryWidgetref->AddToViewport();
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		
+		if (IsValid(PlayerController))
+		{
+			PlayerController->SetShowMouseCursor(true);
+			FInputModeUIOnly UIMode;
+			UIMode.SetWidgetToFocus(InventoryWidgetref->GetCachedWidget());
+			PlayerController->SetInputMode(UIMode);
+		}
 	}
 }
 

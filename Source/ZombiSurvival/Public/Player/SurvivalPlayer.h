@@ -74,9 +74,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	mutable const UInputMappingContext* InputMappingContext;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Mesh", meta=(AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* MeshComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent;
 

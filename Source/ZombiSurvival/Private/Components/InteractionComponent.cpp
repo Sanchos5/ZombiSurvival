@@ -2,7 +2,6 @@
 
 
 #include "Components/InteractionComponent.h"
-
 #include "Blueprint/UserWidget.h"
 #include "Interface/InteractionInterface.h"
 
@@ -11,14 +10,17 @@ UInteractionComponent::UInteractionComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	TraceRadius = 20.0f;
-	TraceDistance = 500.0f;
+	TraceDistance = 150.0f;
 	CollisionChannel = ECC_WorldDynamic;
 }
 
 void UInteractionComponent::PrimaryInteract()
 {
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	IInteractionInterface::Execute_Interact(FocusedActor, MyPawn);
+	if(IsValid(MyPawn) && IsValid(FocusedActor))
+	{
+		IInteractionInterface::Execute_Interact(FocusedActor, MyPawn);
+	}
 }
 
 void UInteractionComponent::FindBestInteractable()
@@ -66,7 +68,6 @@ void UInteractionComponent::FindBestInteractable()
 		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
 		{
 			InteractionWidget->AddToViewport();
-			UE_LOG(LogTemp, Warning, TEXT("Success add to viewport"))
 		}
 	}
 	else
@@ -77,7 +78,7 @@ void UInteractionComponent::FindBestInteractable()
 		}
 	}
 	
-	//DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
+	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
 }
 
 void UInteractionComponent::BeginPlay()
