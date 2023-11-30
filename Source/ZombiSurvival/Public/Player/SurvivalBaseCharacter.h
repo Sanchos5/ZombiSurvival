@@ -22,6 +22,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Default Stats", meta = (ClampMin = "0.0"))
 	float Health;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Default Stats", meta = (ClampMin = "0.0"))
+	float MaxHealth;
 
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;

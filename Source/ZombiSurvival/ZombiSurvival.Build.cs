@@ -26,7 +26,8 @@ public class ZombiSurvival : ModuleRules
 			"Engine", 
 			"GameplayTags",
             "GameplayTasks",
-            "GameplayAbilities"
+            "GameplayAbilities",
+            "UMG"
             }
 		);
 

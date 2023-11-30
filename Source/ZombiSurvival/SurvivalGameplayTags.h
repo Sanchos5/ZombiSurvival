@@ -25,7 +25,8 @@ public:
 	FGameplayTag InputTag_Look_Mouse;
 	FGameplayTag InputTag_Jump;
 	FGameplayTag InputTag_Sprint;
-	//FGameplayTag InputTag_Fire;
+	FGameplayTag InputTag_OpenInventory;
+	FGameplayTag InputTag_Interact;
 
 	//////////////////////////////////////
 	//Item Tags
