@@ -78,7 +78,7 @@ void UInteractionComponent::FindBestInteractable()
 		}
 	}
 	
-	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
+	//DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
 }
 
 void UInteractionComponent::BeginPlay()

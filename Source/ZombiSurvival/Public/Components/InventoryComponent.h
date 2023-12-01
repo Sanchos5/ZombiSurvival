@@ -27,6 +27,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
 
 	UPROPERTY(EditAnywhere, Category="Widget")
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
@@ -38,13 +39,19 @@ protected:
 	UDataTable* ItemInfoDataTable;
 
 	UFUNCTION(BlueprintCallable)
-	void AddToInventory(FSlot Item);
+	bool AddToInventory(FSlot Item);
+	
+	bool CreateNewStack(bool Success, FSlot Item);
+	bool AddItemToExcistingItem(bool Success, FSlot Item);
+
+	UPROPERTY()
+	int ArraySlotIndex = -1;
 	
 	template <typename T>
 	static void SetArrayElement(T item, TArray<T>& item_array, int32 index)
 	{
-		if (index >= item_array.Num())
-			item_array.SetNum(index + 1);
+		if (item_array.Num() - 1 < index)
+			item_array.SetNum(index);
 		item_array[index] = item;
 	}
 };
