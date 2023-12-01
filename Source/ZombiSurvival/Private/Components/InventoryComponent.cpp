@@ -33,25 +33,25 @@ void UInventoryComponent::BeginPlay()
 
 bool UInventoryComponent::AddToInventory(FSlot Item)
 {
-	bool Success = false;
+	bSuccess = false;
 	
 	switch (Item.ItemType)
 	{
 	case EItemType::EI_MeleeWeapon:
 		UE_LOG(LogTemp, Warning, TEXT("MeleeWeapon"))
-		return Success;
+		return bSuccess;
 
 	case EItemType::EI_RangeWeapon:
-		return Success;
+		return bSuccess;
 
 	case EItemType::EI_Eatables:
-		AddItemToExcistingItem(Success, Item);
-		return true;
+		AddItemToExcistingItem(Item);
+		return bSuccess;
 	}
-	return Success;
+	return bSuccess;
 }
 
-bool UInventoryComponent::AddItemToExcistingItem(bool Success, FSlot Item)
+bool UInventoryComponent::AddItemToExcistingItem(FSlot Item)
 {
 	int ArrayIndex = -1;
 	for (FSlot EatableItem : AllItems.Eatables)
@@ -78,16 +78,16 @@ bool UInventoryComponent::AddItemToExcistingItem(bool Success, FSlot Item)
 				ItemSlot.ItemType = Item.ItemType;
 				ItemSlot.Quantity = NewEatableQuantity;
 				SetArrayElement( ItemSlot,AllItems.Eatables, ArrayIndex);
-				Success = true;
-				return Success;
+				bSuccess = true;
+				return bSuccess;
 			}
 		}
 	}
-	CreateNewStack(Success, Item);
-	return Success;
+	CreateNewStack(Item);
+	return bSuccess;
 }
 
-bool UInventoryComponent::CreateNewStack(bool Success, FSlot Item)
+bool UInventoryComponent::CreateNewStack(FSlot Item)
 {
 	for (FSlot EatableItem : AllItems.Eatables)
 	{
@@ -95,12 +95,11 @@ bool UInventoryComponent::CreateNewStack(bool Success, FSlot Item)
 		{
 			ArraySlotIndex += 1;
 			SetArrayElement(Item,AllItems.Eatables, ArraySlotIndex);
-			Success = true;
-			return Success;
+			bSuccess = true;
+			return bSuccess;
 		}
 	}
-	Success = false;
-	return Success;
+	return bSuccess;
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -41,11 +41,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(FSlot Item);
 	
-	bool CreateNewStack(bool Success, FSlot Item);
-	bool AddItemToExcistingItem(bool Success, FSlot Item);
+	bool CreateNewStack(FSlot Item);
+	bool AddItemToExcistingItem(FSlot Item);
 
 	UPROPERTY()
 	int ArraySlotIndex = -1;
+
+	UPROPERTY()
+	bool bSuccess;
 	
 	template <typename T>
 	static void SetArrayElement(T item, TArray<T>& item_array, int32 index)
