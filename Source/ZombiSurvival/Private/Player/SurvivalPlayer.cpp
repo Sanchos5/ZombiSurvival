@@ -11,10 +11,10 @@
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
-#include "Blueprint/UserWidget.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Widget/InventoryWidget.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -85,8 +85,8 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_OpenInventory);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interact, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_PrimaryInteract);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interact, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PrimaryInteract);
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
@@ -135,7 +135,7 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	UUserWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
+	UInventoryWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
 	
 	if (IsValid(InventoryWidgetref))
 	{

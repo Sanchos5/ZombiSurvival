@@ -7,7 +7,20 @@
 #include "Structes/AllItem.h"
 #include "InventoryComponent.generated.h"
 
+class UInventoryWidget;
 class UUserWidget;
+
+USTRUCT()
+struct FNewStack
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int ArrayIndex = 0;
+
+	UPROPERTY()
+	bool Success = false;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
@@ -21,8 +34,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY()
-	UUserWidget* InventoryWidget;
+	UPROPERTY(BlueprintReadWrite)
+	UInventoryWidget* InventoryWidget;
 
 protected:
 	// Called when the game starts
@@ -30,7 +43,7 @@ protected:
 	
 
 	UPROPERTY(EditAnywhere, Category="Widget")
-	TSubclassOf<UUserWidget> InventoryWidgetClass;
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
 	FAllItem AllItems;
@@ -40,12 +53,19 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(FSlot Item);
-	
-	bool CreateNewStack(FSlot Item);
-	bool AddItemToExcistingItem(FSlot Item);
+	bool AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Array);
+	bool CreateNewStack(FSlot Item,TArray<FSlot> &Array);
 
-	UPROPERTY()
-	int ArraySlotIndex = -1;
+	// Update Slots in Inventory Widget
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateMeleeWeaponUI();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateEatablesUI();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateRangeWeaponUI();
 
 	UPROPERTY()
 	bool bSuccess;
