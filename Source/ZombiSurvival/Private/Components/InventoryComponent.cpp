@@ -41,6 +41,7 @@ void UInventoryComponent::BeginPlay()
 	{
 		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
 	}
+	
 	SetSizeForInventory();
 
 	UpdateEatablesUI();

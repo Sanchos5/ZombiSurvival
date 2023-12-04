@@ -2,7 +2,6 @@
 
 
 #include "Widget/InventoryWidget.h"
-
 #include "Components/WrapBox.h"
 #include "Structes/Slot.h"
 #include "Widget/SlotWidget.h"

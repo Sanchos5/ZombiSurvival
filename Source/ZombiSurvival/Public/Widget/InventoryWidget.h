@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
+class UItemInfoWidget;
 class USlotWidget;
 class UWrapBox;
 /**
@@ -25,6 +26,9 @@ public:
 
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
 	UWrapBox* Wb_Eatables;
+
+	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
+	UItemInfoWidget* ItemInfoWidget;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateItemsInInventoryUI(TArray<FSlot>& AllItems, UWrapBox* WrapBox);
