@@ -6,7 +6,7 @@
 #include "Structes/Slot.h"
 #include "Widget/SlotWidget.h"
 
-void UInventoryWidget::UpdateItemsInInventoryUI(TArray<FSlot>& AllItems, UWrapBox* WrapBox)
+void UInventoryWidget::UpdateItemsInInventoryUI(TArray<FSlot> AllItems, UWrapBox* WrapBox)
 {
 	if (!IsValid(SlotWidgetClass)) return;
 	
@@ -18,9 +18,9 @@ void UInventoryWidget::UpdateItemsInInventoryUI(TArray<FSlot>& AllItems, UWrapBo
 		USlotWidget* WidgetSlotref = Cast<USlotWidget>(CreateWidget(GetWorld(), SlotWidgetClass));
 		if (IsValid(WidgetSlotref))
 		{
-			WrapBox->AddChildToWrapBox(WidgetSlotref);
 			WidgetSlotref->Index = i;
 			WidgetSlotref->Item = AllItems[i];
+			WrapBox->AddChildToWrapBox(WidgetSlotref);
 		}
-	}
+	}	
 }

@@ -31,7 +31,7 @@ public:
 	UItemInfoWidget* ItemInfoWidget;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateItemsInInventoryUI(TArray<FSlot>& AllItems, UWrapBox* WrapBox);
+	void UpdateItemsInInventoryUI(TArray<FSlot> AllItems, UWrapBox* WrapBox);
 
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<USlotWidget> SlotWidgetClass;
