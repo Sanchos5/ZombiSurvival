@@ -13,21 +13,70 @@ class ZOMBISURVIVAL_API UPlayerStatsComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+	
+	// Конструктор по умолчанию
 	UPlayerStatsComponent();
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// Проверка на то инфецирован ли игрок
+	bool Infected;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float Hunger;
+	// Восстановление голода
+	UFUNCTION(BlueprintCallable)
+	void IncrementHunger(float Value);
 
-	/* Increments hunger, used by timer. */
-	void IncrementHunger();
+	// Восстановление жажды
+	void IncrementThirst(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	float GetInfectionPercentage() const { return Infection / 100.0f; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetHungerPercentage() const { return Hunger / MaxHunger; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetThirstPercentage() const { return Thirst / MaxThirst; }
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
-		
+	// Начало игры
+	virtual void BeginPlay() override; 
+
+	// Таймер для состояний голода, жажды, инфекции
+	FTimerHandle Handle;
+
+	void HandleStats();
+
+	// Инфекция
+	void IncrementInfection(float Value); 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float Infection; 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
+	float InfectionIncrementValue; 
+
+	// Голод
+	void DecrementHunger(float Value); 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float MaxHunger; 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float Hunger; 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
+	float HungerDecrementValue; 
+
+	// Жажда
+	void DecrementThirst(float Value);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float MaxThirst;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float Thirst;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
+	float ThirstDecrementValue;
+
 };

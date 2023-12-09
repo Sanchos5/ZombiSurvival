@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	UPlayerStatsComponent* PlayerStats;
 
+	UFUNCTION(BlueprintCallable)
+	float GetHealthPercentage() const { return Health / MaxHealth; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -68,6 +71,7 @@ protected:
 	FName CameraSocketName = "CameraSocket";
 
 private:
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 
