@@ -33,8 +33,11 @@ public class ZombiSurvival : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 		new string[] {
             "InputCore",
-            "EnhancedInput" 
-			}
+            "EnhancedInput",
+            "Slate",
+            "SlateCore",
+            "UMG"
+            }
 		);
 
 		// Uncomment if you are using Slate UI

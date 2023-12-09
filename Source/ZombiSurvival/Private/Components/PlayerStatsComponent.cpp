@@ -3,38 +3,114 @@
 
 #include "Components/PlayerStatsComponent.h"
 #include "TimerManager.h"
+#include "Engine/Engine.h"
+#include "Player/SurvivalBaseCharacter.h"
 
-// Sets default values for this component's properties
+// Конструктор по умолчанию
 UPlayerStatsComponent::UPlayerStatsComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+	//
+	Infected = false;
+	InfectionIncrementValue = 6.0f;
+	
+	if(Hunger > MaxHunger)
+	{
+		Hunger = MaxHunger;
+	}
 
-	Hunger = 50.0f;
+	MaxHunger = 100.0f;
+	Hunger = 70.0f;
+	HungerDecrementValue = 8.0f;
+
+	MaxThirst = 100.0f;
+	Thirst = 50.0f;
+	ThirstDecrementValue = 9.0f;
 }
 
 
-// Called when the game starts
+// Начало игры
 void UPlayerStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
 }
 
-
-// Called every frame
-void UPlayerStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+// Уменьшение переменных по таймеру
+void UPlayerStatsComponent::HandleStats()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(Infected == true)
+	{
+		IncrementInfection(InfectionIncrementValue);
+	}
 
-	// ...
+	DecrementHunger(HungerDecrementValue);
+	DecrementThirst(ThirstDecrementValue);
 }
 
-void UPlayerStatsComponent::IncrementHunger()
+// Функция увелечения инфекции
+void UPlayerStatsComponent::IncrementInfection(float Value)
 {
-	Hunger -= 5.0f;
+	if (Infected == true && Infection + Value < 100.0f)
+	{
+		Infection += Value;
+	}
+	else
+	{
+		Infection = 100.0f;
+	}
+}
+
+// Функция уменьшения голода
+void UPlayerStatsComponent::DecrementHunger(float Value)
+{
+	if (Hunger - Value > 0.0f)
+	{
+		Hunger -= Value;
+	}
+	else
+	{
+		Hunger = 0.0f;
+	}
+}
+
+// Функция уменьшения жажды
+void UPlayerStatsComponent::DecrementThirst(float Value)
+{
+	if (Thirst - Value > 0.0f)
+	{
+		Thirst -= Value;
+	}
+	else
+	{
+		Thirst = 0.0f;
+	}
+}
+
+// Функция увеличения голода
+void UPlayerStatsComponent::IncrementHunger(float Value)
+{
+	if (Hunger + Value < MaxHunger)
+	{
+		Hunger += Value;
+	}
+	else
+	{
+		Hunger = MaxHunger;
+	}
+}
+
+// Функция увеличения жажды
+void UPlayerStatsComponent::IncrementThirst(float Value)
+{
+	if (Thirst + Value < MaxThirst)
+	{
+		Thirst += Value;
+	}
+	else
+	{
+		Thirst = MaxThirst;
+	}
 }

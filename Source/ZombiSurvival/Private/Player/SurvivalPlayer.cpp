@@ -10,6 +10,7 @@
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "UI/StatsPlayerWidget.h"
 #include "TimerManager.h"
 
 // Sets default values
@@ -44,6 +45,8 @@ void ASurvivalPlayer::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	PlayerStats->Infected = true;
 }
 
 // Called every frame
@@ -72,13 +75,11 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	const FSurvivalGameplayTags& GameplayTags = FSurvivalGameplayTags::Get();
 	
-
 	//Bind Input actions by tag
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
 	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Fire, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Fire);
-
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)

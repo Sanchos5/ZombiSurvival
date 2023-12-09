@@ -11,8 +11,17 @@ ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& O
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	if(Health > MaxHealth)
+	{
+		Health = MaxHealth;
+	}
+
+	MaxHealth = 100.0f;
 	Health = 100.0f;
+	
 }
+
+
 
 float ASurvivalBaseCharacter::GetHealth() const
 {
@@ -49,5 +58,4 @@ void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& Da
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 
 	DisableInput(nullptr);
-
 }

@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SurvivalBaseCharacter.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ZOMBISURVIVAL_API ASurvivalBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -15,13 +15,16 @@ public:
 	// Sets default values for this character's properties
 	ASurvivalBaseCharacter(const class FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintCallable, Category = "Default Stats")
+	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Default Stats", meta = (ClampMin = "0.0"))
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Health;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float MaxHealth;
 
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
