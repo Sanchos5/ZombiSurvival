@@ -22,9 +22,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Health;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Default Stats", meta = (ClampMin = "0.0"))
-	float MaxHealth;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxHealth;

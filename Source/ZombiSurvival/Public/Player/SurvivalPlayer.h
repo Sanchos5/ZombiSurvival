@@ -46,6 +46,8 @@ public:
 	/** Open Inventory Widget */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
+	void Input_ClosedInventory(const FInputActionValue& InputActionValue);
+
 	/** Interact with object */
 	void Input_PrimaryInteract(const FInputActionValue& InputActionValue);
 	
@@ -70,6 +72,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName = "CameraSocket";
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bOpenInventory = false;
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -86,4 +91,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
+
+	
 };

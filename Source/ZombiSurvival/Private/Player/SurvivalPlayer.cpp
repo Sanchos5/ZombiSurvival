@@ -12,6 +12,9 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/StatsPlayerWidget.h"
 #include "TimerManager.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/InteractionComponent.h"
+#include "Components/InventoryComponent.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -32,6 +35,9 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	FPSCamera->SetupAttachment(MeshComponent, CameraSocketName);
 
 	PlayerStats = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStats"));
+
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 }
 
 void ASurvivalPlayer::BeginPlay()
@@ -79,7 +85,11 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
-	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Fire, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Fire);
+
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
+
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interact, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_PrimaryInteract);
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
@@ -124,4 +134,30 @@ void ASurvivalPlayer::Input_Look(const FInputActionValue& InputActionValue)
 void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 {
 	Jump();
+}
+
+void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
+{
+	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == false)
+	{
+		InventoryComponent->InventoryWidget->AddToViewport();
+		bOpenInventory = true;
+	}
+}
+
+void ASurvivalPlayer::Input_ClosedInventory(const FInputActionValue& InputActionValue)
+{
+	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == true)
+	{
+		InventoryComponent->InventoryWidget->RemoveFromViewport();
+		bOpenInventory = false;
+	}
+}
+
+void ASurvivalPlayer::Input_PrimaryInteract(const FInputActionValue& InputActionValue)
+{
+	if (InteractionComponent)
+	{
+		InteractionComponent->PrimaryInteract();
+	}
 }
