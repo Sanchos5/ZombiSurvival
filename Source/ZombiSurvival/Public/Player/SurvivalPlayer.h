@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	USurvivalInputConfig* InputConfig;
 
-	//Input
+	//Управление игрока
 	/** Handles moving forward/backward */
 	void Input_Move(const FInputActionValue& InputActionValue);
 
@@ -43,13 +43,29 @@ public:
 	/** Handles Jumping */
 	void Input_Jump(const FInputActionValue& InputActionValue);
 
-	/** Open Inventory Widget */
+	/** Начало бега */
+	void Input_StartSprinting(const FInputActionValue& InputActionValue);
+
+	/** Бег закончился */
+	void Input_StopSprinting(const FInputActionValue& InputActionValue);
+
+	/** Открыть инвентарь */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
+	/** Закрыть инвентарь */
 	void Input_ClosedInventory(const FInputActionValue& InputActionValue);
 
-	/** Interact with object */
-	void Input_PrimaryInteract(const FInputActionValue& InputActionValue);
+	/** Взаимодействие с объектами */
+	void Input_Interact(const FInputActionValue& InputActionValue);
+
+	/** Атака */
+	void Input_Attacking(const FInputActionValue& InputActionValue);
+
+	/** Начало перезарядки */
+	void Input_StartReloading(const FInputActionValue& InputActionValue);
+
+	/** Конец перезарядки */
+	void Input_StopReloading(const FInputActionValue& InputActionValue);
 	
 	// End Enhanced Input Sample changes
 

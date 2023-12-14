@@ -20,6 +20,12 @@ void UInventoryComponent::BeginPlay()
 	if (IsValid(InventoryWidgetClass))
 	{
 		InventoryWidget = CreateWidget(GetWorld(), InventoryWidgetClass);
+
+		if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport();
+			InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	
 }

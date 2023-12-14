@@ -12,6 +12,7 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/StatsPlayerWidget.h"
 #include "TimerManager.h"
+#include "Widgets/SWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
@@ -85,11 +86,18 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StartSprinting);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StopSprinting);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interact, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_PrimaryInteract);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
+
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
+
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Attacking);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartReloading);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StopReloading);
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
@@ -136,11 +144,21 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 	Jump();
 }
 
+void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
+{
+
+}
+
+void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionValue)
+{
+
+}
+
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
 	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == false)
 	{
-		InventoryComponent->InventoryWidget->AddToViewport();
+		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		bOpenInventory = true;
 	}
 }
@@ -149,15 +167,30 @@ void ASurvivalPlayer::Input_ClosedInventory(const FInputActionValue& InputAction
 {
 	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == true)
 	{
-		InventoryComponent->InventoryWidget->RemoveFromViewport();
+		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		bOpenInventory = false;
 	}
 }
 
-void ASurvivalPlayer::Input_PrimaryInteract(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 {
 	if (InteractionComponent)
 	{
 		InteractionComponent->PrimaryInteract();
 	}
+}
+
+void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
+{
+	// Attack
+}
+
+void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
+{
+	//reload
+}
+
+void ASurvivalPlayer::Input_StopReloading(const FInputActionValue& InputActionValue)
+{
+	//Stop reload
 }
