@@ -19,6 +19,9 @@ class ZOMBISURVIVAL_API UInventoryWidget : public UUserWidget
 
 public:
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
+	UWrapBox* Wb_MainInventory;
+	
+	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
 	UWrapBox* Wb_MeleeWeapons;
 
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
@@ -32,7 +35,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateItemsInInventoryUI(TArray<FSlot> AllItems, UWrapBox* WrapBox);
-
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateItemsInSortInventoryUI(TArray<FSlot> AllItems, UWrapBox* WrapBox);
+	
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<USlotWidget> SlotWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<USlotWidget> SortSlotWidgetClass;
 };

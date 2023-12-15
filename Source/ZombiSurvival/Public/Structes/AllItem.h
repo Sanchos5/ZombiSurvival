@@ -10,6 +10,9 @@ struct FAllItem
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSlot> MainInventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSlot> MeleeWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

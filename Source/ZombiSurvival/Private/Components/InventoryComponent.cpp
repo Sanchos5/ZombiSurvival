@@ -9,28 +9,33 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	InventorySize = 18.f;
 }
 
 void UInventoryComponent::SetSizeForInventory()
 {
-	AllItems.MeleeWeapon.SetNum(4);
-	AllItems.RangeWeapon.SetNum(3);
-	AllItems.Eatables.SetNum(15);
+	AllItems.MainInventory.SetNum(InventorySize);
+}
+
+void UInventoryComponent::UpdateMainInventoryUI()
+{
+	InventoryWidget->UpdateItemsInInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
 }
 
 void UInventoryComponent::UpdateMeleeWeaponUI()
 {
-	InventoryWidget->UpdateItemsInInventoryUI(AllItems.MeleeWeapon, InventoryWidget->Wb_MeleeWeapons);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.MeleeWeapon, InventoryWidget->Wb_MeleeWeapons);
 }
 
 void UInventoryComponent::UpdateEatablesUI()
 {
-	InventoryWidget->UpdateItemsInInventoryUI(AllItems.Eatables, InventoryWidget->Wb_Eatables);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Eatables, InventoryWidget->Wb_Eatables);
 }
 
 void UInventoryComponent::UpdateRangeWeaponUI()
 {
-	InventoryWidget->UpdateItemsInInventoryUI(AllItems.RangeWeapon, InventoryWidget->Wb_RangeWeapons);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.RangeWeapon, InventoryWidget->Wb_RangeWeapons);
 }
 
 void UInventoryComponent::BeginPlay()
@@ -44,6 +49,7 @@ void UInventoryComponent::BeginPlay()
 	
 	SetSizeForInventory();
 
+	UpdateMainInventoryUI();
 	UpdateEatablesUI();
 	UpdateRangeWeaponUI();
 	UpdateMeleeWeaponUI();
@@ -56,15 +62,21 @@ bool UInventoryComponent::AddToInventory(FSlot Item)
 	switch (Item.ItemType)
 	{
 	case EItemType::EI_MeleeWeapon:
-		CreateNewStack(Item,AllItems.MeleeWeapon);
+		CreateNewStackSort(Item,AllItems.MeleeWeapon);
+		AddItemToExcistingItem(Item, AllItems.MainInventory);
 		return bSuccess;
 
 	case EItemType::EI_RangeWeapon:
-		CreateNewStack(Item,AllItems.RangeWeapon);
+		CreateNewStackSort(Item,AllItems.RangeWeapon);
+		AddItemToExcistingItem(Item, AllItems.MainInventory);
 		return bSuccess;
 
 	case EItemType::EI_Eatables:
-		AddItemToExcistingItem(Item, AllItems.Eatables);
+		AddItemToExcistingItemSort(Item, AllItems.Eatables);
+		AddItemToExcistingItem(Item, AllItems.MainInventory);
+		return bSuccess;
+	
+	case EItemType::NONE:
 		return bSuccess;
 	}
 	return bSuccess;
@@ -76,32 +88,32 @@ bool UInventoryComponent::AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Arra
 	for (uint32 i = 0; i < Len; ++i)
 	{
 		// Item Name that we picked up
-		FName EatableName = Item.ItemID.RowName;
+		FName ItemName = Item.ItemID.RowName;
 
 		// Item Name in inventory
 		FName EatableInventoryName = Array[i].ItemID.RowName;
 
-		if (EatableName == EatableInventoryName)
+		if (ItemName == EatableInventoryName)
 		{
 			// Get Item Info in DataTable
-			FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(EatableName, "");
+			FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(ItemName, "");
 			// Add to Existing Stack of item new quantity
-			int NewEatableQuantity = Array[i].Quantity + Item.Quantity;
+			int NewItemQuantity = Array[i].Quantity + Item.Quantity;
 			
-			if (ItemInfo->StackSize >= NewEatableQuantity)
+			if (ItemInfo->StackSize >= NewItemQuantity)
 			{
 				// Set Information in Slot
 				FSlot ItemSlot;
 				ItemSlot.ItemID = Item.ItemID;
 				ItemSlot.ItemType = Item.ItemType;
-				ItemSlot.Quantity = NewEatableQuantity;
-				SetArrayElement( ItemSlot,AllItems.Eatables, i);
+				ItemSlot.Quantity = NewItemQuantity;
+				SetArrayElement( ItemSlot,Array, i);
 				bSuccess = true;
 				return bSuccess;
 			}
 		}
 	}
-	CreateNewStack(Item, AllItems.Eatables);
+	CreateNewStack(Item, Array);
 	return bSuccess;
 }
 
@@ -118,6 +130,46 @@ bool UInventoryComponent::CreateNewStack(FSlot Item, TArray<FSlot>& Array)
 		}
 	}
 	return bSuccess;
+}
+
+bool UInventoryComponent::AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array)
+{
+	uint32 Len = Array.Num();
+	for (uint32 i = 0; i < Len; ++i)
+	{
+		// Item Name that we picked up
+		FName ItemName = Item.ItemID.RowName;
+
+		// Item Name in inventory
+		FName EatableInventoryName = Array[i].ItemID.RowName;
+
+		if (ItemName == EatableInventoryName)
+		{
+			// Get Item Info in DataTable
+			FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(ItemName, "");
+			// Add to Existing Stack of item new quantity
+			int NewItemQuantity = Array[i].Quantity + Item.Quantity;
+			
+			if (ItemInfo->StackSize >= NewItemQuantity)
+			{
+				// Set Information in Slot
+				FSlot ItemSlot;
+				ItemSlot.ItemID = Item.ItemID;
+				ItemSlot.ItemType = Item.ItemType;
+				ItemSlot.Quantity = NewItemQuantity;
+				SetArrayElement( ItemSlot,Array, i);
+				bSuccess = true;
+				return bSuccess;
+			}
+		}
+	}
+	CreateNewStackSort(Item, Array);
+	return bSuccess;
+}
+
+void UInventoryComponent::CreateNewStackSort(FSlot Item, TArray<FSlot>& Array)
+{
+	Array.Add(Item);
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

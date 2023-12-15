@@ -56,8 +56,17 @@ protected:
 	bool AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Array);
 	bool CreateNewStack(FSlot Item,TArray<FSlot> &Array);
 
+	bool AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array);
+	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
+
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	 float InventorySize;
+
 	// Update Slots in Inventory Widget
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateMainInventoryUI();
+	
 	UFUNCTION(BlueprintCallable)
 	void UpdateMeleeWeaponUI();
 	
