@@ -53,7 +53,7 @@ public:
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
 	/** Закрыть инвентарь */
-	void Input_ClosedInventory(const FInputActionValue& InputActionValue);
+	//void Input_ClosedInventory(const FInputActionValue& InputActionValue);
 
 	/** Взаимодействие с объектами */
 	void Input_Interact(const FInputActionValue& InputActionValue);

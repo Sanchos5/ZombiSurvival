@@ -91,7 +91,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
+	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
 
@@ -156,21 +156,29 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == false)
+	if (InventoryComponent->InventoryWidget != nullptr)
 	{
-		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		bOpenInventory = true;
+		if(bOpenInventory == false)
+		{
+			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+			bOpenInventory = true;
+		}
+		else if(bOpenInventory == true)
+		{
+			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+			bOpenInventory = false;
+		}
 	}
 }
 
-void ASurvivalPlayer::Input_ClosedInventory(const FInputActionValue& InputActionValue)
-{
-	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == true)
-	{
-		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-		bOpenInventory = false;
-	}
-}
+//void ASurvivalPlayer::Input_ClosedInventory(const FInputActionValue& InputActionValue)
+//{
+//	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == true)
+//	{
+//		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+//		bOpenInventory = false;
+//	}
+//}
 
 void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 {
