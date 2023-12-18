@@ -28,14 +28,15 @@ class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UInventoryComponent();
 	void SetSizeForInventory();
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintReadWrite)
 	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
+	FAllItem AllItems;
 
 protected:
 	// Called when the game starts
@@ -44,10 +45,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
-	FAllItem AllItems;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	UDataTable* ItemInfoDataTable;
 

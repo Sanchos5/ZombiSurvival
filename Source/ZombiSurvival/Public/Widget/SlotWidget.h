@@ -21,4 +21,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	int Index;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* Owner;
 };

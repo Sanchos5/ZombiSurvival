@@ -29,6 +29,9 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
 
+	/** Returns InventoryComponent subobject **/
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
 	/** The input config that maps Input Actions to Input Tags*/
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	USurvivalInputConfig* InputConfig;
