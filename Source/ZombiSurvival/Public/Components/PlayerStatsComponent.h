@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "PlayerStatsComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInfectionChangeDelegate, float, Infection);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHungerChangeDelegate, float, Hunger, float, MaxHunger);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnThirstChangeDelegate, float, Thirst, float, MaxThirst);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBISURVIVAL_API UPlayerStatsComponent : public UActorComponent
@@ -27,14 +30,14 @@ public:
 	// Восстановление жажды
 	void IncrementThirst(float Value);
 
-	UFUNCTION(BlueprintCallable)
-	float GetInfectionPercentage() const { return Infection / 100.0f; }
+	UPROPERTY(BlueprintAssignable)
+	FOnInfectionChangeDelegate OnInfectionChange;
 
-	UFUNCTION(BlueprintCallable)
-	float GetHungerPercentage() const { return Hunger / MaxHunger; }
+	UPROPERTY(BlueprintAssignable)
+	FOnHungerChangeDelegate OnHungerChange;
 
-	UFUNCTION(BlueprintCallable)
-	float GetThirstPercentage() const { return Thirst / MaxThirst; }
+	UPROPERTY(BlueprintAssignable)
+	FOnThirstChangeDelegate OnThirstChange;
 
 protected:
 

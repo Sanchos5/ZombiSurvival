@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SurvivalBaseCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangeDelegate, float, Health, float, MaxHealth);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ZOMBISURVIVAL_API ASurvivalBaseCharacter : public ACharacter
 {
@@ -17,6 +19,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChangeDelegate OnHealthChange;
 
 protected:
 

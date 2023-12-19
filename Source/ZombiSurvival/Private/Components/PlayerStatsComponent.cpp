@@ -35,6 +35,10 @@ void UPlayerStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnInfectionChange.Broadcast(Infection);
+	OnHungerChange.Broadcast(Hunger, MaxHunger);
+	OnThirstChange.Broadcast(Thirst, MaxThirst);
+
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
 }
 
@@ -48,6 +52,10 @@ void UPlayerStatsComponent::HandleStats()
 
 	DecrementHunger(HungerDecrementValue);
 	DecrementThirst(ThirstDecrementValue);
+
+	OnInfectionChange.Broadcast(Infection);
+	OnHungerChange.Broadcast(Hunger, MaxHunger);
+	OnThirstChange.Broadcast(Thirst, MaxThirst);
 }
 
 // Функция увелечения инфекции
@@ -74,6 +82,8 @@ void UPlayerStatsComponent::DecrementHunger(float Value)
 	{
 		Hunger = 0.0f;
 	}
+
+	
 }
 
 // Функция уменьшения жажды
@@ -87,6 +97,8 @@ void UPlayerStatsComponent::DecrementThirst(float Value)
 	{
 		Thirst = 0.0f;
 	}
+
+	OnHungerChange.Broadcast(Hunger, MaxHunger);
 }
 
 // Функция увеличения голода

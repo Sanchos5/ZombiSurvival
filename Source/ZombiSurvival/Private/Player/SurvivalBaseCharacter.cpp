@@ -19,6 +19,7 @@ ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& O
 	MaxHealth = 100.0f;
 	Health = 100.0f;
 	
+
 }
 
 
@@ -40,6 +41,8 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 			bIsDying = true;
 			OnDeath(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : NULL, DamageCauser);
 		}
+
+		OnHealthChange.Broadcast(Health, MaxHealth);
 	}
 	return Damage;
 }

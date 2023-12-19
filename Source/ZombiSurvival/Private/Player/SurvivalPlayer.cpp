@@ -54,6 +54,8 @@ void ASurvivalPlayer::BeginPlay()
 	}
 
 	PlayerStats->Infected = true;
+
+	OnHealthChange.Broadcast(Health, MaxHealth);
 }
 
 // Called every frame
