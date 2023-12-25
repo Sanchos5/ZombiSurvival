@@ -84,10 +84,10 @@ void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ensure(InteractionWidgetClass))
+	/*if (ensure(InteractionWidgetClass))
 	{
 		InteractionWidget = CreateWidget(GetWorld(), InteractionWidgetClass);
-	}
+	}*/
 }
 
 

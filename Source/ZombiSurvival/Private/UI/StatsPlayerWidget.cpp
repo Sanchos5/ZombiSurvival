@@ -20,6 +20,8 @@ void UStatsPlayerWidget::UpdateProgressBar()
 		break;
 	case EStatsType::Thirst:
 		break;
+	case EStatsType::Stamina:
+		break;
 	default:
 		break;
 	}

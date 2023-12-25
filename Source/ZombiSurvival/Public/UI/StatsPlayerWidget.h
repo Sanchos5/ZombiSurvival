@@ -21,6 +21,7 @@ enum class EStatsType : uint8
 	Health,
 	Hunger,
 	Thirst,
+	Stamina,
 };
 
 UCLASS(Abstract)

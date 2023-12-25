@@ -52,9 +52,6 @@ public:
 	/** Открыть инвентарь */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
-	/** Закрыть инвентарь */
-	//void Input_ClosedInventory(const FInputActionValue& InputActionValue);
-
 	/** Взаимодействие с объектами */
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
@@ -91,6 +88,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bOpenInventory = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsSprinting = false;
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -108,5 +108,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
 
-	
+	float StaminaValue;
 };

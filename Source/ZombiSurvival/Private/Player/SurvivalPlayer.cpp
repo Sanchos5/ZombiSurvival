@@ -87,9 +87,10 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	//Bind Input actions by tag
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Jump);
+
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StartSprinting);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StopSprinting);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Completed, this, &ASurvivalPlayer::Input_StopSprinting);
 
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
@@ -143,22 +144,44 @@ void ASurvivalPlayer::Input_Look(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	Jump();
+	if (PlayerStats->GetStamina() - StaminaValue > 0.0f && !GetCharacterMovement()->IsFalling())
+	{
+		StaminaValue = 10.0f;
+		PlayerStats->DecrementStamina(StaminaValue);
+		Jump();
+	}
 }
 
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
 {
+	if(PlayerStats->GetStamina() > 0.0f)
+	{
+		StaminaValue = 1.0f;
+		bIsSprinting = true;
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+		
+		PlayerStats->DecrementStamina(StaminaValue);
 
+		PlayerStats->SprintingTimer(true);
+	}
+	else if(PlayerStats->GetStamina() <= 0.0f)
+	{
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+		PlayerStats->SprintingTimer(false);
+	}
 }
 
 void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionValue)
 {
-
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	PlayerStats->SprintingTimer(false);
 }
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	if (InventoryComponent->InventoryWidget != nullptr)
+	/*if (InventoryComponent->InventoryWidget != nullptr)
 	{
 		if(bOpenInventory == false)
 		{
@@ -170,24 +193,15 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 			bOpenInventory = false;
 		}
-	}
+	}*/
 }
-
-//void ASurvivalPlayer::Input_ClosedInventory(const FInputActionValue& InputActionValue)
-//{
-//	if (InventoryComponent->InventoryWidget != nullptr && bOpenInventory == true)
-//	{
-//		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-//		bOpenInventory = false;
-//	}
-//}
 
 void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 {
-	if (InteractionComponent)
+	/*if (InteractionComponent)
 	{
 		InteractionComponent->PrimaryInteract();
-	}
+	}*/
 }
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)

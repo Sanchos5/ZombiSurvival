@@ -9,6 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInfectionChangeDelegate, float, Infection);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHungerChangeDelegate, float, Hunger, float, MaxHunger);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnThirstChangeDelegate, float, Thirst, float, MaxThirst);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChangeDelegate, float, Stamina, float, MaxStamina);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBISURVIVAL_API UPlayerStatsComponent : public UActorComponent
@@ -23,12 +24,21 @@ public:
 	// Проверка на то инфецирован ли игрок
 	bool Infected;
 
+	float GetStamina() const { return Stamina; }
+
 	// Восстановление голода
 	UFUNCTION(BlueprintCallable)
 	void IncrementHunger(float Value);
 
 	// Восстановление жажды
 	void IncrementThirst(float Value);
+
+	void DecrementStamina(float Value);
+
+	void SprintingTimer(bool bIsRunning);
+
+	// Таймер для состояний голода, жажды, инфекции
+	FTimerHandle StaminaHandle;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnInfectionChangeDelegate OnInfectionChange;
@@ -39,6 +49,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnThirstChangeDelegate OnThirstChange;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnStaminaChangeDelegate OnStaminaChange;
+
 protected:
 
 	// Начало игры
@@ -48,6 +61,8 @@ protected:
 	FTimerHandle Handle;
 
 	void HandleStats();
+
+	void RegenerateStamina();
 
 	// Инфекция
 	void IncrementInfection(float Value); 
@@ -82,4 +97,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float ThirstDecrementValue;
 
+	// Выносливость
+	void IncrementStamina(float Value);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float MaxStamina;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float Stamina;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
+	float StaminaIncrementValue;
 };

@@ -24,9 +24,23 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 	Hunger = 70.0f;
 	HungerDecrementValue = 8.0f;
 
+	if (Thirst > MaxThirst)
+	{
+		Thirst = MaxThirst;
+	}
+
 	MaxThirst = 100.0f;
 	Thirst = 50.0f;
 	ThirstDecrementValue = 9.0f;
+
+	if (Stamina > MaxStamina)
+	{
+		Stamina = MaxStamina;
+	}
+
+	MaxStamina = 100.0f;
+	Stamina = 50.0f;
+	StaminaIncrementValue = 1.0f;
 }
 
 
@@ -38,8 +52,23 @@ void UPlayerStatsComponent::BeginPlay()
 	OnInfectionChange.Broadcast(Infection);
 	OnHungerChange.Broadcast(Hunger, MaxHunger);
 	OnThirstChange.Broadcast(Thirst, MaxThirst);
+	OnStaminaChange.Broadcast(Stamina, MaxStamina);
 
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
+
+	GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true);
+}
+
+void UPlayerStatsComponent::SprintingTimer(bool bIsRunning)
+{
+	if(bIsRunning == true)
+	{
+		GetWorld()->GetTimerManager().PauseTimer(StaminaHandle);
+	}
+	else if(bIsRunning == false)
+	{
+		GetWorld()->GetTimerManager().UnPauseTimer(StaminaHandle);
+	}
 }
 
 // Уменьшение переменных по таймеру
@@ -56,6 +85,13 @@ void UPlayerStatsComponent::HandleStats()
 	OnInfectionChange.Broadcast(Infection);
 	OnHungerChange.Broadcast(Hunger, MaxHunger);
 	OnThirstChange.Broadcast(Thirst, MaxThirst);
+}
+
+void UPlayerStatsComponent::RegenerateStamina()
+{
+	IncrementStamina(StaminaIncrementValue);
+
+	OnStaminaChange.Broadcast(Stamina, MaxStamina);
 }
 
 // Функция увелечения инфекции
@@ -97,8 +133,6 @@ void UPlayerStatsComponent::DecrementThirst(float Value)
 	{
 		Thirst = 0.0f;
 	}
-
-	OnHungerChange.Broadcast(Hunger, MaxHunger);
 }
 
 // Функция увеличения голода
@@ -125,4 +159,33 @@ void UPlayerStatsComponent::IncrementThirst(float Value)
 	{
 		Thirst = MaxThirst;
 	}
+}
+
+// Функция увелечения выносливости
+void UPlayerStatsComponent::IncrementStamina(float Value)
+{
+	if (Stamina + Value < MaxStamina)
+	{
+		Stamina += Value;
+	}
+	else
+	{
+		Stamina = 100.0f;
+	}
+}
+
+// Функция уменьшения выносливости
+void UPlayerStatsComponent::DecrementStamina(float Value)
+{
+	if (Stamina - Value > 0.0f)
+	{
+		Stamina -= Value;
+		
+	}
+	else
+	{
+		Stamina = 0.0f;
+	}
+
+	OnStaminaChange.Broadcast(Stamina, MaxStamina);
 }
