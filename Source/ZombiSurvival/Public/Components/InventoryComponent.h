@@ -41,7 +41,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	float InventorySize;
 
 	UPROPERTY(EditAnywhere, Category="Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
@@ -49,16 +51,28 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	UDataTable* ItemInfoDataTable;
 
+	// Function for adding item to main inventory
 	UFUNCTION(BlueprintCallable)
 	bool AddToInventory(FSlot Item);
 	bool AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Array);
 	bool CreateNewStack(FSlot Item,TArray<FSlot> &Array);
+	// End //
 
+	// Function for adding item to sorting inventory
+	UFUNCTION(BlueprintCallable)
+	void SortMeleeItem();
+
+	UFUNCTION(BlueprintCallable)
+	void SortRangeItem();
+
+	UFUNCTION(BlueprintCallable)
+	void SortEatablesItem();
+	
 	bool AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array);
 	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
+	// End //
 
-	UPROPERTY(EditDefaultsOnly, Category="Inventory")
-	 float InventorySize;
+	
 
 	// Update Slots in Inventory Widget
 

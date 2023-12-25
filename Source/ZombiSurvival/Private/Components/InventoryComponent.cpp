@@ -62,17 +62,14 @@ bool UInventoryComponent::AddToInventory(FSlot Item)
 	switch (Item.ItemType)
 	{
 	case EItemType::EI_MeleeWeapon:
-		CreateNewStackSort(Item,AllItems.MeleeWeapon);
 		AddItemToExcistingItem(Item, AllItems.MainInventory);
 		return bSuccess;
 
 	case EItemType::EI_RangeWeapon:
-		CreateNewStackSort(Item,AllItems.RangeWeapon);
 		AddItemToExcistingItem(Item, AllItems.MainInventory);
 		return bSuccess;
 
 	case EItemType::EI_Eatables:
-		AddItemToExcistingItemSort(Item, AllItems.Eatables);
 		AddItemToExcistingItem(Item, AllItems.MainInventory);
 		return bSuccess;
 	
@@ -132,6 +129,54 @@ bool UInventoryComponent::CreateNewStack(FSlot Item, TArray<FSlot>& Array)
 	return bSuccess;
 }
 
+void UInventoryComponent::SortMeleeItem()
+{
+	uint32 Len = AllItems.MainInventory.Num();
+	for (uint32 i = 0; i < Len; ++i)
+	{
+		if (AllItems.MainInventory[i].ItemType == EItemType::EI_MeleeWeapon)
+		{
+			CreateNewStackSort(AllItems.MainInventory[i], AllItems.MeleeWeapon);
+			UE_LOG(LogTemp, Warning, TEXT("Add TO Melee"))
+		}
+		UpdateEatablesUI();
+		UpdateRangeWeaponUI();
+		UpdateMeleeWeaponUI();
+	}
+}
+
+void UInventoryComponent::SortRangeItem()
+{
+	uint32 Len = AllItems.MainInventory.Num();
+	for (uint32 i = 0; i < Len; ++i)
+	{
+		if (AllItems.MainInventory[i].ItemType == EItemType::EI_RangeWeapon)
+		{
+			CreateNewStackSort(AllItems.MainInventory[i], AllItems.RangeWeapon);
+			UE_LOG(LogTemp, Warning, TEXT("Add TO Range"))
+		}
+		UpdateEatablesUI();
+		UpdateRangeWeaponUI();
+		UpdateMeleeWeaponUI();
+	}
+}
+
+void UInventoryComponent::SortEatablesItem()
+{
+	uint32 Len = AllItems.MainInventory.Num();
+	for (uint32 i = 0; i < Len; ++i)
+	{
+		if (AllItems.MainInventory[i].ItemType == EItemType::EI_Eatables)
+		{
+			AddItemToExcistingItemSort(AllItems.MainInventory[i], AllItems.Eatables);
+			UE_LOG(LogTemp, Warning, TEXT("Add TO Eatables"))
+		}
+		UpdateEatablesUI();
+		UpdateRangeWeaponUI();
+		UpdateMeleeWeaponUI();
+	}
+}
+
 bool UInventoryComponent::AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array)
 {
 	uint32 Len = Array.Num();
@@ -141,9 +186,9 @@ bool UInventoryComponent::AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& 
 		FName ItemName = Item.ItemID.RowName;
 
 		// Item Name in inventory
-		FName EatableInventoryName = Array[i].ItemID.RowName;
+		FName ItemInventoryName = Array[i].ItemID.RowName;
 
-		if (ItemName == EatableInventoryName)
+		if (ItemName == ItemInventoryName)
 		{
 			// Get Item Info in DataTable
 			FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(ItemName, "");
