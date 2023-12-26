@@ -41,13 +41,23 @@ void UInventoryComponent::UpdateRangeWeaponUI()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	SetSizeForInventory();
 
-	UpdateMainInventoryUI();
-	UpdateEatablesUI();
-	UpdateRangeWeaponUI();
-	UpdateMeleeWeaponUI();
+	if (IsValid(InventoryWidgetClass))
+	{
+		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
+
+		/*if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport();
+			InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+		}*/
+		UpdateMainInventoryUI();
+		UpdateEatablesUI();
+		UpdateRangeWeaponUI();
+		UpdateMeleeWeaponUI();
+	}
 }
 
 bool UInventoryComponent::AddToInventory(FSlot Item)

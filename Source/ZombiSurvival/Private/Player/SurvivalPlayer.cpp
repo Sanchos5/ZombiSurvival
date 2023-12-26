@@ -16,6 +16,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Widget/InventoryWidget.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -102,9 +104,8 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Attacking);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartReloading);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StopReloading);
-
+	
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
-
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
@@ -183,8 +184,9 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 	PlayerStats->SprintingTimer(false);
 }
 
-void ASurvivalPlayer::Input_OpenInventoryOld(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
+	// TODO: Using HUD make it open and close
 	/*if (InventoryComponent->InventoryWidget != nullptr)
 	{
 		if(bOpenInventory == false)
@@ -198,14 +200,29 @@ void ASurvivalPlayer::Input_OpenInventoryOld(const FInputActionValue& InputActio
 			bOpenInventory = false;
 		}
 	}*/
+	UInventoryWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
+	
+	if (IsValid(InventoryWidgetref))
+	{
+		InventoryWidgetref->AddToViewport();
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		
+		if (IsValid(PlayerController))
+		{
+			PlayerController->SetShowMouseCursor(true);
+			FInputModeUIOnly UIMode;
+			UIMode.SetWidgetToFocus(InventoryWidgetref->GetCachedWidget());
+			PlayerController->SetInputMode(UIMode);
+		}
+	}
 }
 
 void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 {
-	/*if (InteractionComponent)
+	if (InteractionComponent)
 	{
 		InteractionComponent->PrimaryInteract();
-	}*/
+	}
 }
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
