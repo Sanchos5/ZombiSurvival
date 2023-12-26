@@ -4,9 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Structes/AllItem.h"
 #include "InventoryComponent.generated.h"
 
+class UInventoryWidget;
 class UUserWidget;
+
+USTRUCT()
+struct FNewStack
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int ArrayIndex = 0;
+
+	UPROPERTY()
+	bool Success = false;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
@@ -14,19 +28,74 @@ class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UInventoryComponent();
-	// Called every frame
+	void SetSizeForInventory();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY()
-	UUserWidget* InventoryWidget;
+	UPROPERTY(BlueprintReadWrite)
+	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
+	FAllItem AllItems;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	float InventorySize;
+
 	UPROPERTY(EditAnywhere, Category="Widget")
-	TSubclassOf<UUserWidget> InventoryWidgetClass;
-		
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	UDataTable* ItemInfoDataTable;
+
+	// Function for adding item to main inventory
+	UFUNCTION(BlueprintCallable)
+	bool AddToInventory(FSlot Item);
+	bool AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Array);
+	bool CreateNewStack(FSlot Item,TArray<FSlot> &Array);
+	// End //
+
+	// Function for adding item to sorting inventory
+	UFUNCTION(BlueprintCallable)
+	void SortMeleeItem();
+
+	UFUNCTION(BlueprintCallable)
+	void SortRangeItem();
+
+	UFUNCTION(BlueprintCallable)
+	void SortEatablesItem();
+	
+	bool AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array);
+	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
+	// End //
+
+	
+
+	// Update Slots in Inventory Widget
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateMainInventoryUI();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateMeleeWeaponUI();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateEatablesUI();
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateRangeWeaponUI();
+
+	UPROPERTY()
+	bool bSuccess;
+	
+	template <typename T>
+	static void SetArrayElement(T item, TArray<T>& item_array, int32 index)
+	{
+		if (item_array.Num() - 1 < index)
+			item_array.SetNum(index);
+		item_array[index] = item;
+	}
 };

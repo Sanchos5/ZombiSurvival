@@ -29,11 +29,14 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
 
+	/** Returns InventoryComponent subobject **/
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
 	/** The input config that maps Input Actions to Input Tags*/
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	USurvivalInputConfig* InputConfig;
 
-	//Управление игрока
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	/** Handles moving forward/backward */
 	void Input_Move(const FInputActionValue& InputActionValue);
 
@@ -42,26 +45,26 @@ public:
 
 	/** Handles Jumping */
 	void Input_Jump(const FInputActionValue& InputActionValue);
-
-	/** Начало бега */
+	
+	/** пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ */
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
 
-	/** Бег закончился */
+	/** пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
 
-	/** Открыть инвентарь */
+	/** пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
-	/** Взаимодействие с объектами */
+	/** пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
-	/** Атака */
+	/** пїЅпїЅпїЅпїЅпїЅ */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 
-	/** Начало перезарядки */
+	/** пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 	void Input_StartReloading(const FInputActionValue& InputActionValue);
 
-	/** Конец перезарядки */
+	/** пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
 	void Input_StopReloading(const FInputActionValue& InputActionValue);
 	
 	// End Enhanced Input Sample changes
@@ -98,9 +101,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	mutable const UInputMappingContext* InputMappingContext;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Mesh", meta=(AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent;
