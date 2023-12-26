@@ -85,7 +85,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Move);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_OpenInventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventoryOld);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interact, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PrimaryInteract);
 }
 
@@ -133,7 +133,7 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 	Jump();
 }
 
-void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::Input_OpenInventoryOld(const FInputActionValue& InputActionValue)
 {
 	UInventoryWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
 	

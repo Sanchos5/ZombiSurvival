@@ -47,7 +47,7 @@ public:
 	void Input_Jump(const FInputActionValue& InputActionValue);
 
 	/** Open Inventory Widget */
-	void Input_OpenInventory(const FInputActionValue& InputActionValue);
+	void Input_OpenInventoryOld(const FInputActionValue& InputActionValue);
 
 	/** Interact with object */
 	void Input_PrimaryInteract(const FInputActionValue& InputActionValue);
