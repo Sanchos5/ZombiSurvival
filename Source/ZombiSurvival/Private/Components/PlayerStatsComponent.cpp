@@ -6,7 +6,7 @@
 #include "Engine/Engine.h"
 #include "Player/SurvivalBaseCharacter.h"
 
-// Конструктор по умолчанию
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 UPlayerStatsComponent::UPlayerStatsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -44,7 +44,7 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 }
 
 
-// Начало игры
+// РќР°С‡Р°Р»Рѕ РёРіСЂС‹
 void UPlayerStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -71,7 +71,7 @@ void UPlayerStatsComponent::SprintingTimer(bool bIsRunning)
 	}
 }
 
-// Уменьшение переменных по таймеру
+// РЈРјРµРЅСЊС€РµРЅРёРµ РїРµСЂРµРјРµРЅРЅС‹С… РїРѕ С‚Р°Р№РјРµСЂСѓ
 void UPlayerStatsComponent::HandleStats()
 {
 	if(Infected == true)
@@ -94,7 +94,7 @@ void UPlayerStatsComponent::RegenerateStamina()
 	OnStaminaChange.Broadcast(Stamina, MaxStamina);
 }
 
-// Функция увелечения инфекции
+// Р¤СѓРЅРєС†РёСЏ СѓРІРµР»РµС‡РµРЅРёСЏ РёРЅС„РµРєС†РёРё
 void UPlayerStatsComponent::IncrementInfection(float Value)
 {
 	if (Infected == true && Infection + Value < 100.0f)
@@ -107,7 +107,7 @@ void UPlayerStatsComponent::IncrementInfection(float Value)
 	}
 }
 
-// Функция уменьшения голода
+// Р¤СѓРЅРєС†РёСЏ СѓРјРµРЅСЊС€РµРЅРёСЏ РіРѕР»РѕРґР°
 void UPlayerStatsComponent::DecrementHunger(float Value)
 {
 	if (Hunger - Value > 0.0f)
@@ -122,7 +122,7 @@ void UPlayerStatsComponent::DecrementHunger(float Value)
 	
 }
 
-// Функция уменьшения жажды
+// Р¤СѓРЅРєС†РёСЏ СѓРјРµРЅСЊС€РµРЅРёСЏ Р¶Р°Р¶РґС‹
 void UPlayerStatsComponent::DecrementThirst(float Value)
 {
 	if (Thirst - Value > 0.0f)
@@ -135,7 +135,7 @@ void UPlayerStatsComponent::DecrementThirst(float Value)
 	}
 }
 
-// Функция увеличения голода
+// Р¤СѓРЅРєС†РёСЏ СѓРІРµР»РёС‡РµРЅРёСЏ РіРѕР»РѕРґР°
 void UPlayerStatsComponent::IncrementHunger(float Value)
 {
 	if (Hunger + Value < MaxHunger)
@@ -148,7 +148,7 @@ void UPlayerStatsComponent::IncrementHunger(float Value)
 	}
 }
 
-// Функция увеличения жажды
+// Р¤СѓРЅРєС†РёСЏ СѓРІРµР»РёС‡РµРЅРёСЏ Р¶Р°Р¶РґС‹
 void UPlayerStatsComponent::IncrementThirst(float Value)
 {
 	if (Thirst + Value < MaxThirst)
@@ -161,7 +161,7 @@ void UPlayerStatsComponent::IncrementThirst(float Value)
 	}
 }
 
-// Функция увелечения выносливости
+// Р¤СѓРЅРєС†РёСЏ СѓРІРµР»РµС‡РµРЅРёСЏ РІС‹РЅРѕСЃР»РёРІРѕСЃС‚Рё
 void UPlayerStatsComponent::IncrementStamina(float Value)
 {
 	if (Stamina + Value < MaxStamina)
@@ -174,7 +174,7 @@ void UPlayerStatsComponent::IncrementStamina(float Value)
 	}
 }
 
-// Функция уменьшения выносливости
+// Р¤СѓРЅРєС†РёСЏ СѓРјРµРЅСЊС€РµРЅРёСЏ РІС‹РЅРѕСЃР»РёРІРѕСЃС‚Рё
 void UPlayerStatsComponent::DecrementStamina(float Value)
 {
 	if (Stamina - Value > 0.0f)

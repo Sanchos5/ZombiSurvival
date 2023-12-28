@@ -18,26 +18,27 @@ class ZOMBISURVIVAL_API UPlayerStatsComponent : public UActorComponent
 
 public:	
 	
-	// Конструктор по умолчанию
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	UPlayerStatsComponent();
 
-	// Проверка на то инфецирован ли игрок
+	// РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ РёРЅС„РµС†РёСЂРѕРІР°РЅ Р»Рё РёРіСЂРѕРє
 	bool Infected;
 
 	float GetStamina() const { return Stamina; }
 
-	// Восстановление голода
+	// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РіРѕР»РѕРґР°
 	UFUNCTION(BlueprintCallable)
 	void IncrementHunger(float Value);
 
-	// Восстановление жажды
+	// Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ Р¶Р°Р¶РґС‹
+	UFUNCTION(BlueprintCallable)
 	void IncrementThirst(float Value);
 
 	void DecrementStamina(float Value);
 
 	void SprintingTimer(bool bIsRunning);
 
-	// Таймер для состояний голода, жажды, инфекции
+	// РўР°Р№РјРµСЂ РґР»СЏ СЃРѕСЃС‚РѕСЏРЅРёР№ РіРѕР»РѕРґР°, Р¶Р°Р¶РґС‹, РёРЅС„РµРєС†РёРё
 	FTimerHandle StaminaHandle;
 
 	UPROPERTY(BlueprintAssignable)
@@ -54,17 +55,17 @@ public:
 
 protected:
 
-	// Начало игры
+	// РќР°С‡Р°Р»Рѕ РёРіСЂС‹
 	virtual void BeginPlay() override; 
 
-	// Таймер для состояний голода, жажды, инфекции
+	// РўР°Р№РјРµСЂ РґР»СЏ СЃРѕСЃС‚РѕСЏРЅРёР№ РіРѕР»РѕРґР°, Р¶Р°Р¶РґС‹, РёРЅС„РµРєС†РёРё
 	FTimerHandle Handle;
 
 	void HandleStats();
 
 	void RegenerateStamina();
 
-	// Инфекция
+	// РРЅС„РµРєС†РёСЏ
 	void IncrementInfection(float Value); 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
@@ -73,7 +74,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float InfectionIncrementValue; 
 
-	// Голод
+	// Р“РѕР»РѕРґ
 	void DecrementHunger(float Value); 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
@@ -85,7 +86,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float HungerDecrementValue; 
 
-	// Жажда
+	// Р–Р°Р¶РґР°
 	void DecrementThirst(float Value);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
@@ -97,7 +98,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float ThirstDecrementValue;
 
-	// Выносливость
+	// Р’С‹РЅРѕСЃР»РёРІРѕСЃС‚СЊ
 	void IncrementStamina(float Value);
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
