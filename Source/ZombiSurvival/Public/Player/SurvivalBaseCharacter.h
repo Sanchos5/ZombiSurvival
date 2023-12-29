@@ -20,21 +20,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnHealthChangeDelegate OnHealthChange;
-
-protected:
-
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Health;
 
+	//Максимальное количество жизней
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxHealth;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChangeDelegate OnHealthChange;
+
+	bool bIsDying = false;
+
 	//Damage
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+
+protected:
 
 	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 
-	bool bIsDying = false;
 };

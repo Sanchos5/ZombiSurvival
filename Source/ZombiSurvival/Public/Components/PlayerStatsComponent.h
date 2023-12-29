@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Player/SurvivalPlayer.h"
 #include "PlayerStatsComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInfectionChangeDelegate, float, Infection);
@@ -109,4 +110,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float StaminaIncrementValue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bOneStats = false;
 };

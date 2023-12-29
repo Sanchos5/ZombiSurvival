@@ -30,7 +30,7 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 	}
 
 	MaxThirst = 100.0f;
-	Thirst = 50.0f;
+	Thirst = 70.0f;
 	ThirstDecrementValue = 9.0f;
 
 	if (Stamina > MaxStamina)
@@ -40,7 +40,7 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 
 	MaxStamina = 100.0f;
 	Stamina = 50.0f;
-	StaminaIncrementValue = 1.0f;
+	StaminaIncrementValue = 3.0f;
 }
 
 
@@ -105,6 +105,37 @@ void UPlayerStatsComponent::IncrementInfection(float Value)
 	{
 		Infection = 100.0f;
 	}
+
+	if(ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner()))
+	{
+		if (Infection < 25.0f)
+		{
+			Player->MaxHealth = 100.0f;
+		}
+		else if (Infection > 25.0f && Infection < 50.0f)
+		{
+			Player->MaxHealth = 90.0f;
+		}
+		else if (Infection > 50.0f && Infection < 75.0f)
+		{
+			Player->MaxHealth = 80.0f;
+		}
+		else if (Infection > 75.0f && Infection < 100.0f)
+		{
+			Player->MaxHealth = 70.0f;
+		}
+		else if (Infection >= 100.0f)
+		{
+			Player->TakeDamage(Player->MaxHealth, FDamageEvent(), Player->GetController(), Player);
+		}
+
+		if(Player->Health > Player->MaxHealth)
+		{
+			Player->Health = Player->MaxHealth;
+		}
+
+		Player->OnHealthChange.Broadcast(Player->Health, Player->MaxHealth);
+	}
 }
 
 // Функция уменьшения голода
@@ -119,7 +150,34 @@ void UPlayerStatsComponent::DecrementHunger(float Value)
 		Hunger = 0.0f;
 	}
 
-	
+	if(Hunger > 80.0f)
+	{
+		MaxStamina = 100.0f;
+	}
+	else if (Hunger > 60.0f && Hunger < 80.0f)
+	{
+		MaxStamina = 90.0f;
+	}
+	else if (Hunger > 40.0f && Hunger < 60.0f)
+	{
+		MaxStamina = 80.0f;
+	}
+	else if (Hunger > 20.0f && Hunger < 40.0f)
+	{
+		MaxStamina = 70.0f;
+	}
+	else if (Hunger < 20.0f)
+	{
+		MaxStamina = 60.0f;
+	}
+
+	if (Hunger <= 0.0f)
+	{
+		if (ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner()))
+		{
+			Player->TakeDamage(2.0f, FDamageEvent(), Player->GetController(), Player);
+		}
+	}
 }
 
 // Функция уменьшения жажды
@@ -132,6 +190,35 @@ void UPlayerStatsComponent::DecrementThirst(float Value)
 	else
 	{
 		Thirst = 0.0f;
+	}
+
+	if (Thirst > 80.0f)
+	{
+		StaminaIncrementValue = 2.5f;
+	}
+	if (Thirst > 60.0f && Thirst < 80.0f)
+	{
+		StaminaIncrementValue = 2.0f;
+	}
+	else if (Thirst > 40.0f && Thirst < 60.0f)
+	{
+		StaminaIncrementValue = 1.5f;
+	}
+	else if (Thirst > 20.0f && Thirst < 40.0f)
+	{
+		StaminaIncrementValue = 1.0f;
+	}
+	else if (Thirst < 20.0f)
+	{
+		StaminaIncrementValue = 0.5f;
+	}
+
+	if (Thirst <= 0.0f)
+	{
+		if (ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner()))
+		{
+			Player->TakeDamage(2.0f, FDamageEvent(), Player->GetController(), Player);
+		}
 	}
 }
 
@@ -170,7 +257,7 @@ void UPlayerStatsComponent::IncrementStamina(float Value)
 	}
 	else
 	{
-		Stamina = 100.0f;
+		Stamina = MaxStamina;
 	}
 }
 
@@ -180,7 +267,6 @@ void UPlayerStatsComponent::DecrementStamina(float Value)
 	if (Stamina - Value > 0.0f)
 	{
 		Stamina -= Value;
-		
 	}
 	else
 	{

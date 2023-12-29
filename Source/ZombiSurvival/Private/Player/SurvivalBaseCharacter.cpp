@@ -18,8 +18,6 @@ ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& O
 
 	MaxHealth = 100.0f;
 	Health = 100.0f;
-	
-
 }
 
 

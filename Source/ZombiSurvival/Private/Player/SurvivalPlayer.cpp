@@ -161,7 +161,7 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 {
 	if(PlayerStats->GetStamina() > 0.0f)
 	{
-		StaminaValue = 1.0f;
+		StaminaValue = 0.2f;
 		bIsSprinting = true;
 		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 		
