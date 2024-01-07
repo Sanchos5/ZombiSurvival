@@ -3,6 +3,7 @@
 
 #include "Player/SurvivalBaseCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& ObjectInitializer) 
@@ -57,6 +58,11 @@ void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& Da
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	
+	USkeletalMeshComponent* Mesh1P = GetMesh();
+	Mesh1P->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Mesh1P->SetSimulatePhysics(true);
+	Mesh1P->SetAllBodiesSimulatePhysics(true);
 
 	DisableInput(nullptr);
 }
