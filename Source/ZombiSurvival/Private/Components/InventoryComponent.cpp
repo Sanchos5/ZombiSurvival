@@ -8,7 +8,7 @@
 
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	InventorySize = 18.f;
 }
@@ -48,11 +48,11 @@ void UInventoryComponent::BeginPlay()
 	{
 		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
 
-		/*if (InventoryWidget)
+		if (InventoryWidget)
 		{
 			InventoryWidget->AddToViewport();
 			InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-		}*/
+		}
 		UpdateMainInventoryUI();
 		UpdateEatablesUI();
 		UpdateRangeWeaponUI();
@@ -221,9 +221,3 @@ void UInventoryComponent::CreateNewStackSort(FSlot Item, TArray<FSlot>& Array)
 {
 	Array.Add(Item);
 }
-
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-

@@ -186,8 +186,8 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	// TODO: Using HUD make it open and close
-	/*if (InventoryComponent->InventoryWidget != nullptr)
+	// TODO: Using HUD make it open and close(with Player UI)
+	if (InventoryComponent->InventoryWidget != nullptr)
 	{
 		if(bOpenInventory == false)
 		{
@@ -198,21 +198,6 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 		{
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 			bOpenInventory = false;
-		}
-	}*/
-	UInventoryWidget* InventoryWidgetref = InventoryComponent->InventoryWidget;
-	
-	if (IsValid(InventoryWidgetref))
-	{
-		InventoryWidgetref->AddToViewport();
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		
-		if (IsValid(PlayerController))
-		{
-			PlayerController->SetShowMouseCursor(true);
-			FInputModeUIOnly UIMode;
-			UIMode.SetWidgetToFocus(InventoryWidgetref->GetCachedWidget());
-			PlayerController->SetInputMode(UIMode);
 		}
 	}
 }

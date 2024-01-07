@@ -16,7 +16,6 @@ class ZOMBISURVIVAL_API UInteractionComponent : public UActorComponent
 public:	
 	UInteractionComponent();
 	void PrimaryInteract();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,4 +38,6 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* InteractionWidget;
+
+	FTimerHandle InteractionTimer;
 };

@@ -7,7 +7,7 @@
 
 UInteractionComponent::UInteractionComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	TraceRadius = 20.0f;
 	TraceDistance = 150.0f;
@@ -25,6 +25,7 @@ void UInteractionComponent::PrimaryInteract()
 
 void UInteractionComponent::FindBestInteractable()
 {
+	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
 
@@ -77,7 +78,8 @@ void UInteractionComponent::FindBestInteractable()
 			InteractionWidget->RemoveFromParent();
 		}
 	}
-	
+
+	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f);	
 	//DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
 }
 
@@ -89,13 +91,5 @@ void UInteractionComponent::BeginPlay()
 	{
 		InteractionWidget = CreateWidget(GetWorld(), InteractionWidgetClass);
 	}
+	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f, false);
 }
-
-
-void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-	FindBestInteractable();
-}
-

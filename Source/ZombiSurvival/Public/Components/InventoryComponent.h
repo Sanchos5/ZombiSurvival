@@ -30,7 +30,6 @@ class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 	void SetSizeForInventory();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintReadWrite)
 	UInventoryWidget* InventoryWidget;
