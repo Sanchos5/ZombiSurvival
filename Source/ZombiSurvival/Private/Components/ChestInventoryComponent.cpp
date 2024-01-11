@@ -28,6 +28,8 @@ void UChestInventoryComponent::BeginPlay()
 	if (IsValid(InventoryWidgetClass))
 	{
 		ChestInventoryWidget = Cast<UChestInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
+		ChestInventoryWidget->AddToViewport();
+		ChestInventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		ChestInventoryWidget->ChestOwner = GetOwner();
 	}
 	

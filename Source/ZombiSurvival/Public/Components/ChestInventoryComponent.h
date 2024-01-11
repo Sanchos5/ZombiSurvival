@@ -41,9 +41,5 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerInventoryUI();
-
-public:	
-
-
 		
 };
