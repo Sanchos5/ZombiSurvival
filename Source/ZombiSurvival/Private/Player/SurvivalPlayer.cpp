@@ -14,9 +14,9 @@
 #include "TimerManager.h"
 #include "Widgets/SWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Widget/InventoryWidget.h"
 
 // Sets default values
@@ -186,19 +186,25 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	// TODO: Using HUD make it open and close(with Player UI)
-	if (InventoryComponent->InventoryWidget != nullptr)
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 	{
 		if(bOpenInventory == false)
 		{
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			bOpenInventory = true;
+			PlayerController->bShowMouseCursor = true;
+			UE_LOG(LogTemp, Warning, TEXT("Open"))
 		}
-		else if(bOpenInventory == true)
+		/*else if(bOpenInventory == true)
 		{
+			PlayerController->SetInputMode(FInputModeGameOnly());
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 			bOpenInventory = false;
-		}
+			PlayerController->bShowMouseCursor = false;
+			UE_LOG(LogTemp, Warning, TEXT("Close"))
+		}*/
 	}
 }
 
