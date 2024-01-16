@@ -30,6 +30,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChangeDelegate OnHealthChange;
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsDying = false;
 
 	//Damage
