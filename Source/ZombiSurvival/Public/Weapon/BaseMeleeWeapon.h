@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BaseMeleeWeapon.generated.h"
 
+class UTraceComponent;
+
 UCLASS()
 class ZOMBISURVIVAL_API ABaseMeleeWeapon : public AActor
 {
@@ -18,6 +20,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
 	float Damage;
 
+	UTraceComponent* GetTraceComponent() { return TraceComponent; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -26,6 +30,6 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess= "true"))
-	class UTraceComponent* TraceComponent;
+	UTraceComponent* TraceComponent;
 
 };

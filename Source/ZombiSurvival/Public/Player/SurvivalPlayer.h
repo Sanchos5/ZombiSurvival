@@ -16,6 +16,7 @@ struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
 class UPlayerStatsComponent;
+class UUserWidget;
 
 UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
@@ -36,7 +37,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	USurvivalInputConfig* InputConfig;
 
-	//���������� ������
 	/** Handles moving forward/backward */
 	void Input_Move(const FInputActionValue& InputActionValue);
 
@@ -52,14 +52,18 @@ public:
 	/** ��� ���������� */
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
 
-	/** ������� ��������� */
+	/** Open Inventory */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 
-	/** �������������� � ��������� */
+	/** Open PauseWidget */
+	void Input_PauseGame(const FInputActionValue& InputActionValue);
+
+	/** Interact with objects */
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
-	/** ����� */
+	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
+	void Input_MeleeAttacking();
 
 	/** ������ ����������� */
 	void Input_StartReloading(const FInputActionValue& InputActionValue);
@@ -86,7 +90,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
-	FName CameraSocketName = "CameraSocket";
+	FName CameraSocketName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bOpenInventory = false;
@@ -94,8 +98,33 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsSprinting = false;
 
-private:
+	// Melee Weapon
+	void CreateWeapon();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Melee Weapon")
+	TSubclassOf<class ABaseMeleeWeapon> MeleeWeaponClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName WeaponSocketName;
+
+	UPROPERTY(BlueprintReadWrite, Category="Melee Weapon")
+	bool CanAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category="Melee Weapon")
+	UAnimMontage* MeleeAttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="Melee Weapon")
+	float AttackPlayRate;
+
+	// Pause Game
+	void CreatePauseWidget();
+	UPROPERTY(EditAnywhere, Category="Widget")
+	TSubclassOf<UUserWidget> PauseWidgetClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	UUserWidget* PauseWidget;
+
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 

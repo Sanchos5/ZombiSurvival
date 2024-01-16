@@ -17,7 +17,10 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Weapon/BaseMeleeWeapon.h"
 #include "Widget/InventoryWidget.h"
+#include "Components/TraceComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -32,15 +35,32 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
 
-	// Create a CameraComponent	
+	// Create a CameraComponent
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FPSCamera->bUsePawnControlRotation = true;
+	CameraSocketName = TEXT("CameraSocket");
 	FPSCamera->SetupAttachment(MeshComponent, CameraSocketName);
 
 	PlayerStats = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStats"));
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
+
+	WeaponSocketName = TEXT("MeleeWeaponSocket");
+}
+
+void ASurvivalPlayer::CreatePauseWidget()
+{
+	if (IsValid(PauseWidgetClass))
+	{
+		PauseWidget = Cast<UUserWidget>(CreateWidget(GetWorld(), PauseWidgetClass));
+
+		if (PauseWidget)
+		{
+			PauseWidget->AddToViewport();
+			PauseWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }
 
 void ASurvivalPlayer::BeginPlay()
@@ -55,6 +75,9 @@ void ASurvivalPlayer::BeginPlay()
 		}
 	}
 
+	CreatePauseWidget();
+	
+	CreateWeapon();
 	PlayerStats->Infected = true;
 
 	OnHealthChange.Broadcast(Health, MaxHealth);
@@ -98,10 +121,11 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
 	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_PauseGame, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PauseGame);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Attacking);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_MeleeAttacking);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartReloading);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StopReloading);
 	
@@ -189,22 +213,22 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 	{
-		if(bOpenInventory == false)
-		{
-			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-			bOpenInventory = true;
-			PlayerController->bShowMouseCursor = true;
-			UE_LOG(LogTemp, Warning, TEXT("Open"))
-		}
-		/*else if(bOpenInventory == true)
-		{
-			PlayerController->SetInputMode(FInputModeGameOnly());
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-			bOpenInventory = false;
-			PlayerController->bShowMouseCursor = false;
-			UE_LOG(LogTemp, Warning, TEXT("Close"))
-		}*/
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		bOpenInventory = true;
+		PlayerController->bShowMouseCursor = true;
+	}
+}
+
+void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PauseWidget != nullptr && PlayerController != nullptr)
+	{
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, PauseWidget);
+		PauseWidget->SetVisibility(ESlateVisibility::Visible);
+		PlayerController->bShowMouseCursor = true;
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
@@ -218,7 +242,19 @@ void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 {
-	// Attack
+	// Attacking
+}
+
+void ASurvivalPlayer::Input_MeleeAttacking()
+{
+	if (CanAttack == false) return;
+	
+	CanAttack = false;
+	
+	if (MeleeAttackMontage)
+	{
+		PlayAnimMontage(MeleeAttackMontage, AttackPlayRate);
+	}
 }
 
 void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
@@ -229,4 +265,16 @@ void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionV
 void ASurvivalPlayer::Input_StopReloading(const FInputActionValue& InputActionValue)
 {
 	//Stop reload
+}
+
+void ASurvivalPlayer::CreateWeapon()
+{
+	if (MeleeWeaponClass == nullptr) return;
+	FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName);
+	ABaseMeleeWeapon* Weaponref = GetWorld()->SpawnActor<ABaseMeleeWeapon>(MeleeWeaponClass, SocketTransform);
+	if (Weaponref)
+	{
+		Weaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+		Weaponref->GetTraceComponent()->MeleeWeapon = Weaponref;
+	}
 }

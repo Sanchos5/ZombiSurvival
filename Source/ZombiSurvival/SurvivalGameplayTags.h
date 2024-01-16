@@ -26,6 +26,7 @@ public:
 	FGameplayTag InputTag_Jump;
 	FGameplayTag InputTag_Sprint;
 	FGameplayTag InputTag_Inventory;
+	FGameplayTag InputTag_PauseGame;
 	FGameplayTag InputTag_Interaction;
 	FGameplayTag InputTag_Attack;
 	FGameplayTag InputTag_Reload;
