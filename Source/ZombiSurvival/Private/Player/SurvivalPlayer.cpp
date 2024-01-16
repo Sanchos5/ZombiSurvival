@@ -47,6 +47,7 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 
 	WeaponSocketName = TEXT("MeleeWeaponSocket");
+	CanAttack = true;
 }
 
 void ASurvivalPlayer::CreatePauseWidget()
@@ -249,12 +250,12 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 {
 	if (CanAttack == false) return;
 	
-	CanAttack = false;
-	
-	if (MeleeAttackMontage)
+	if (MeleeAttackMontage != nullptr)
 	{
 		PlayAnimMontage(MeleeAttackMontage, AttackPlayRate);
 	}
+	
+	CanAttack = false;
 }
 
 void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
@@ -271,10 +272,10 @@ void ASurvivalPlayer::CreateWeapon()
 {
 	if (MeleeWeaponClass == nullptr) return;
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName);
-	ABaseMeleeWeapon* Weaponref = GetWorld()->SpawnActor<ABaseMeleeWeapon>(MeleeWeaponClass, SocketTransform);
-	if (Weaponref)
+	MeleeWeaponref = GetWorld()->SpawnActor<ABaseMeleeWeapon>(MeleeWeaponClass, SocketTransform);
+	if (MeleeWeaponref)
 	{
-		Weaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-		Weaponref->GetTraceComponent()->MeleeWeapon = Weaponref;
+		MeleeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+		MeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
 	}
 }

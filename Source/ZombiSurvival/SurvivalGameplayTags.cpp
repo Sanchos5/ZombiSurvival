@@ -24,8 +24,8 @@ void FSurvivalGameplayTags::AddAllTags(UGameplayTagsManager& Manager)
 	AddTag(InputTag_Inventory, "InputTag.Inventory", "Inventory input");
 	AddTag(InputTag_PauseGame, "InputTag.PauseGame", "PauseGame input");
 	AddTag(InputTag_Interaction, "InputTag.Interaction", "Interact input");
-	AddTag(InputTag_Attack, "InputTag_Attack", "Attacking input");
-	AddTag(InputTag_Reload, "InputTag_Reload", "Reloading input");
+	AddTag(InputTag_Attack, "InputTag.Attack", "Attacking input");
+	AddTag(InputTag_Reload, "InputTag.Reload", "Reloading input");
 
 
 }

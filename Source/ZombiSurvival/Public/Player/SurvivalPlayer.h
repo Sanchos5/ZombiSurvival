@@ -12,6 +12,7 @@ class UInventoryComponent;
 class UCameraComponent;
 class UInputComponent;
 class USurvivalInputConfig;
+class ABaseMeleeWeapon;
 struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
@@ -103,6 +104,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Melee Weapon")
 	TSubclassOf<class ABaseMeleeWeapon> MeleeWeaponClass;
+
+	UPROPERTY(BlueprintReadOnly)
+	ABaseMeleeWeapon* MeleeWeaponref;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName WeaponSocketName;
