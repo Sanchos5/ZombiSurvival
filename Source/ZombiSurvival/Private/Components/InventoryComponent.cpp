@@ -18,24 +18,18 @@ void UInventoryComponent::SetSizeForInventory()
 	AllItems.MainInventory.SetNum(InventorySize);
 }
 
-void UInventoryComponent::UpdateMainInventoryUI()
+void UInventoryComponent::UpdateInventoryUI(TArray<FSlot> Array, UWrapBox* WrapBox)
 {
-	InventoryWidget->UpdateItemsInInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
+	InventoryWidget->UpdateItemsInInventoryUI(Array, WrapBox);
 }
 
-void UInventoryComponent::UpdateMeleeWeaponUI()
+void UInventoryComponent::UpdateAllInventoryUI()
 {
-	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.MeleeWeapon, InventoryWidget->Wb_MeleeWeapons);
-}
-
-void UInventoryComponent::UpdateEatablesUI()
-{
-	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Eatables, InventoryWidget->Wb_Eatables);
-}
-
-void UInventoryComponent::UpdateRangeWeaponUI()
-{
-	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.RangeWeapon, InventoryWidget->Wb_RangeWeapons);
+	UpdateInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
+	UpdateInventoryUI(AllItems.Patrons, InventoryWidget->Wb_Patrons);
+	UpdateInventoryUI(AllItems.Drinks, InventoryWidget->Wb_Drinks);
+	UpdateInventoryUI(AllItems.Food, InventoryWidget->Wb_Food);
+	UpdateInventoryUI(AllItems.Medicine, InventoryWidget->Wb_Medicine);
 }
 
 void UInventoryComponent::BeginPlay()
@@ -53,10 +47,7 @@ void UInventoryComponent::BeginPlay()
 			InventoryWidget->AddToViewport();
 			InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
-		UpdateMainInventoryUI();
-		UpdateEatablesUI();
-		UpdateRangeWeaponUI();
-		UpdateMeleeWeaponUI();
+		UpdateAllInventoryUI();
 	}
 }
 
@@ -64,23 +55,7 @@ bool UInventoryComponent::AddToInventory(FSlot Item)
 {
 	bSuccess = false;
 	
-	switch (Item.ItemType)
-	{
-	case EItemType::EI_MeleeWeapon:
-		AddItemToExcistingItem(Item, AllItems.MainInventory);
-		return bSuccess;
-
-	case EItemType::EI_RangeWeapon:
-		AddItemToExcistingItem(Item, AllItems.MainInventory);
-		return bSuccess;
-
-	case EItemType::EI_Eatables:
-		AddItemToExcistingItem(Item, AllItems.MainInventory);
-		return bSuccess;
-	
-	case EItemType::NONE:
-		return bSuccess;
-	}
+	AddItemToExcistingItem(Item, AllItems.MainInventory);
 	return bSuccess;
 }
 
@@ -134,52 +109,37 @@ bool UInventoryComponent::CreateNewStack(FSlot Item, TArray<FSlot>& Array)
 	return bSuccess;
 }
 
-void UInventoryComponent::SortMeleeItem()
+void UInventoryComponent::SortPatrons()
 {
-	uint32 Len = AllItems.MainInventory.Num();
-	for (uint32 i = 0; i < Len; ++i)
-	{
-		if (AllItems.MainInventory[i].ItemType == EItemType::EI_MeleeWeapon)
-		{
-			CreateNewStackSort(AllItems.MainInventory[i], AllItems.MeleeWeapon);
-			UE_LOG(LogTemp, Warning, TEXT("Add TO Melee"))
-		}
-		UpdateEatablesUI();
-		UpdateRangeWeaponUI();
-		UpdateMeleeWeaponUI();
-	}
+	SortItems(EItemType::EI_Patrons, AllItems.Patrons);
 }
 
-void UInventoryComponent::SortRangeItem()
+void UInventoryComponent::SortMedicine()
 {
-	uint32 Len = AllItems.MainInventory.Num();
-	for (uint32 i = 0; i < Len; ++i)
-	{
-		if (AllItems.MainInventory[i].ItemType == EItemType::EI_RangeWeapon)
-		{
-			CreateNewStackSort(AllItems.MainInventory[i], AllItems.RangeWeapon);
-			UE_LOG(LogTemp, Warning, TEXT("Add TO Range"))
-		}
-		UpdateEatablesUI();
-		UpdateRangeWeaponUI();
-		UpdateMeleeWeaponUI();
-	}
+	SortItems(EItemType::EI_Medicines, AllItems.Medicine);
 }
 
-void UInventoryComponent::SortEatablesItem()
+void UInventoryComponent::SortDrinks()
+{
+	SortItems(EItemType::EI_Drinks, AllItems.Drinks);
+}
+
+void UInventoryComponent::SortFood()
+{
+	SortItems(EItemType::EI_Food, AllItems.Food);
+}
+
+void UInventoryComponent::SortItems(EItemType ItemType, TArray<FSlot>& Array)
 {
 	uint32 Len = AllItems.MainInventory.Num();
 	for (uint32 i = 0; i < Len; ++i)
 	{
-		if (AllItems.MainInventory[i].ItemType == EItemType::EI_Eatables)
+		if (AllItems.MainInventory[i].ItemType == ItemType)
 		{
-			AddItemToExcistingItemSort(AllItems.MainInventory[i], AllItems.Eatables);
-			UE_LOG(LogTemp, Warning, TEXT("Add TO Eatables"))
+			AddItemToExcistingItemSort(AllItems.MainInventory[i], Array);
 		}
-		UpdateEatablesUI();
-		UpdateRangeWeaponUI();
-		UpdateMeleeWeaponUI();
 	}
+	UpdateAllInventoryUI();
 }
 
 bool UInventoryComponent::AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array)

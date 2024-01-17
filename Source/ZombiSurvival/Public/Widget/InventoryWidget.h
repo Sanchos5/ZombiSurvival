@@ -22,13 +22,16 @@ public:
 	UWrapBox* Wb_MainInventory;
 	
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
-	UWrapBox* Wb_MeleeWeapons;
+	UWrapBox* Wb_Medicine;
 
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
-	UWrapBox* Wb_RangeWeapons;
+	UWrapBox* Wb_Food;
 
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
-	UWrapBox* Wb_Eatables;
+	UWrapBox* Wb_Drinks;
+
+	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
+	UWrapBox* Wb_Patrons;
 
 	UPROPERTY(meta=(BindWidget), BlueprintReadWrite)
 	UItemInfoWidget* ItemInfoWidget;

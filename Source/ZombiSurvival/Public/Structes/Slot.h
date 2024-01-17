@@ -7,9 +7,10 @@
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	EI_MeleeWeapon UMETA(DisplayName = "Melee Weapon"),
-	EI_RangeWeapon UMETA(DisplayName = "Range Weapon"),
-	EI_Eatables UMETA(DisplayName = "Eatables"),
+	EI_Patrons UMETA(DisplayName = "Patrons"),
+	EI_Medicines UMETA(DisplayName = "Medicines"),
+	EI_Drinks UMETA(DisplayName = "Drinks"),
+	EI_Food UMETA(DisplayName = "Food"),
 	NONE UMETA(DisplayName = "NONE")
 };
 

@@ -13,13 +13,16 @@ struct FAllItem
 	TArray<FSlot> MainInventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSlot> MeleeWeapon;
+	TArray<FSlot> Patrons;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSlot> RangeWeapon;
+	TArray<FSlot> Medicine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSlot> Eatables;
+	TArray<FSlot> Drinks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSlot> Food;
 
 	FAllItem();
 	~FAllItem();

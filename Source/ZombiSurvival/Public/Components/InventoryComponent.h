@@ -59,13 +59,18 @@ protected:
 
 	// Function for adding item to sorting inventory
 	UFUNCTION(BlueprintCallable)
-	void SortMeleeItem();
+	void SortPatrons();
 
 	UFUNCTION(BlueprintCallable)
-	void SortRangeItem();
+	void SortMedicine();
 
 	UFUNCTION(BlueprintCallable)
-	void SortEatablesItem();
+	void SortDrinks();
+
+	UFUNCTION(BlueprintCallable)
+	void SortFood();
+	
+	void SortItems(EItemType ItemType, TArray<FSlot>& Array);
 	
 	bool AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array);
 	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
@@ -76,16 +81,10 @@ protected:
 	// Update Slots in Inventory Widget
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateMainInventoryUI();
+	void UpdateInventoryUI(TArray<FSlot> Array, UWrapBox* WrapBox);
 	
 	UFUNCTION(BlueprintCallable)
-	void UpdateMeleeWeaponUI();
-	
-	UFUNCTION(BlueprintCallable)
-	void UpdateEatablesUI();
-	
-	UFUNCTION(BlueprintCallable)
-	void UpdateRangeWeaponUI();
+	void UpdateAllInventoryUI();
 
 	UPROPERTY()
 	bool bSuccess;
