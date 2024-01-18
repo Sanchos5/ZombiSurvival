@@ -28,6 +28,12 @@ struct ZOMBISURVIVAL_API FItemInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NumbertoRestore;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float NumbertoSubtract;
+
 	FItemInfo();
 	~FItemInfo();
 };
