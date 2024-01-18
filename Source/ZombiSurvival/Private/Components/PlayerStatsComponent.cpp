@@ -56,7 +56,7 @@ void UPlayerStatsComponent::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
 
-	GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true);
+	GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, 2.0f);
 }
 
 void UPlayerStatsComponent::SprintingTimer(bool bIsRunning)

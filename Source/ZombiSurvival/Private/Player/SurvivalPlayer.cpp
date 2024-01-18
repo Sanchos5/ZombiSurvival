@@ -10,7 +10,6 @@
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "UI/StatsPlayerWidget.h"
 #include "TimerManager.h"
 #include "Widgets/SWidget.h"
 #include "Blueprint/UserWidget.h"
