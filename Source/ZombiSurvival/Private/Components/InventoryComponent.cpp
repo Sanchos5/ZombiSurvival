@@ -68,12 +68,13 @@ bool UInventoryComponent::AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Arra
 		FName ItemName = Item.ItemID.RowName;
 
 		// Item Name in inventory
-		FName EatableInventoryName = Array[i].ItemID.RowName;
+		FName InventoryName = Array[i].ItemID.RowName;
 
-		if (ItemName == EatableInventoryName)
+		// Get Item Info in DataTable
+		FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(ItemName, "");
+
+		if (ItemName == InventoryName && Array[i].Quantity < ItemInfo->StackSize)
 		{
-			// Get Item Info in DataTable
-			FItemInfo* ItemInfo = ItemInfoDataTable->FindRow<FItemInfo>(ItemName, "");
 			// Add to Existing Stack of item new quantity
 			int NewItemQuantity = Array[i].Quantity + Item.Quantity;
 			
@@ -85,6 +86,21 @@ bool UInventoryComponent::AddItemToExcistingItem(FSlot Item, TArray<FSlot>& Arra
 				ItemSlot.ItemType = Item.ItemType;
 				ItemSlot.Quantity = NewItemQuantity;
 				SetArrayElement( ItemSlot,Array, i);
+				bSuccess = true;
+				return bSuccess;
+			}
+			else
+			{
+				// Set Information in Slot
+				int IntToFullStuck = ItemInfo->StackSize - Array[i].Quantity;
+				NewItemQuantity = Array[i].Quantity + IntToFullStuck;
+				Item.Quantity -= IntToFullStuck;
+				FSlot ItemSlot;
+				ItemSlot.ItemID = Item.ItemID;
+				ItemSlot.ItemType = Item.ItemType;
+				ItemSlot.Quantity = NewItemQuantity;
+				SetArrayElement( ItemSlot,Array, i);
+				CreateNewStack(Item, Array);
 				bSuccess = true;
 				return bSuccess;
 			}
