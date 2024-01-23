@@ -95,7 +95,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetHealthPercentage() const { return Health / MaxHealth; }
 
-	EActiveWeapon ActiveWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
 protected:
 	// Called when the game starts or when spawned
