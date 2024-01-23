@@ -30,6 +30,9 @@ public:
 	FGameplayTag InputTag_Interaction;
 	FGameplayTag InputTag_Attack;
 	FGameplayTag InputTag_Reload;
+	FGameplayTag InputTag_SwapToAxe;
+	FGameplayTag InputTag_SwapToPistol;
+	FGameplayTag InputTag_SwapToShotgun;
 
 	//////////////////////////////////////
 	//Item Tags

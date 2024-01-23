@@ -15,10 +15,8 @@ class ZOMBISURVIVAL_API ABaseMeleeWeapon : public AActor
 	
 public:
 	ABaseMeleeWeapon();
-	FVector GetWeaponSocketLocation(FName SocketName);
-
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
-	float Damage;
+	FVector GetStartLocation();
+	FVector GetEndLocation();
 
 	UTraceComponent* GetTraceComponent() { return TraceComponent; }
 
@@ -26,7 +24,14 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	USkeletalMeshComponent* SkeletalMesh;
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* Start;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* End;
+
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess= "true"))

@@ -26,6 +26,9 @@ void FSurvivalGameplayTags::AddAllTags(UGameplayTagsManager& Manager)
 	AddTag(InputTag_Interaction, "InputTag.Interaction", "Interact input");
 	AddTag(InputTag_Attack, "InputTag.Attack", "Attacking input");
 	AddTag(InputTag_Reload, "InputTag.Reload", "Reloading input");
+	AddTag(InputTag_SwapToAxe, "InputTag.SwapWeaponTo.Axe", "SwapWeaponToAxe input");
+	AddTag(InputTag_SwapToPistol, "InputTag.SwapWeaponTo.Pistol", "SwapWeaponToPistol input");
+	AddTag(InputTag_SwapToShotgun, "InputTag.SwapWeaponTo.Shotgun", "SwapWeaponToShotgun input");
 
 
 }

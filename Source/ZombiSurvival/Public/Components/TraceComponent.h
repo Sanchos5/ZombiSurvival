@@ -37,12 +37,6 @@ protected:
 	void ClearActorsToIgnore();
 
 	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
-	FName StartTraceName;
-
-	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
-	FName EndTraceName;
-
-	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
