@@ -18,7 +18,7 @@ UChestInventoryComponent::UChestInventoryComponent()
 
 void UChestInventoryComponent::SetSizeForInventory()
 {
-	ChestInventory.ChestInventory.SetNum(InventorySize);
+	AllChestItem.MainInventory.SetNum(InventorySize);
 }
 
 void UChestInventoryComponent::BeginPlay()
@@ -39,7 +39,7 @@ void UChestInventoryComponent::BeginPlay()
 
 void UChestInventoryComponent::UpdateChestInventoryUI()
 {
-	ChestInventoryWidget->UpdateItemsInInventoryUI(ChestInventory.ChestInventory, ChestInventoryWidget->Wb_ChestInventory);
+	ChestInventoryWidget->UpdateItemsInInventoryUI(AllChestItem.MainInventory, ChestInventoryWidget->Wb_ChestInventory);
 }
 
 void UChestInventoryComponent::UpdatePlayerInventoryUI()
