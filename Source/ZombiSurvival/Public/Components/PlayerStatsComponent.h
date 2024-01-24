@@ -67,7 +67,10 @@ protected:
 	void RegenerateStamina();
 
 	// Инфекция
-	void IncrementInfection(float Value); 
+	void IncrementInfection(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void DecrementInfection(float Value); 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Infection; 

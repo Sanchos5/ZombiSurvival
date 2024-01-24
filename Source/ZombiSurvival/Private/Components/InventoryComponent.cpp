@@ -132,7 +132,8 @@ void UInventoryComponent::SortPatrons()
 
 void UInventoryComponent::SortMedicine()
 {
-	SortItems(EItemType::EI_Medicines, AllItems.Medicine);
+	SortItems(EItemType::EI_HealthMedicines, AllItems.Medicine);
+	SortItems(EItemType::EI_InfectionMedicines, AllItems.Medicine);
 }
 
 void UInventoryComponent::SortDrinks()

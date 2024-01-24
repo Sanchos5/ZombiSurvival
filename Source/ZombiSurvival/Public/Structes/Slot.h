@@ -8,7 +8,8 @@ UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	EI_Patrons UMETA(DisplayName = "Patrons"),
-	EI_Medicines UMETA(DisplayName = "Medicines"),
+	EI_HealthMedicines UMETA(DisplayName = "HealthMedicines"),
+	EI_InfectionMedicines UMETA(DisplayName = "InfectionMedicines"),
 	EI_Drinks UMETA(DisplayName = "Drinks"),
 	EI_Food UMETA(DisplayName = "Food"),
 	NONE UMETA(DisplayName = "NONE")

@@ -46,6 +46,12 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 	return Damage;
 }
 
+void ASurvivalBaseCharacter::AddHealth(float Heal)
+{
+	if (Heal <= 0.f) return;
+	Health = FMath::Clamp(GetHealth() + Heal, 0.f, MaxHealth);
+}
+
 void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
 {
 	/*if (bIsDying)

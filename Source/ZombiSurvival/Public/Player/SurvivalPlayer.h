@@ -73,8 +73,13 @@ public:
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
 	/** Swap Weapon */
+	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToAxe(const FInputActionValue& InputActionValue);
+	
+	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToPistol(const FInputActionValue& InputActionValue);
+	
+	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
 
 	/** Attack */
@@ -117,7 +122,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsSprinting = false;
 
-	
+
+	// Weapon
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseMeleeWeapon> AxeWeaponClass;
@@ -128,6 +134,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool CanSwapWeapon;
+	
 	int PistolDispenserMagazine;
 	int ShotgubDispenserMagazine;
 
