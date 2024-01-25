@@ -134,6 +134,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHaveAxe;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHavePistol;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHaveShotgun;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool CanSwapWeapon;
 	

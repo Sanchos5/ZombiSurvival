@@ -49,6 +49,10 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	AxeSocketName = TEXT("MeleeWeaponSocket");
 	CanAttack = true;
 	CanSwapWeapon = true;
+
+	bHaveAxe = false;
+	bHavePistol = false;
+	bHaveShotgun = false;
 }
 
 void ASurvivalPlayer::CreatePauseWidget()
@@ -291,7 +295,7 @@ void ASurvivalPlayer::Input_StopReloading(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == AXE || CanSwapWeapon == false) return;
+	if (ActiveWeapon == AXE || CanSwapWeapon == false || bHaveAxe == false) return;
 
 	if (RangeWeaponref != nullptr)
 	{
@@ -321,7 +325,7 @@ void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& In
 
 void ASurvivalPlayer::Input_SwapToPistol_Implementation(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == PISTOL || CanSwapWeapon == false) return;
+	if (ActiveWeapon == PISTOL || CanSwapWeapon == false || bHavePistol == false) return;
 
 	if (MeleeWeaponref != nullptr)
 	{
@@ -349,7 +353,7 @@ void ASurvivalPlayer::Input_SwapToPistol_Implementation(const FInputActionValue&
 
 void ASurvivalPlayer::Input_SwapToShotgun_Implementation(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == SHOTGUN || CanSwapWeapon == false) return;
+	if (ActiveWeapon == SHOTGUN || CanSwapWeapon == false || bHaveShotgun == false) return;
 
 	if (MeleeWeaponref != nullptr)
 	{
