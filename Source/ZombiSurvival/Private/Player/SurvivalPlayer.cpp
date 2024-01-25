@@ -216,13 +216,13 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
+	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr && bOpenInventory == false)
 	{
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		bOpenInventory = true;
 		PlayerController->bShowMouseCursor = true;
-	}
+	}	
 }
 
 void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)

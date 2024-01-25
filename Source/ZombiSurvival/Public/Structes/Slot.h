@@ -2,18 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Enum/ItemType.h"
 #include "Slot.generated.h"
-
-UENUM(BlueprintType)
-enum EItemType : uint8
-{
-	EI_Patrons UMETA(DisplayName = "Patrons"),
-	EI_HealthMedicines UMETA(DisplayName = "HealthMedicines"),
-	EI_InfectionMedicines UMETA(DisplayName = "InfectionMedicines"),
-	EI_Drinks UMETA(DisplayName = "Drinks"),
-	EI_Food UMETA(DisplayName = "Food"),
-	EI_NONE UMETA(DisplayName = "NONE")
-};
 
 USTRUCT(BlueprintType)
 struct ZOMBISURVIVAL_API FSlot

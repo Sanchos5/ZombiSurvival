@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Structes/AllItem.h"
-#include "Structes/ChestInventory.h"
 #include "ChestInventoryComponent.generated.h"
 
 class UChestInventoryWidget;

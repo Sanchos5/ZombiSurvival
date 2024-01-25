@@ -91,6 +91,7 @@ protected:
 	float HungerDecrementValue; 
 
 	// Жажда
+	UFUNCTION(BlueprintCallable)
 	void DecrementThirst(float Value);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
