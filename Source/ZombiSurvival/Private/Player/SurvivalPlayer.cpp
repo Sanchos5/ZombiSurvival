@@ -279,8 +279,6 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 	{
 		PlayAnimMontage(MeleeAttackMontage, AttackPlayRate);
 	}
-	
-	CanAttack = false;
 }
 
 void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
