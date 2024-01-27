@@ -117,9 +117,6 @@ protected:
 	FName CameraSocketName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bOpenInventory = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsSprinting = false;
 
 
