@@ -131,6 +131,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
 
+	UPROPERTY(BlueprintReadOnly, Category="Weapon")
+	ABaseMeleeWeapon* MeleeWeaponref;
+
+	UPROPERTY(BlueprintReadOnly, Category="Weapon")
+	ABaseRangeWeapon* RangeWeaponref;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	bool bHaveAxe;
 
@@ -142,15 +148,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool CanSwapWeapon;
+
+	UPROPERTY(BlueprintReadWrite)
+	int Combo;
 	
 	int PistolDispenserMagazine;
 	int ShotgubDispenserMagazine;
-
-	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseMeleeWeapon* MeleeWeaponref;
-
-	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseRangeWeapon* RangeWeaponref;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	FName AxeSocketName;
@@ -165,7 +168,10 @@ protected:
 	bool CanAttack;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UAnimMontage* MeleeAttackMontage;
+	UAnimMontage* ComboAttack1;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* ComboAttack2;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	float AttackPlayRate;

@@ -53,6 +53,8 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	bHaveAxe = false;
 	bHavePistol = false;
 	bHaveShotgun = false;
+
+	Combo = 0;
 }
 
 void ASurvivalPlayer::CreatePauseWidget()
@@ -273,10 +275,24 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 void ASurvivalPlayer::Input_MeleeAttacking()
 {
 	if (CanAttack == false) return;
+	CanAttack = false;
 	
-	if (MeleeAttackMontage != nullptr)
+	if (ComboAttack1 != nullptr || ComboAttack2 != nullptr)
 	{
-		PlayAnimMontage(MeleeAttackMontage, AttackPlayRate);
+		
+		switch (Combo)
+		{
+		case 0:
+			PlayAnimMontage(ComboAttack1, AttackPlayRate);
+			Combo = 1;
+			break;
+		case 1:
+			PlayAnimMontage(ComboAttack2, AttackPlayRate);
+			Combo = 0;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
