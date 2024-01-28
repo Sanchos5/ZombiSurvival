@@ -274,12 +274,12 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_MeleeAttacking()
 {
+	
 	if (CanAttack == false) return;
 	CanAttack = false;
 	
 	if (ComboAttack1 != nullptr || ComboAttack2 != nullptr)
 	{
-		
 		switch (Combo)
 		{
 		case 0:
