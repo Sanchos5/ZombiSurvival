@@ -21,6 +21,12 @@ protected:
 	virtual void BeginPlay() override;
 	void FindBestInteractable();
 
+	UFUNCTION(BlueprintCallable)
+	void StartInteractionTimer();
+
+	UFUNCTION(BlueprintCallable)
+	void StopInteractionTimer();
+
 	UPROPERTY()
 	TObjectPtr<AActor> FocusedActor;
 

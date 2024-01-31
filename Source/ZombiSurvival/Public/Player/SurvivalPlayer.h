@@ -86,11 +86,9 @@ public:
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void Input_MeleeAttacking();
 
-	/** ������ ����������� */
-	void Input_StartReloading(const FInputActionValue& InputActionValue);
-
-	/** ����� ����������� */
-	void Input_StopReloading(const FInputActionValue& InputActionValue);
+	/** Reload Weapon */
+	UFUNCTION(BlueprintCallable)
+	void Input_Reloading(const FInputActionValue& InputActionValue);
 	
 	// End Enhanced Input Sample changes
 
@@ -168,10 +166,13 @@ protected:
 	bool CanAttack;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UAnimMontage* ComboAttack1;
+	UAnimMontage* FirstAttack;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UAnimMontage* ComboAttack2;
+	UAnimMontage* SecondAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* ReloadShotgun;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	float AttackPlayRate;

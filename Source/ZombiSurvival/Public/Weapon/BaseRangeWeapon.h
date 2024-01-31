@@ -15,8 +15,14 @@ public:
 	ABaseRangeWeapon();
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int DispenserMagazine;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int MaxDispenserMagazine;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int PatronsInInventory;
 
 protected:
 	virtual void BeginPlay() override;

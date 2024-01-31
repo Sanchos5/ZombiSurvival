@@ -132,9 +132,8 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
 	
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Attacking);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartReloading);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StopReloading);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Attacking);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Reloading);
 	
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToAxe, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToAxe);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToPistol, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToPistol);
@@ -278,16 +277,16 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 	if (CanAttack == false) return;
 	CanAttack = false;
 	
-	if (ComboAttack1 != nullptr || ComboAttack2 != nullptr)
+	if (FirstAttack != nullptr || SecondAttack != nullptr)
 	{
 		switch (Combo)
 		{
 		case 0:
-			PlayAnimMontage(ComboAttack1, AttackPlayRate);
+			PlayAnimMontage(FirstAttack, AttackPlayRate);
 			Combo = 1;
 			break;
 		case 1:
-			PlayAnimMontage(ComboAttack2, AttackPlayRate);
+			PlayAnimMontage(SecondAttack, AttackPlayRate);
 			Combo = 0;
 			break;
 		default:
@@ -296,14 +295,19 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 	}
 }
 
-void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
 {
-	//reload
-}
+	if (ActiveWeapon == AXE) return;
 
-void ASurvivalPlayer::Input_StopReloading(const FInputActionValue& InputActionValue)
-{
-	//Stop reload
+	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
+	{
+		
+		if (RangeWeaponref->PatronsInInventory > 0.f)
+		{
+			PlayAnimMontage(ReloadShotgun);
+			UE_LOG(LogTemp, Warning, TEXT("Success"))
+		}
+	}
 }
 
 void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& InputActionValue)
