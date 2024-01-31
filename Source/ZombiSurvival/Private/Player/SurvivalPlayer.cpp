@@ -301,11 +301,9 @@ void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
 
 	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
 	{
-		
 		if (RangeWeaponref->PatronsInInventory > 0.f)
 		{
 			PlayAnimMontage(ReloadShotgun);
-			UE_LOG(LogTemp, Warning, TEXT("Success"))
 		}
 	}
 }
