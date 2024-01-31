@@ -297,8 +297,9 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 
 void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == AXE) return;
-
+	if (ActiveWeapon == AXE || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun) ||
+		RangeWeaponref->DispenserMagazine == RangeWeaponref->MaxDispenserMagazine) return;
+	
 	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
 	{
 		if (RangeWeaponref->PatronsInInventory > 0.f)
