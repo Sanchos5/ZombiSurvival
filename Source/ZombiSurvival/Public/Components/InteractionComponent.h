@@ -24,9 +24,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void StartInteractionTimer();
 
-	UFUNCTION(BlueprintCallable)
-	void StopInteractionTimer();
-
 	UPROPERTY()
 	TObjectPtr<AActor> FocusedActor;
 
@@ -42,7 +39,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> InteractionWidgetClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UUserWidget* InteractionWidget;
 
 	FTimerHandle InteractionTimer;
