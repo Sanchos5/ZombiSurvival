@@ -88,12 +88,6 @@ void UInteractionComponent::StartInteractionTimer()
 	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f, false);
 }
 
-void UInteractionComponent::StopInteractionTimer()
-{
-	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
-	FocusedActor = nullptr;
-}
-
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
