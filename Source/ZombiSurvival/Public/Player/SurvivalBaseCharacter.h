@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SurvivalBaseCharacter.generated.h"
 
+class USoundBase;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangeDelegate, float, Health, float, MaxHealth);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -42,4 +44,6 @@ protected:
 
 	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* SoundDeath;
 };
