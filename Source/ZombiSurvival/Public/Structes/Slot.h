@@ -2,17 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Enum/ItemType.h"
 #include "Slot.generated.h"
-
-UENUM(BlueprintType)
-enum class EItemType : uint8
-{
-	EI_Patrons UMETA(DisplayName = "Patrons"),
-	EI_Medicines UMETA(DisplayName = "Medicines"),
-	EI_Drinks UMETA(DisplayName = "Drinks"),
-	EI_Food UMETA(DisplayName = "Food"),
-	NONE UMETA(DisplayName = "NONE")
-};
 
 USTRUCT(BlueprintType)
 struct ZOMBISURVIVAL_API FSlot
@@ -26,7 +17,7 @@ struct ZOMBISURVIVAL_API FSlot
 	int Quantity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EItemType ItemType;
+	TEnumAsByte<EItemType> ItemType;
 
 	FSlot();
 	~FSlot();

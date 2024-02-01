@@ -79,8 +79,19 @@ void UInteractionComponent::FindBestInteractable()
 		}
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f);	
+	StartInteractionTimer();	
 	//DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
+}
+
+void UInteractionComponent::StartInteractionTimer()
+{
+	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f, false);
+}
+
+void UInteractionComponent::StopInteractionTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
+	FocusedActor = nullptr;
 }
 
 void UInteractionComponent::BeginPlay()
@@ -91,5 +102,5 @@ void UInteractionComponent::BeginPlay()
 	{
 		InteractionWidget = CreateWidget(GetWorld(), InteractionWidgetClass);
 	}
-	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::FindBestInteractable, 0.05f, false);
+	StartInteractionTimer();
 }

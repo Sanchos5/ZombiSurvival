@@ -3,7 +3,7 @@
 FSlot::FSlot()
 {
 	Quantity = 0;
-	ItemType = EItemType::NONE;
+	ItemType = EItemType::EI_NONE;
 }
 
 FSlot::~FSlot()

@@ -4,6 +4,7 @@
 #include "Player/SurvivalBaseCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASurvivalBaseCharacter::ASurvivalBaseCharacter(const class FObjectInitializer& ObjectInitializer) 
@@ -46,6 +47,12 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 	return Damage;
 }
 
+void ASurvivalBaseCharacter::AddHealth(float Heal)
+{
+	if (Heal <= 0.f) return;
+	Health = FMath::Clamp(GetHealth() + Heal, 0.f, MaxHealth);
+}
+
 void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
 {
 	/*if (bIsDying)
@@ -53,6 +60,12 @@ void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& Da
 		return;
 	}*/
 	bIsDying = true;
+
+	if(SoundDeath)
+	{
+		FVector SpawnLocation = GetActorLocation();
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundDeath, SpawnLocation);
+	}
 
 	/* Disable all collision on capsule */
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();

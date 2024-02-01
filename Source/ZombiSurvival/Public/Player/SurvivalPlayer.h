@@ -7,12 +7,22 @@
 #include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
+UENUM(BlueprintType)
+enum EActiveWeapon : uint8
+{
+	NONE,
+	AXE,
+	PISTOL,
+	SHOTGUN
+};
+
 class UInteractionComponent;
 class UInventoryComponent;
 class UCameraComponent;
 class UInputComponent;
 class USurvivalInputConfig;
 class ABaseMeleeWeapon;
+class ABaseRangeWeapon;
 struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
@@ -62,15 +72,23 @@ public:
 	/** Interact with objects */
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
+	/** Swap Weapon */
+	UFUNCTION(BlueprintNativeEvent)
+	void Input_SwapToAxe(const FInputActionValue& InputActionValue);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void Input_SwapToPistol(const FInputActionValue& InputActionValue);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
+
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void Input_MeleeAttacking();
 
-	/** ������ ����������� */
-	void Input_StartReloading(const FInputActionValue& InputActionValue);
-
-	/** ����� ����������� */
-	void Input_StopReloading(const FInputActionValue& InputActionValue);
+	/** Reload Weapon */
+	UFUNCTION(BlueprintCallable)
+	void Input_Reloading(const FInputActionValue& InputActionValue);
 	
 	// End Enhanced Input Sample changes
 
@@ -79,6 +97,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealthPercentage() const { return Health / MaxHealth; }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
 protected:
 	// Called when the game starts or when spawned
@@ -94,30 +115,66 @@ protected:
 	FName CameraSocketName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bOpenInventory = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsSprinting = false;
 
-	// Melee Weapon
-	void CreateWeapon();
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Melee Weapon")
-	TSubclassOf<class ABaseMeleeWeapon> MeleeWeaponClass;
 
-	UPROPERTY(BlueprintReadOnly)
+	// Weapon
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	TSubclassOf<ABaseMeleeWeapon> AxeWeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	TSubclassOf<ABaseRangeWeapon> PistolWeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
+
+	UPROPERTY(BlueprintReadOnly, Category="Weapon")
 	ABaseMeleeWeapon* MeleeWeaponref;
 
-	UPROPERTY(EditDefaultsOnly)
-	FName WeaponSocketName;
+	UPROPERTY(BlueprintReadOnly, Category="Weapon")
+	ABaseRangeWeapon* RangeWeaponref;
 
-	UPROPERTY(BlueprintReadWrite, Category="Melee Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHaveAxe;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHavePistol;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	bool bHaveShotgun;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool CanSwapWeapon;
+
+	UPROPERTY(BlueprintReadWrite)
+	int Combo;
+	
+	int PistolDispenserMagazine;
+	int ShotgubDispenserMagazine;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	FName AxeSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	FName PistolSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	FName ShotgunSocketName;
+
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool CanAttack;
 
-	UPROPERTY(EditDefaultsOnly, Category="Melee Weapon")
-	UAnimMontage* MeleeAttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* FirstAttack;
 
-	UPROPERTY(EditDefaultsOnly, Category="Melee Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* SecondAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* ReloadShotgun;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	float AttackPlayRate;
 
 	// Pause Game

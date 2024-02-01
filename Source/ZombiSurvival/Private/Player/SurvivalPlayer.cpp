@@ -20,6 +20,7 @@
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
 ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer)
@@ -45,8 +46,15 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 
-	WeaponSocketName = TEXT("MeleeWeaponSocket");
+	AxeSocketName = TEXT("MeleeWeaponSocket");
 	CanAttack = true;
+	CanSwapWeapon = true;
+
+	bHaveAxe = false;
+	bHavePistol = false;
+	bHaveShotgun = false;
+
+	Combo = 0;
 }
 
 void ASurvivalPlayer::CreatePauseWidget()
@@ -77,7 +85,6 @@ void ASurvivalPlayer::BeginPlay()
 
 	CreatePauseWidget();
 	
-	CreateWeapon();
 	PlayerStats->Infected = true;
 
 	OnHealthChange.Broadcast(Health, MaxHealth);
@@ -124,10 +131,13 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_PauseGame, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PauseGame);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
-
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_MeleeAttacking);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartReloading);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StopReloading);
+	
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Attacking);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Reloading);
+	
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToAxe, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToAxe);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToPistol, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToPistol);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToShotgun, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToShotgun);
 	
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
 }
@@ -215,9 +225,8 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 	{
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		bOpenInventory = true;
 		PlayerController->bShowMouseCursor = true;
-	}
+	}	
 }
 
 void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
@@ -242,39 +251,146 @@ void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 {
-	// Attacking
+	switch (ActiveWeapon)
+	{
+	case AXE:
+		Input_MeleeAttacking();
+		break;
+		
+	case PISTOL:
+		// Shoot
+		break;
+		
+	case SHOTGUN:
+		// Shoot
+		break;
+		
+	default:
+		// No Weapon
+		break;
+	}
 }
 
 void ASurvivalPlayer::Input_MeleeAttacking()
 {
-	if (CanAttack == false) return;
 	
-	if (MeleeAttackMontage != nullptr)
+	if (CanAttack == false) return;
+	CanAttack = false;
+	
+	if (FirstAttack != nullptr || SecondAttack != nullptr)
 	{
-		PlayAnimMontage(MeleeAttackMontage, AttackPlayRate);
+		switch (Combo)
+		{
+		case 0:
+			PlayAnimMontage(FirstAttack, AttackPlayRate);
+			Combo = 1;
+			break;
+		case 1:
+			PlayAnimMontage(SecondAttack, AttackPlayRate);
+			Combo = 0;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
+{
+	if (ActiveWeapon == AXE || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun) ||
+		RangeWeaponref->DispenserMagazine == RangeWeaponref->MaxDispenserMagazine) return;
+	
+	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
+	{
+		if (RangeWeaponref->PatronsInInventory > 0.f)
+		{
+			PlayAnimMontage(ReloadShotgun);
+		}
+	}
+}
+
+void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& InputActionValue)
+{
+	if (ActiveWeapon == AXE || CanSwapWeapon == false || bHaveAxe == false) return;
+
+	if (RangeWeaponref != nullptr)
+	{
+		if (ActiveWeapon == PISTOL)
+		{
+			PistolDispenserMagazine = RangeWeaponref->DispenserMagazine;
+		}
+		else if (ActiveWeapon == SHOTGUN)
+		{
+			ShotgubDispenserMagazine = RangeWeaponref->DispenserMagazine;
+		}		
+		RangeWeaponref->Destroy();
 	}
 	
-	CanAttack = false;
-}
-
-void ASurvivalPlayer::Input_StartReloading(const FInputActionValue& InputActionValue)
-{
-	//reload
-}
-
-void ASurvivalPlayer::Input_StopReloading(const FInputActionValue& InputActionValue)
-{
-	//Stop reload
-}
-
-void ASurvivalPlayer::CreateWeapon()
-{
-	if (MeleeWeaponClass == nullptr) return;
-	FTransform SocketTransform = GetMesh()->GetSocketTransform(WeaponSocketName);
-	MeleeWeaponref = GetWorld()->SpawnActor<ABaseMeleeWeapon>(MeleeWeaponClass, SocketTransform);
-	if (MeleeWeaponref)
+	FTransform SocketTransform = GetMesh()->GetSocketTransform(AxeSocketName);
+	if (IsValid(AxeWeaponClass))
 	{
-		MeleeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-		MeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
+		MeleeWeaponref = GetWorld()->SpawnActor<ABaseMeleeWeapon>(AxeWeaponClass, SocketTransform);
+		if (MeleeWeaponref)
+		{
+			MeleeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AxeSocketName);
+			MeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
+		}
+		ActiveWeapon = AXE;
+	}
+}
+
+void ASurvivalPlayer::Input_SwapToPistol_Implementation(const FInputActionValue& InputActionValue)
+{
+	if (ActiveWeapon == PISTOL || CanSwapWeapon == false || bHavePistol == false) return;
+
+	if (MeleeWeaponref != nullptr)
+	{
+		MeleeWeaponref->Destroy();
+	}
+	
+	if (RangeWeaponref != nullptr && ActiveWeapon == SHOTGUN)
+	{
+		ShotgubDispenserMagazine = RangeWeaponref->DispenserMagazine;
+		RangeWeaponref->Destroy();
+	}
+
+	FTransform SocketTransform = GetMesh()->GetSocketTransform(PistolSocketName);
+	if (IsValid(PistolWeaponClass))
+	{
+		RangeWeaponref = GetWorld()->SpawnActor<ABaseRangeWeapon>(PistolWeaponClass, SocketTransform);
+		if (RangeWeaponref)
+		{
+			RangeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, PistolSocketName);
+			RangeWeaponref->DispenserMagazine = PistolDispenserMagazine;
+		}
+		ActiveWeapon = PISTOL;
+	}
+}
+
+void ASurvivalPlayer::Input_SwapToShotgun_Implementation(const FInputActionValue& InputActionValue)
+{
+	if (ActiveWeapon == SHOTGUN || CanSwapWeapon == false || bHaveShotgun == false) return;
+
+	if (MeleeWeaponref != nullptr)
+	{
+		MeleeWeaponref->Destroy();
+	}
+	
+	if (RangeWeaponref != nullptr && ActiveWeapon == PISTOL)
+	{
+		PistolDispenserMagazine = RangeWeaponref->DispenserMagazine;
+		RangeWeaponref->Destroy();
+	}
+	
+	FTransform SocketTransform = GetMesh()->GetSocketTransform(ShotgunSocketName);
+	if (IsValid(ShotgunWeaponClass))
+	{
+		RangeWeaponref = GetWorld()->SpawnActor<ABaseRangeWeapon>(ShotgunWeaponClass, SocketTransform);
+		if (RangeWeaponref)
+		{
+			RangeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, ShotgunSocketName);
+			RangeWeaponref->DispenserMagazine = ShotgubDispenserMagazine;
+		}
+		ActiveWeapon = SHOTGUN;
 	}
 }

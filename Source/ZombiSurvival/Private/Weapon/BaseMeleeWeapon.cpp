@@ -2,16 +2,32 @@
 
 
 #include "Weapon/BaseMeleeWeapon.h"
-
 #include "Components/TraceComponent.h"
 
 ABaseMeleeWeapon::ABaseMeleeWeapon()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	SetRootComponent(Mesh);
+	
+	Start = CreateDefaultSubobject<USceneComponent>("Start");
+	Start->SetupAttachment(GetRootComponent());
+	
+	End = CreateDefaultSubobject<USceneComponent>("End");
+	End->SetupAttachment(GetRootComponent());
 	
 	TraceComponent = CreateDefaultSubobject<UTraceComponent>(TEXT("TraceComponent"));
+}
+
+FVector ABaseMeleeWeapon::GetStartLocation()
+{
+	return Start->GetComponentLocation();
+}
+
+FVector ABaseMeleeWeapon::GetEndLocation()
+{
+	return End->GetComponentLocation();
 }
 
 void ABaseMeleeWeapon::BeginPlay()
@@ -19,9 +35,3 @@ void ABaseMeleeWeapon::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
-FVector ABaseMeleeWeapon::GetWeaponSocketLocation(FName SocketName)
-{
-	return SkeletalMesh->GetSocketLocation(SocketName);
-}
-

@@ -24,8 +24,8 @@ void UTraceComponent::TraceHit()
 {
 	if (MeleeWeapon == nullptr) return;
 
-	FVector Start = MeleeWeapon->GetWeaponSocketLocation(StartTraceName);
-	FVector End = MeleeWeapon->GetWeaponSocketLocation(EndTraceName);
+	FVector Start = MeleeWeapon->GetStartLocation();
+	FVector End = MeleeWeapon->GetEndLocation();
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 	Objects.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));

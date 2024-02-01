@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Structes/ChestInventory.h"
+#include "Structes/AllItem.h"
 #include "ChestInventoryComponent.generated.h"
 
 class UChestInventoryWidget;
@@ -32,7 +32,7 @@ protected:
 	float InventorySize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
-	FChestInventory ChestInventory;
+	FAllItem AllChestItem;
 
 	// Update Slots in Inventory Widget
 

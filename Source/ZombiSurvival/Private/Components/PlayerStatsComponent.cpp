@@ -138,6 +138,12 @@ void UPlayerStatsComponent::IncrementInfection(float Value)
 	}
 }
 
+void UPlayerStatsComponent::DecrementInfection(float Value)
+{
+	if (Value <= 0.f) return;
+	Infection = FMath::Clamp(Infection - Value, 0.f, 100.f);
+}
+
 // Функция уменьшения голода
 void UPlayerStatsComponent::DecrementHunger(float Value)
 {
