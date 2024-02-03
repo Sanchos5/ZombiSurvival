@@ -18,18 +18,13 @@ void UInventoryComponent::SetSizeForInventory()
 	AllItems.MainInventory.SetNum(InventorySize);
 }
 
-void UInventoryComponent::UpdateInventoryUI(TArray<FSlot> Array, UWrapBox* WrapBox)
-{
-	InventoryWidget->UpdateItemsInInventoryUI(Array, WrapBox);
-}
-
 void UInventoryComponent::UpdateAllInventoryUI()
 {
-	UpdateInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
-	UpdateInventoryUI(AllItems.Patrons, InventoryWidget->Wb_Patrons);
-	UpdateInventoryUI(AllItems.Drinks, InventoryWidget->Wb_Drinks);
-	UpdateInventoryUI(AllItems.Food, InventoryWidget->Wb_Food);
-	UpdateInventoryUI(AllItems.Medicine, InventoryWidget->Wb_Medicine);
+	InventoryWidget->UpdateItemsInInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Patrons, InventoryWidget->Wb_Patrons);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Drinks, InventoryWidget->Wb_Drinks);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Food, InventoryWidget->Wb_Food);
+	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Medicine, InventoryWidget->Wb_Medicine);
 }
 
 void UInventoryComponent::BeginPlay()

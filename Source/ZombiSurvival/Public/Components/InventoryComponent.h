@@ -76,13 +76,7 @@ protected:
 	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
 	// End //
 
-	
-
-	// Update Slots in Inventory Widget
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateInventoryUI(TArray<FSlot> Array, UWrapBox* WrapBox);
-	
+	// Update Slots in Inventory Widget	
 	UFUNCTION(BlueprintCallable)
 	void UpdateAllInventoryUI();
 
