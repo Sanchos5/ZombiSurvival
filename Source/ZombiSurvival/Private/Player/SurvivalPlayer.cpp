@@ -130,7 +130,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_PauseGame, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PauseGame);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Interact);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Interact);
 	
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Attack, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Attacking);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Reload, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Reloading);
