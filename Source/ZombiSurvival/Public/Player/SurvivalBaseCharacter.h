@@ -36,7 +36,7 @@ public:
 	bool bIsDying = false;
 
 	//Damage
-	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 protected:
 	UFUNCTION(BlueprintCallable)

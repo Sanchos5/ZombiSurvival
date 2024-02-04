@@ -19,3 +19,15 @@ ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectI
 	MeshComponent->SetupAttachment(GetRootComponent());
 
 }
+
+float ASurvZombiCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	SetTargetActor();
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ASurvZombiCharacter::SetTargetActor_Implementation()
+{
+}
+

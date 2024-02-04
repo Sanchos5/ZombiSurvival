@@ -148,6 +148,10 @@ void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
 	{
 		const FVector2D MoveValue = InputActionValue.Get<FVector2D>();
 		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+		if (MoveValue.IsNearlyZero(0.1))
+		{
+			return;
+		}
 
 		if (MoveValue.X != 0.0f)
 		{
@@ -168,6 +172,10 @@ void ASurvivalPlayer::Input_Look(const FInputActionValue& InputActionValue)
 	if (Controller != nullptr)
 	{
 		const FVector2D LookValue = InputActionValue.Get<FVector2D>();
+		if (LookValue.IsNearlyZero(0.1))
+		{
+			return;
+		}
 
 		if (LookValue.X != 0.0f)
 		{
