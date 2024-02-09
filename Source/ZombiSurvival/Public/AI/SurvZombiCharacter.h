@@ -22,7 +22,10 @@ public:
 	ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer);
 
 protected:
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SetTargetActor();
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
