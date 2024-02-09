@@ -305,15 +305,16 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 
 void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == AXE || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun) ||
-		RangeWeaponref->DispenserMagazine == RangeWeaponref->MaxDispenserMagazine) return;
+	if (ActiveWeapon == AXE || ActiveWeapon == NONE || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun) ||
+		RangeWeaponref->DispenserMagazine == RangeWeaponref->MaxDispenserMagazine || RangeWeaponref->PatronsInInventory <= 0.f) return;
 	
 	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
 	{
-		if (RangeWeaponref->PatronsInInventory > 0.f)
-		{
-			PlayAnimMontage(ReloadShotgun);
-		}
+		PlayAnimMontage(ReloadShotgun);
+	}
+	else if (ActiveWeapon == PISTOL && ReloadPistol != nullptr)
+	{
+		PlayAnimMontage(ReloadPistol);
 	}
 }
 
