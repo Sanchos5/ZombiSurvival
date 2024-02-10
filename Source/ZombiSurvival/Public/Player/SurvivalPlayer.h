@@ -101,6 +101,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsSprinting = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	float SprintSpeed;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	float WalkSpeed;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -114,8 +123,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bIsSprinting = false;
+	
 
 
 	// Weapon

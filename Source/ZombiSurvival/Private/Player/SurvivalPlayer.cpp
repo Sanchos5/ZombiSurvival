@@ -55,6 +55,9 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	bHaveShotgun = false;
 
 	Combo = 0;
+
+	SprintSpeed = 400.0f;
+	WalkSpeed = 200.0f;
 }
 
 void ASurvivalPlayer::CreatePauseWidget()
@@ -205,7 +208,7 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 	{
 		StaminaValue = 0.2f;
 		bIsSprinting = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+		//GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 		
 		PlayerStats->DecrementStamina(StaminaValue);
 
@@ -214,7 +217,7 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 	else if(PlayerStats->GetStamina() <= 0.0f)
 	{
 		bIsSprinting = false;
-		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+		//GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 		PlayerStats->SprintingTimer(false);
 	}
 }

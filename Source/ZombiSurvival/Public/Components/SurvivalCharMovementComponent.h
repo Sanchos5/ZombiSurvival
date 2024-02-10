@@ -13,5 +13,6 @@ UCLASS()
 class ZOMBISURVIVAL_API USurvivalCharMovementComponent : public UCharacterMovementComponent
 {
 	GENERATED_BODY()
-	
+
+	virtual float GetMaxSpeed() const override;
 };
