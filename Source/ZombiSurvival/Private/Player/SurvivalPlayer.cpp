@@ -194,7 +194,7 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 
 		PlayerStats->SprintingTimer(true);
 	}
-	else if(PlayerStats->GetStamina() <= 0.0f)
+	else if(PlayerStats->GetStamina() == 0.0f)
 	{
 		bIsSprinting = false;
 		PlayerStats->SprintingTimer(false);
@@ -224,24 +224,20 @@ void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 
 	if (IsValid(PauseWidgetClass))
 	{
-		if(UUserWidget* PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass))
+		if (!PC->IsPaused())
 		{
-			if (!PC->IsPaused())
-			{
-				PauseWidget->AddToViewport();
-				UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
-				UGameplayStatics::SetGamePaused(GetWorld(), true);
-				PC->bShowMouseCursor = true;
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Pause: true")));
-			}
-			/*else if(PC->IsPaused())
-			{
-				PauseWidget->RemoveFromParent();
-				UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
-				UGameplayStatics::SetGamePaused(GetWorld(), false);
-				PC->bShowMouseCursor = false;
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Pause: false")));
-			}*/
+			PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass);
+			PauseWidget->AddToViewport();
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			PC->bShowMouseCursor = true;
+		}
+		else
+		{
+			PauseWidget->RemoveFromParent();
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			PC->bShowMouseCursor = false;
 		}
 	}
 }

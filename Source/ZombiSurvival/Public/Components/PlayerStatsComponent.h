@@ -19,7 +19,6 @@ class ZOMBISURVIVAL_API UPlayerStatsComponent : public UActorComponent
 
 public:	
 	
-	// Конструктор по умолчанию
 	UPlayerStatsComponent();
 
 	// Проверка на то инфецирован ли игрок
@@ -56,7 +55,6 @@ public:
 
 protected:
 
-	// Начало игры
 	virtual void BeginPlay() override; 
 
 	// Таймер для состояний голода, жажды, инфекции

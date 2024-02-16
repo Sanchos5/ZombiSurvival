@@ -27,7 +27,6 @@ struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
 class UPlayerStatsComponent;
-class UUserWidget;
 
 UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
@@ -164,6 +163,8 @@ protected:
 	// Pause Game
 	UPROPERTY(EditAnywhere, Category="Defaults | Widget")
 	TSubclassOf<UUserWidget> PauseWidgetClass;
+
+	class UUserWidget* PauseWidget;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")

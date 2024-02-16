@@ -6,12 +6,10 @@
 #include "Engine/Engine.h"
 #include "Player/SurvivalBaseCharacter.h"
 
-// Конструктор по умолчанию
 UPlayerStatsComponent::UPlayerStatsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	//
 	Infected = false;
 	InfectionIncrementValue = 6.0f;
 	
@@ -43,8 +41,6 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 	StaminaIncrementValue = 3.0f;
 }
 
-
-// Начало игры
 void UPlayerStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
