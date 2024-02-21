@@ -55,20 +55,9 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	bHaveShotgun = false;
 
 	Combo = 0;
-}
 
-void ASurvivalPlayer::CreatePauseWidget()
-{
-	if (IsValid(PauseWidgetClass))
-	{
-		PauseWidget = Cast<UUserWidget>(CreateWidget(GetWorld(), PauseWidgetClass));
-
-		if (PauseWidget)
-		{
-			PauseWidget->AddToViewport();
-			PauseWidget->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
+	SprintSpeed = 400.0f;
+	WalkSpeed = 200.0f;
 }
 
 void ASurvivalPlayer::BeginPlay()
@@ -83,20 +72,16 @@ void ASurvivalPlayer::BeginPlay()
 		}
 	}
 
-	CreatePauseWidget();
-	
 	PlayerStats->Infected = true;
 
 	OnHealthChange.Broadcast(Health, MaxHealth);
 }
 
-// Called every frame
 void ASurvivalPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
@@ -127,7 +112,6 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_OpenInventory);
-	//SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Inventory, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_ClosedInventory);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_PauseGame, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_PauseGame);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Interaction, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Interact);
@@ -205,16 +189,14 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 	{
 		StaminaValue = 0.2f;
 		bIsSprinting = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 		
 		PlayerStats->DecrementStamina(StaminaValue);
 
 		PlayerStats->SprintingTimer(true);
 	}
-	else if(PlayerStats->GetStamina() <= 0.0f)
+	else if(PlayerStats->GetStamina() == 0.0f)
 	{
 		bIsSprinting = false;
-		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 		PlayerStats->SprintingTimer(false);
 	}
 }
@@ -222,7 +204,6 @@ void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionV
 void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionValue)
 {
 	bIsSprinting = false;
-	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 	PlayerStats->SprintingTimer(false);
 }
 
@@ -239,13 +220,25 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PauseWidget != nullptr && PlayerController != nullptr)
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	if (IsValid(PauseWidgetClass))
 	{
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, PauseWidget);
-		PauseWidget->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->bShowMouseCursor = true;
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		if (!PC->IsPaused())
+		{
+			PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass);
+			PauseWidget->AddToViewport();
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			PC->bShowMouseCursor = true;
+		}
+		else
+		{
+			PauseWidget->RemoveFromParent();
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			PC->bShowMouseCursor = false;
+		}
 	}
 }
 
@@ -281,7 +274,6 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_MeleeAttacking()
 {
-	
 	if (CanAttack == false) return;
 	CanAttack = false;
 	

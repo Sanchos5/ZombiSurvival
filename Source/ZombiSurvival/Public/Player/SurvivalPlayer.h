@@ -27,7 +27,6 @@ struct FInputActionValue;
 class UInputMappingContext;
 class USkeletalMeshComponent;
 class UPlayerStatsComponent;
-class UUserWidget;
 
 UCLASS(config = game)
 class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
@@ -45,31 +44,17 @@ public:
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 
 	/** The input config that maps Input Actions to Input Tags*/
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Input")
 	USurvivalInputConfig* InputConfig;
 
-	/** Handles moving forward/backward */
+	// Управление
 	void Input_Move(const FInputActionValue& InputActionValue);
-
-	/** Handles mouse and stick look */
 	void Input_Look(const FInputActionValue& InputActionValue);
-
-	/** Handles Jumping */
 	void Input_Jump(const FInputActionValue& InputActionValue);
-	
-	/** ������ ���� */
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
-
-	/** ��� ���������� */
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
-
-	/** Open Inventory */
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
-
-	/** Open PauseWidget */
 	void Input_PauseGame(const FInputActionValue& InputActionValue);
-
-	/** Interact with objects */
 	void Input_Interact(const FInputActionValue& InputActionValue);
 
 	/** Swap Weapon */
@@ -89,37 +74,35 @@ public:
 	/** Reload Weapon */
 	UFUNCTION(BlueprintCallable)
 	void Input_Reloading(const FInputActionValue& InputActionValue);
-	
 	// End Enhanced Input Sample changes
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults | Stats")
 	UPlayerStatsComponent* PlayerStats;
-
-	UFUNCTION(BlueprintCallable)
-	float GetHealthPercentage() const { return Health / MaxHealth; }
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsSprinting = false;
+
+	// Sprinting
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	float SprintSpeed;
+
+	// Walking
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	float WalkSpeed;
+
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
-
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bIsSprinting = false;
-
-
 	// Weapon
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseMeleeWeapon> AxeWeaponClass;
 
@@ -181,18 +164,16 @@ protected:
 	float AttackPlayRate;
 
 	// Pause Game
-	void CreatePauseWidget();
-	UPROPERTY(EditAnywhere, Category="Widget")
+	UPROPERTY(EditAnywhere, Category="Defaults | Widget")
 	TSubclassOf<UUserWidget> PauseWidgetClass;
 
-	UPROPERTY(BlueprintReadWrite)
-	UUserWidget* PauseWidget;
+	class UUserWidget* PauseWidget;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Input")
 	mutable const UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))

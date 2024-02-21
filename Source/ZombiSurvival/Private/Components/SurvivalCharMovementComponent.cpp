@@ -2,4 +2,23 @@
 
 
 #include "Components/SurvivalCharMovementComponent.h"
+#include "Player/SurvivalPlayer.h"
 
+float USurvivalCharMovementComponent::GetMaxSpeed() const
+{
+	float MaxSpeed = Super::GetMaxSpeed();
+
+	if (const ASurvivalPlayer* PlayerOwner = Cast<ASurvivalPlayer>(GetOwner()))
+	{
+		if (PlayerOwner->bIsSprinting == true && !IsCrouching())
+		{
+			MaxSpeed = PlayerOwner->SprintSpeed;
+		}
+		else if (PlayerOwner->bIsSprinting == false)
+		{
+			MaxSpeed = PlayerOwner->WalkSpeed;
+		}
+	}
+
+	return MaxSpeed;
+}
