@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
+class ABaseWeapon;
+
 UENUM(BlueprintType)
 enum EActiveWeapon : uint8
 {
@@ -56,6 +58,7 @@ public:
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 	void Input_PauseGame(const FInputActionValue& InputActionValue);
 	void Input_Interact(const FInputActionValue& InputActionValue);
+	
 
 	/** Swap Weapon */
 	UFUNCTION(BlueprintNativeEvent)
@@ -69,7 +72,9 @@ public:
 
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
-	void Input_MeleeAttacking();
+	void MeleeAttacking();
+	void RangeAttacking(UAnimMontage* ReloadMontage);
+	bool PlayReloadMontage();
 
 	/** Reload Weapon */
 	UFUNCTION(BlueprintCallable)
@@ -112,11 +117,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
 
+	// TODO: One Weapon(Weapon in hand)
+
+	
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseMeleeWeapon* MeleeWeaponref;
+	ABaseWeapon* MeleeWeaponref;
 
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseRangeWeapon* RangeWeaponref;
+	ABaseWeapon* RangeWeaponref;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	bool bHaveAxe;

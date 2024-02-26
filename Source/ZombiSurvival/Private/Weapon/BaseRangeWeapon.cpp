@@ -3,22 +3,140 @@
 
 #include "Weapon/BaseRangeWeapon.h"
 
+#include "AI/SurvZombiCharacter.h"
+#include "Interface/PatronsInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Perception/AISense_Damage.h"
+#include "Player/SurvivalBaseCharacter.h"
+#include "Player/SurvivalPlayer.h"
+#include "UI/HUDSurvival.h"
+#include "Widget/PlayerInterface.h"
+
 ABaseRangeWeapon::ABaseRangeWeapon()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	SetRootComponent(Scene);
+
+	Start = CreateDefaultSubobject<USceneComponent>(TEXT("Start"));
+	Start->SetupAttachment(GetRootComponent());
+
+	
+	Impuls = true;
+}
+
+void ABaseRangeWeapon::Attack()
+{
+	Fire();
+}
+
+void ABaseRangeWeapon::Fire()
+{
+	Impuls = true;
+	if (DispenserMagazine > 0.f)
+	{
+		DispenserMagazine -= 1.f;
+		UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
+		// TODO: Spawn VFX
+
+		//Interface to subtract patrons in UI
+		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
+		ShotLineTrace();
+	}
+	else
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), EmptyMagazineSound);
+		ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(Owner);
+		if (Player)
+		{
+			Player->PlayReloadMontage();
+		}
+	}
+	
+}
+
+void ABaseRangeWeapon::GetPlayerInterface()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0.f);
+	if (PlayerController)
+	{
+		AHUDSurvival* PlayerHUD = Cast<AHUDSurvival>(PlayerController->GetHUD());
+		if (PlayerHUD)
+		{
+			PlayerInterface = PlayerHUD->PlayerInterface;
+		}
+	}
 }
 
 void ABaseRangeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GetPlayerInterface();
 }
 
-// Called every frame
-void ABaseRangeWeapon::Tick(float DeltaTime)
+void ABaseRangeWeapon::ShotLineTrace()
 {
-	Super::Tick(DeltaTime);
+	ASurvivalBaseCharacter* SurvivalCharacter = Cast<ASurvivalBaseCharacter>(Owner);
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	
+	if (SurvivalCharacter)
+	{
+		SurvivalCharacter->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	}
 
+	FVector TraceStart = Start->GetComponentLocation();
+	
+	const float AimAssistDistance = 5000.f;
+	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
+	float Spread = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(SurvivalCharacter);
+	
+	FHitResult HitResult;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	
+	
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd+ FVector(Spread), ObjectTypes, true,
+		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+
+
+	if (bHit)
+	{
+		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
+		if (Zombie)
+		{
+			float DamagetoZombie = UKismetMathLibrary::RandomFloatInRange(Damage - 2.f, Damage + 2.f);
+			TSubclassOf<class UDamageType> DamageTypeClass;
+			
+			if(HitResult.BoneName == TEXT("head"))
+			{
+				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
+					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+			}
+			else
+			{
+				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
+					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+			}
+
+			// Report zombie that player damage him
+			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
+				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
+
+			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Impuls == true)
+			{
+				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(Spread)) * Impulse, HitResult.Location);
+			}
+		}
+	}
 }
+
 

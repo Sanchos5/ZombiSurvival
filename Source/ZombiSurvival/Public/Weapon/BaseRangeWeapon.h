@@ -3,28 +3,57 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "BaseWeapon.h"
 #include "BaseRangeWeapon.generated.h"
 
+class UPlayerInterface;
+
 UCLASS()
-class ZOMBISURVIVAL_API ABaseRangeWeapon : public AActor
+class ZOMBISURVIVAL_API ABaseRangeWeapon : public ABaseWeapon
 {
 	GENERATED_BODY()
 	
 public:
 	ABaseRangeWeapon();
-	virtual void Tick(float DeltaTime) override;
+	virtual void Attack() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int DispenserMagazine;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int MaxDispenserMagazine;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
+
+	virtual void Fire();
+	void GetPlayerInterface();
 
 protected:
 	virtual void BeginPlay() override;
+	void ShotLineTrace();
+
+	UPROPERTY()
+	bool Impuls;
+
+	UPROPERTY()
+	UPlayerInterface* PlayerInterface;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	float Accuracy;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	float Impulse;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	USoundBase* ShotSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	USoundBase* EmptyMagazineSound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USceneComponent* Scene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USceneComponent* Start;
 };

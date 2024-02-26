@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "BaseWeapon.h"
 #include "BaseMeleeWeapon.generated.h"
 
 class UTraceComponent;
 
 UCLASS()
-class ZOMBISURVIVAL_API ABaseMeleeWeapon : public AActor
+class ZOMBISURVIVAL_API ABaseMeleeWeapon : public ABaseWeapon
 {
 	GENERATED_BODY()
 	

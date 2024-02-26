@@ -30,7 +30,9 @@ void UTraceComponent::TraceHit()
 	TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 	Objects.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
-	ActorsToIgnore.Add(MeleeWeapon->GetOwner());
+	ASurvivalBaseCharacter* WeaponOwner = Cast<ASurvivalBaseCharacter>(MeleeWeapon->Owner);
+	
+	ActorsToIgnore.Add(WeaponOwner);
 	TArray<FHitResult> SphereHitResults;
 	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
@@ -39,9 +41,10 @@ void UTraceComponent::TraceHit()
 	for (FHitResult HitResult : SphereHitResults)
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
+		TSubclassOf<class UDamageType> DamageTypeClass;
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
 		{
-			ASurvivalBaseCharacter* WeaponOwner = Cast<ASurvivalBaseCharacter>(MeleeWeapon->GetOwner());
+			
 			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
 			ActorsToIgnore.Add(Enemy);
 		}

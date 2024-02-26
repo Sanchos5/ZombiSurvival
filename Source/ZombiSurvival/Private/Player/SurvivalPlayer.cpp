@@ -255,15 +255,15 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 	switch (ActiveWeapon)
 	{
 	case AXE:
-		Input_MeleeAttacking();
+		MeleeAttacking();
 		break;
 		
 	case PISTOL:
-		// Shoot
+		RangeAttacking(ReloadShotgun);
 		break;
 		
 	case SHOTGUN:
-		// Shoot
+		RangeAttacking(ReloadShotgun);
 		break;
 		
 	default:
@@ -272,7 +272,7 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 	}
 }
 
-void ASurvivalPlayer::Input_MeleeAttacking()
+void ASurvivalPlayer::MeleeAttacking()
 {
 	if (CanAttack == false) return;
 	CanAttack = false;
@@ -295,36 +295,57 @@ void ASurvivalPlayer::Input_MeleeAttacking()
 	}
 }
 
-void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage)
 {
+	if (RangeWeaponref != nullptr && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadMontage))
+	{
+		RangeWeaponref->Attack();
+	}
+}
+
+bool ASurvivalPlayer::PlayReloadMontage()
+{
+	if (RangeWeaponref == nullptr) return false;
+	
+	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(RangeWeaponref);
 	if (ActiveWeapon == AXE || ActiveWeapon == NONE || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun) ||
-		RangeWeaponref->DispenserMagazine == RangeWeaponref->MaxDispenserMagazine || RangeWeaponref->PatronsInInventory <= 0.f) return;
+		RangeWeapon->DispenserMagazine == RangeWeapon->MaxDispenserMagazine || RangeWeapon->PatronsInInventory <= 0.f) return false;
 	
 	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
 	{
 		PlayAnimMontage(ReloadShotgun);
+		return true;
 	}
-	else if (ActiveWeapon == PISTOL && ReloadPistol != nullptr)
+	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr)
 	{
 		PlayAnimMontage(ReloadPistol);
+		return true;
 	}
+	return false;
+}
+
+void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
+{
+	PlayReloadMontage();
 }
 
 void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& InputActionValue)
 {
 	if (ActiveWeapon == AXE || CanSwapWeapon == false || bHaveAxe == false) return;
-
-	if (RangeWeaponref != nullptr)
+	
+	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(RangeWeaponref);
+	if (RangeWeapon)
 	{
+		
 		if (ActiveWeapon == PISTOL)
 		{
-			PistolDispenserMagazine = RangeWeaponref->DispenserMagazine;
+			PistolDispenserMagazine = RangeWeapon->DispenserMagazine;
 		}
 		else if (ActiveWeapon == SHOTGUN)
 		{
-			ShotgubDispenserMagazine = RangeWeaponref->DispenserMagazine;
+			ShotgubDispenserMagazine =  RangeWeapon->DispenserMagazine;
 		}		
-		RangeWeaponref->Destroy();
+		RangeWeapon->Destroy();
 	}
 	
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(AxeSocketName);
@@ -334,7 +355,7 @@ void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& In
 		if (MeleeWeaponref)
 		{
 			MeleeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AxeSocketName);
-			MeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
+			MeleeWeaponref->Owner = this;
 		}
 		ActiveWeapon = AXE;
 	}
@@ -349,20 +370,24 @@ void ASurvivalPlayer::Input_SwapToPistol_Implementation(const FInputActionValue&
 		MeleeWeaponref->Destroy();
 	}
 	
-	if (RangeWeaponref != nullptr && ActiveWeapon == SHOTGUN)
+	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(RangeWeaponref);
+	
+	if (RangeWeapon && ActiveWeapon == SHOTGUN)
 	{
-		ShotgubDispenserMagazine = RangeWeaponref->DispenserMagazine;
-		RangeWeaponref->Destroy();
+		ShotgubDispenserMagazine = RangeWeapon->DispenserMagazine;
+		RangeWeapon->Destroy();
 	}
 
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(PistolSocketName);
 	if (IsValid(PistolWeaponClass))
 	{
-		RangeWeaponref = GetWorld()->SpawnActor<ABaseRangeWeapon>(PistolWeaponClass, SocketTransform);
-		if (RangeWeaponref)
+		RangeWeapon = GetWorld()->SpawnActor<ABaseRangeWeapon>(PistolWeaponClass, SocketTransform);
+		if (RangeWeapon)
 		{
-			RangeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, PistolSocketName);
-			RangeWeaponref->DispenserMagazine = PistolDispenserMagazine;
+			RangeWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, PistolSocketName);
+			RangeWeapon->DispenserMagazine = PistolDispenserMagazine;
+			RangeWeapon->Owner = this;
+			RangeWeaponref = RangeWeapon;
 		}
 		ActiveWeapon = PISTOL;
 	}
@@ -376,21 +401,25 @@ void ASurvivalPlayer::Input_SwapToShotgun_Implementation(const FInputActionValue
 	{
 		MeleeWeaponref->Destroy();
 	}
+
+	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(RangeWeaponref);
 	
-	if (RangeWeaponref != nullptr && ActiveWeapon == PISTOL)
+	if (RangeWeapon && ActiveWeapon == PISTOL)
 	{
-		PistolDispenserMagazine = RangeWeaponref->DispenserMagazine;
-		RangeWeaponref->Destroy();
+		PistolDispenserMagazine = RangeWeapon->DispenserMagazine;
+		RangeWeapon->Destroy();
 	}
 	
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(ShotgunSocketName);
 	if (IsValid(ShotgunWeaponClass))
 	{
-		RangeWeaponref = GetWorld()->SpawnActor<ABaseRangeWeapon>(ShotgunWeaponClass, SocketTransform);
-		if (RangeWeaponref)
+		RangeWeapon = GetWorld()->SpawnActor<ABaseRangeWeapon>(ShotgunWeaponClass, SocketTransform);
+		if (RangeWeapon)
 		{
-			RangeWeaponref->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, ShotgunSocketName);
-			RangeWeaponref->DispenserMagazine = ShotgubDispenserMagazine;
+			RangeWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, ShotgunSocketName);
+			RangeWeapon->DispenserMagazine = ShotgubDispenserMagazine;
+			RangeWeapon->Owner = this;
+			RangeWeaponref = RangeWeapon;
 		}
 		ActiveWeapon = SHOTGUN;
 	}

@@ -42,5 +42,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
 	float Damage;
 
-	TSubclassOf<class UDamageType> DamageTypeClass;
+	
 };

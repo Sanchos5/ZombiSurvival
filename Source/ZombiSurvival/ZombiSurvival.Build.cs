@@ -37,7 +37,8 @@ public class ZombiSurvival : ModuleRules
             "EnhancedInput",
             "Slate",
             "SlateCore",
-            "UMG"
+            "UMG",
+            "AIModule"
             }
 		);
 
