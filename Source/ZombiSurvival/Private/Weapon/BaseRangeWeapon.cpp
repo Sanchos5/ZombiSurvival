@@ -26,6 +26,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 
 	
 	Impuls = true;
+	NumOfShotLine = 1.f;
 }
 
 void ABaseRangeWeapon::Attack()
@@ -35,7 +36,7 @@ void ABaseRangeWeapon::Attack()
 
 void ABaseRangeWeapon::Fire()
 {
-	Impuls = true;
+	
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
@@ -44,7 +45,11 @@ void ABaseRangeWeapon::Fire()
 
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		ShotLineTrace();
+		for (int i = NumOfShotLine; i > 0.f; i--)
+		{
+			ShotLineTrace();
+		}
+		Impuls = true;
 	}
 	else
 	{
@@ -93,7 +98,9 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	const float AimAssistDistance = 5000.f;
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
-	float Spread = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadX = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadY = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadZ = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
 
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(SurvivalCharacter);
@@ -104,7 +111,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
 	
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd+ FVector(Spread), ObjectTypes, true,
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd+ FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
 
 
@@ -120,6 +127,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				UE_LOG(LogTemp, Warning, TEXT("HitInHead"))
 			}
 			else
 			{
@@ -133,7 +141,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Impuls == true)
 			{
-				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(Spread)) * Impulse, HitResult.Location);
+				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(SpreadX, SpreadY, SpreadZ)) * Impulse, HitResult.Location);
 			}
 		}
 	}

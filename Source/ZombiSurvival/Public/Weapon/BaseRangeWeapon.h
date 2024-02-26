@@ -40,6 +40,9 @@ protected:
 	UPlayerInterface* PlayerInterface;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	int NumOfShotLine;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	float Accuracy;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
