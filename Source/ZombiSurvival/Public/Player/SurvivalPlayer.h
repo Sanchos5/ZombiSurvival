@@ -158,6 +158,9 @@ protected:
 	UAnimMontage* ReloadShotgun;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* ReloadPistol;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	float AttackPlayRate;
 
 	// Pause Game
