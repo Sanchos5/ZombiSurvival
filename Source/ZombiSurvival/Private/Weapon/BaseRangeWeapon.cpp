@@ -45,6 +45,7 @@ void ABaseRangeWeapon::Fire()
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
 		ShotLineTrace();
+		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
 	}
 	else
 	{
