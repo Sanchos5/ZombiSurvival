@@ -109,22 +109,19 @@ protected:
 
 	// Weapon
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-	TSubclassOf<ABaseMeleeWeapon> AxeWeaponClass;
+	TSubclassOf<ABaseWeapon> AxeWeaponClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-	TSubclassOf<ABaseRangeWeapon> PistolWeaponClass;
+	TSubclassOf<ABaseWeapon> PistolWeaponClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
-	TSubclassOf<ABaseRangeWeapon> ShotgunWeaponClass;
+	TSubclassOf<ABaseWeapon> ShotgunWeaponClass;
 
 	// TODO: One Weapon(Weapon in hand)
 
 	
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseWeapon* MeleeWeaponref;
-
-	UPROPERTY(BlueprintReadOnly, Category="Weapon")
-	ABaseWeapon* RangeWeaponref;
+	ABaseWeapon* ActiveWeaponref;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	bool bHaveAxe;
@@ -142,7 +139,7 @@ protected:
 	int Combo;
 	
 	int PistolDispenserMagazine;
-	int ShotgubDispenserMagazine;
+	int ShotgunDispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	FName AxeSocketName;
