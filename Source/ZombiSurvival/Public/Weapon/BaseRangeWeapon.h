@@ -59,4 +59,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* Start;
+
+	UPROPERTY(EditDefaultsOnly)
+	float MaxRangeNoise = 0.0f;
 };
