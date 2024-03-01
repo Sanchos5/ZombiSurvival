@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "SurvivalPlayer.generated.h"
 
+class UBaseSaveGame;
 class ABaseWeapon;
 
 UENUM(BlueprintType)
@@ -38,6 +39,7 @@ class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
 public:
 	// Sets default values for this character's properties
 	ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer);
+	void EquipWeaponFromSave();
 
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
@@ -61,17 +63,23 @@ public:
 	
 
 	/** Swap Weapon */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToAxe(const FInputActionValue& InputActionValue);
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToPistol(const FInputActionValue& InputActionValue);
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
 	
-	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
+	void EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
 		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipAxe();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipPistol();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipShotgun();
+
+	
 
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
@@ -82,6 +90,8 @@ public:
 	/** Reload Weapon */
 	UFUNCTION(BlueprintCallable)
 	void Input_Reloading(const FInputActionValue& InputActionValue);
+
+	
 	// End Enhanced Input Sample changes
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults | Stats")
@@ -100,6 +110,13 @@ public:
 	// Walking
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
 	float WalkSpeed;
+
+	// Save System
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerStats(UBaseSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerStats(UBaseSaveGame* SaveObject);
 
 protected:
 
