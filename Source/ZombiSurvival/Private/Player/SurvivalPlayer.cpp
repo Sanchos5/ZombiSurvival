@@ -213,6 +213,7 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 	{
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+		InventoryComponent->UpdateAllInventoryUI();
 		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		PlayerController->bShowMouseCursor = true;
 	}	

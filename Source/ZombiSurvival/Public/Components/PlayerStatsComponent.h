@@ -68,7 +68,10 @@ protected:
 	void IncrementInfection(float Value);
 
 	UFUNCTION(BlueprintCallable)
-	void DecrementInfection(float Value); 
+	void DecrementInfection(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void SetInfection(float NewInfection) { Infection = NewInfection; }
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Infection; 
@@ -111,7 +114,7 @@ protected:
 	void IncrementStamina(float Value);
 
 	UFUNCTION(BlueprintCallable)
-	void SetStamina(float NewStamina) { Thirst = NewStamina; }
+	void SetStamina(float NewStamina) { Stamina = NewStamina; }
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxStamina;
