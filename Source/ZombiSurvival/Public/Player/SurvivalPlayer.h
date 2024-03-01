@@ -69,16 +69,15 @@ public:
 	
 
 	/** Swap Weapon */
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToAxe(const FInputActionValue& InputActionValue);
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToPistol(const FInputActionValue& InputActionValue);
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
-
-	UFUNCTION(BlueprintCallable)
+	
 	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
 		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
 
