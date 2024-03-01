@@ -25,7 +25,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 	Start->SetupAttachment(GetRootComponent());
 
 	
-	bImpulse = true;
+	Impuls = true;
 }
 
 void ABaseRangeWeapon::Attack()
@@ -35,7 +35,7 @@ void ABaseRangeWeapon::Attack()
 
 void ABaseRangeWeapon::Fire()
 {
-	bImpulse = true;
+	Impuls = true;
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
@@ -44,7 +44,7 @@ void ABaseRangeWeapon::Fire()
 
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		for (int i = NumOfShotLine; i>0; --i)
+		for (int i = NumOfShotLine; i>0; i--)
 		{
 			ShotLineTrace();
 		}
@@ -126,23 +126,20 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
-				UE_LOG(LogTemp, Warning, TEXT("Hit Head"))
 			}
 			else
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
-				UE_LOG(LogTemp, Warning, TEXT("Hit not Head"))
 			}
 
 			// Report zombie that player damage him
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
 
-			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
+			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Impuls == true)
 			{
 				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(SpreadX, SpreadY, SpreadZ)) * Impulse, HitResult.Location);
-				bImpulse = false;
 			}
 		}
 	}

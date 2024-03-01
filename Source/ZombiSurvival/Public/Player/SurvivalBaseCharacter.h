@@ -21,6 +21,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth() const;
+	
+	UFUNCTION(BlueprintCallable)
+    void SetHealth(float NewHealth) { Health = NewHealth; }
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Health;

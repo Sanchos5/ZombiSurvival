@@ -70,6 +70,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
 
+	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
+		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
+
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void MeleeAttacking();
@@ -84,7 +87,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults | Stats")
 	UPlayerStatsComponent* PlayerStats;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
 	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -116,21 +119,21 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseWeapon> ShotgunWeaponClass;
-
-	// TODO: One Weapon(Weapon in hand)
-
 	
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
 	ABaseWeapon* ActiveWeaponref;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHaveAxe;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHavePistol;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHaveShotgun;
+
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
+	bool bIsRangeWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool CanSwapWeapon;
@@ -140,6 +143,7 @@ protected:
 	
 	int PistolDispenserMagazine;
 	int ShotgunDispenserMagazine;
+	int DispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	FName AxeSocketName;
@@ -172,6 +176,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Defaults | Widget")
 	TSubclassOf<UUserWidget> PauseWidgetClass;
 
+	UPROPERTY()
 	class UUserWidget* PauseWidget;
 
 private:
