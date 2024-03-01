@@ -77,7 +77,10 @@ protected:
 	float InfectionIncrementValue; 
 
 	// Голод
-	void DecrementHunger(float Value); 
+	void DecrementHunger(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHunger(float NewHunger) { Hunger = NewHunger; }
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxHunger; 
@@ -92,6 +95,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void DecrementThirst(float Value);
 
+	UFUNCTION(BlueprintCallable)
+	void SetThirst(float NewThirst) { Thirst = NewThirst; }
+
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxThirst;
 
@@ -103,6 +109,9 @@ protected:
 
 	// Выносливость
 	void IncrementStamina(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void SetStamina(float NewStamina) { Thirst = NewStamina; }
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxStamina;
