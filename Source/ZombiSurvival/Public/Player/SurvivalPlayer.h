@@ -70,6 +70,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
 
+	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
 		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
 
@@ -140,9 +141,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	int Combo;
-	
-	int PistolDispenserMagazine;
-	int ShotgunDispenserMagazine;
+
 	int DispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")

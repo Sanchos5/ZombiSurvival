@@ -305,22 +305,19 @@ void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage)
 
 bool ASurvivalPlayer::PlayReloadMontage()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Success1"))
+	
 	if (ActiveWeaponref == nullptr || ActiveWeapon == AXE || ActiveWeapon == NONE ||
 		GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun)) return false;
 	
 	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
-	UE_LOG(LogTemp, Warning, TEXT("Success2"))
 	
 	if (RangeWeapon->DispenserMagazine == RangeWeapon->MaxDispenserMagazine ||
 		RangeWeapon->PatronsInInventory <= 0.f) return false;
-
-	UE_LOG(LogTemp, Warning, TEXT("Success3"))
+	
 	
 	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
 	{
 		PlayAnimMontage(ReloadShotgun);
-		UE_LOG(LogTemp, Warning, TEXT("Success4"))
 		return true;
 	}
 	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr)
