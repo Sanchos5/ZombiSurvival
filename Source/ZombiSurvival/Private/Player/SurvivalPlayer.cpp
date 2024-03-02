@@ -21,6 +21,7 @@
 #include "Components/TraceComponent.h"
 #include "GameMode/SurvivalGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "SaveSystem/BaseGameInstance.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Weapon/BaseRangeWeapon.h"
 
@@ -82,6 +83,16 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 	}
 }
 
+void ASurvivalPlayer::InitPlayerSavedData()
+{
+	UBaseGameInstance* GameInstance = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		GameInstance->InitPlayerSavedData();
+	}
+	EquipWeaponFromSave();
+}
+
 void ASurvivalPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -94,7 +105,7 @@ void ASurvivalPlayer::BeginPlay()
 		}
 	}
 
-	EquipWeaponFromSave();
+	InitPlayerSavedData();
 
 	PlayerStats->Infected = true;
 
@@ -175,6 +186,8 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Save Player Stats"));
 		FPlayerSaveData PlayerData = SaveObject->PlayerSaveData;
 		SetHealth(PlayerData.Health);
 		PlayerStats->SetStamina(PlayerData.Stamina);

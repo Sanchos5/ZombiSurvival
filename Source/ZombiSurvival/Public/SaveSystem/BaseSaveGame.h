@@ -23,5 +23,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category="Save Data")
 	TArray<FItemSaveData> ItemSaveData;
 
-	
+	UPROPERTY(BlueprintReadWrite, Category="Save Data")
+	TArray<AActor*> ActorsToDestroy;
 };

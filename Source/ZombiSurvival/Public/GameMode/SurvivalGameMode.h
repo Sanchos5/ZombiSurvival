@@ -16,19 +16,4 @@ UCLASS()
 class ZOMBISURVIVAL_API ASurvivalGameMode : public AGameModeBase, public ISaveGameInterface
 {
 	GENERATED_BODY()
-
-protected:
-	ASurvivalGameMode();
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-
-	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
-
-	UPROPERTY(BlueprintReadOnly)
-	UBaseSaveGame* CurrentSaveGame;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Save Game")
-	FString SlotName;
-	
-	virtual void SaveGameData_Implementation() override;
-	virtual void LoadGameData_Implementation() override;
 };

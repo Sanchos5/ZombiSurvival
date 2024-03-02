@@ -40,6 +40,7 @@ public:
 	// Sets default values for this character's properties
 	ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer);
 	void EquipWeaponFromSave();
+	void InitPlayerSavedData();
 
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
