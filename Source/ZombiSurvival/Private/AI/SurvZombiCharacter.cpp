@@ -5,7 +5,8 @@
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
-
+#include "SaveSystem/BaseGameInstance.h"
+#include "Weapon/BaseMeleeWeapon.h"
 
 // Sets default values
 ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer) 
@@ -78,6 +79,12 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 		LeftMeleeWeaponref->Destroy();
 	}
 	StopAnimMontage();
+
+	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
+	if (GameInstance)
+	{
+		GameInstance->AddDestroyedActor(this);
+	}
 }
 
 void ASurvZombiCharacter::SetTargetActor_Implementation()

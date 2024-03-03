@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Interface/SaveGameInterface.h"
 #include "SurvivalGameMode.generated.h"
 
 class UBaseSaveGame;
@@ -13,7 +12,10 @@ class UBaseSaveGame;
  * 
  */
 UCLASS()
-class ZOMBISURVIVAL_API ASurvivalGameMode : public AGameModeBase, public ISaveGameInterface
+class ZOMBISURVIVAL_API ASurvivalGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 };
