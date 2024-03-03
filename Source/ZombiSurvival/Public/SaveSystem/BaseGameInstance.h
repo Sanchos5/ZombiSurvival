@@ -3,15 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
-#include "Interface/SaveGameInterface.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 #include "BaseGameInstance.generated.h"
 
-/**
- * 
- */
-UCLASS()
-class ZOMBISURVIVAL_API UBaseGameInstance : public UGameInstance, public ISaveGameInterface
+class UBaseSaveGame;
+
+UCLASS(meta=(DisplayName="SaveGame System"))
+class ZOMBISURVIVAL_API UBaseGameInstance : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
@@ -21,16 +19,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddDestroyedActor(AActor* DestroyedActor);
 
+	/* Initialize Subsystem, good moment to load in SaveGameSettings variables */
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SaveGameData();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void LoadGameData();
+
 protected:
 	UBaseGameInstance();
-	virtual void Init() override;
 
 	UPROPERTY(BlueprintReadOnly)
-	UBaseSaveGame* CurrentSaveGame;
+	TObjectPtr<UBaseSaveGame> CurrentSaveGame;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Save Game")
 	FString SlotName;
-	
-	virtual void SaveGameData_Implementation() override;
-	virtual void LoadGameData_Implementation() override;
 };

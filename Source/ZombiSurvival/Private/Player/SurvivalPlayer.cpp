@@ -85,7 +85,7 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 
 void ASurvivalPlayer::InitPlayerSavedData()
 {
-	UBaseGameInstance* GameInstance = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
 	if (GameInstance)
 	{
 		GameInstance->InitPlayerSavedData();
@@ -179,6 +179,8 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
 		SaveObject->PlayerSaveData = PlayerData;
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats"));
 	}
 }
 

@@ -2,3 +2,15 @@
 
 
 #include "GameMode/SurvivalGameMode.h"
+#include "SaveSystem/BaseGameInstance.h"
+
+void ASurvivalGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
+	if (GameInstance)
+	{
+		GameInstance->LoadGameData();
+	}
+}
