@@ -122,6 +122,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float StaminaIncrementValue;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
+	float StaminaRecoveryDelay;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bOneStats = false;
 };
