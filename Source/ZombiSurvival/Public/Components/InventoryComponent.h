@@ -37,6 +37,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
 	FAllItem AllItems;
 
+	// Update Slots in Inventory Widget	
+	UFUNCTION(BlueprintCallable)
+	void UpdateAllInventoryUI();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -75,10 +79,6 @@ protected:
 	bool AddItemToExcistingItemSort(FSlot Item, TArray<FSlot>& Array);
 	void CreateNewStackSort(FSlot Item,TArray<FSlot> &Array);
 	// End //
-
-	// Update Slots in Inventory Widget	
-	UFUNCTION(BlueprintCallable)
-	void UpdateAllInventoryUI();
 
 	UPROPERTY()
 	bool bSuccess;
