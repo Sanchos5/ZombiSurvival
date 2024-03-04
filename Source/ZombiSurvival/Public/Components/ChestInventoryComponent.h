@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Structes/AllItem.h"
+#include "Player/SurvivalPlayer.h"
+#include "Kismet/GameplayStatics.h"
 #include "ChestInventoryComponent.generated.h"
 
 class UChestInventoryWidget;

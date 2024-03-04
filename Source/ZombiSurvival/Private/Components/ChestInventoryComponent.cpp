@@ -5,8 +5,6 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Components/InventoryComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Player/SurvivalPlayer.h"
 #include "Widget/ChestInventoryWidget.h"
 
 UChestInventoryComponent::UChestInventoryComponent()

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Player/SurvivalBaseCharacter.h"
+#include "Weapon/BaseMeleeWeapon.h"
 #include "SurvZombiCharacter.generated.h"
 
 class USkeletalMeshComponent;

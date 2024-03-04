@@ -5,12 +5,7 @@
 
 #include "AI/SurvZombiCharacter.h"
 #include "Interface/PatronsInterface.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Perception/AISense_Damage.h"
-#include "Player/SurvivalBaseCharacter.h"
-#include "Player/SurvivalPlayer.h"
 #include "UI/HUDSurvival.h"
 #include "Widget/PlayerInterface.h"
 

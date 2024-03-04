@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "BaseWeapon.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Player/SurvivalPlayer.h"
 #include "BaseRangeWeapon.generated.h"
 
 class UPlayerInterface;

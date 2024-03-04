@@ -5,7 +5,7 @@
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
-#include "Weapon/BaseMeleeWeapon.h"
+
 
 // Sets default values
 ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer) 
