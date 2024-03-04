@@ -69,8 +69,14 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	AActor* DamageCauser)
 {
 	Super::OnDeath(KillingDamage, DamageEvent, PawnInstigator, DamageCauser);
-	RightMeleeWeaponref->Destroy();
-	LeftMeleeWeaponref->Destroy();
+	if (IsValid(RightMeleeWeaponref))
+	{
+		RightMeleeWeaponref->Destroy();
+	}
+	if (IsValid(LeftMeleeWeaponref))
+	{
+		LeftMeleeWeaponref->Destroy();
+	}
 	StopAnimMontage();
 }
 

@@ -25,7 +25,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 	Start->SetupAttachment(GetRootComponent());
 
 	
-	Impuls = true;
+	bImpulse = true;
 }
 
 void ABaseRangeWeapon::Attack()
@@ -35,7 +35,7 @@ void ABaseRangeWeapon::Attack()
 
 void ABaseRangeWeapon::Fire()
 {
-	Impuls = true;
+	bImpulse = true;
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
@@ -44,7 +44,10 @@ void ABaseRangeWeapon::Fire()
 
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		ShotLineTrace();
+		for (int i = NumOfShotLine; i>0; --i)
+		{
+			ShotLineTrace();
+		}
 		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
 	}
 	else
@@ -94,7 +97,9 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	const float AimAssistDistance = 5000.f;
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
-	float Spread = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadX = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadY = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
+	float SpreadZ = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
 
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(SurvivalCharacter);
@@ -105,7 +110,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
 	
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd+ FVector(Spread), ObjectTypes, true,
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
 
 
@@ -121,20 +126,23 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				UE_LOG(LogTemp, Warning, TEXT("Hit Head"))
 			}
 			else
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				UE_LOG(LogTemp, Warning, TEXT("Hit not Head"))
 			}
 
 			// Report zombie that player damage him
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
 
-			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Impuls == true)
+			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
 			{
-				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(Spread)) * Impulse, HitResult.Location);
+				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(SpreadX, SpreadY, SpreadZ)) * Impulse, HitResult.Location);
+				bImpulse = false;
 			}
 		}
 	}

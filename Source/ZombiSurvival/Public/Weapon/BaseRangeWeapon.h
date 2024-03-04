@@ -34,7 +34,7 @@ protected:
 	void ShotLineTrace();
 
 	UPROPERTY()
-	bool Impuls;
+	bool bImpulse;
 
 	UPROPERTY()
 	UPlayerInterface* PlayerInterface;
