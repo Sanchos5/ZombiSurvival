@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Player/SurvivalBaseCharacter.h"
+#include "Weapon/BaseMeleeWeapon.h"
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "TraceComponent.generated.h"
 
 

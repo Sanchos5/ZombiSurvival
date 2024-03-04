@@ -2,24 +2,15 @@
 
 
 #include "Player/SurvivalPlayer.h"
-#include "EnhancedInputComponent.h"
-#include "Input/SurvivalInputConfig.h"
-#include "Input/SurvivalInputComponent.h"
-#include "ZombiSurvival/SurvivalGameplayTags.h"
-#include "Camera/CameraComponent.h"
+
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "TimerManager.h"
-#include "Widgets/SWidget.h"
-#include "Blueprint/UserWidget.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
-#include "Weapon/BaseMeleeWeapon.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Weapon/BaseMeleeWeapon.h"
 #include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
@@ -107,7 +98,8 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Jump);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StartSprinting);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartSprinting);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_TriggerSprinting);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Completed, this, &ASurvivalPlayer::Input_StopSprinting);
 
 
@@ -185,19 +177,24 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
 {
-	if(PlayerStats->GetStamina() > 0.0f)
+	if (PlayerStats->GetStamina() > 10.0f)
 	{
-		StaminaValue = 0.2f;
 		bIsSprinting = true;
-		
-		PlayerStats->DecrementStamina(StaminaValue);
-
 		PlayerStats->SprintingTimer(true);
 	}
-	else if(PlayerStats->GetStamina() == 0.0f)
+}
+
+void ASurvivalPlayer::Input_TriggerSprinting(const FInputActionValue& InputActionValue)
+{
+	if (bIsSprinting == true)
+	{
+		StaminaValue = 0.2f;
+		PlayerStats->DecrementStamina(StaminaValue);
+	}
+
+	if(PlayerStats->GetStamina() == 0.0f)
 	{
 		bIsSprinting = false;
-		PlayerStats->SprintingTimer(false);
 	}
 }
 
@@ -209,19 +206,21 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) 
 	{
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->bShowMouseCursor = true;
+		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
+		{
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+			PlayerController->bShowMouseCursor = true;
+		}
 	}	
 }
 
 void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 {
 	APlayerController* PC = Cast<APlayerController>(GetController());
-
+	
 	if (IsValid(PauseWidgetClass))
 	{
 		if (!PC->IsPaused())

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Player/SurvivalPlayer.h"
 #include "SurvivalCharMovementComponent.generated.h"
 
 /**

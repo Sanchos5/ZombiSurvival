@@ -2,10 +2,7 @@
 
 
 #include "Components/TraceComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Player/SurvivalBaseCharacter.h"
-#include "Weapon/BaseMeleeWeapon.h"
+
 
 UTraceComponent::UTraceComponent()
 {

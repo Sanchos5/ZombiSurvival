@@ -34,9 +34,6 @@ public:
 	FGameplayTag InputTag_SwapToPistol;
 	FGameplayTag InputTag_SwapToShotgun;
 
-	//////////////////////////////////////
-	//Item Tags
-
 
 protected:
 

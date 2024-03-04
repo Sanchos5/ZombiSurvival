@@ -2,7 +2,7 @@
 
 
 #include "Components/SurvivalCharMovementComponent.h"
-#include "Player/SurvivalPlayer.h"
+
 
 float USurvivalCharMovementComponent::GetMaxSpeed() const
 {

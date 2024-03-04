@@ -3,8 +3,6 @@
 
 #include "Components/PlayerStatsComponent.h"
 #include "TimerManager.h"
-#include "Engine/Engine.h"
-#include "Player/SurvivalBaseCharacter.h"
 
 UPlayerStatsComponent::UPlayerStatsComponent()
 {
@@ -39,6 +37,7 @@ UPlayerStatsComponent::UPlayerStatsComponent()
 	MaxStamina = 100.0f;
 	Stamina = 50.0f;
 	StaminaIncrementValue = 3.0f;
+	StaminaRecoveryDelay = 1.0f;
 }
 
 void UPlayerStatsComponent::BeginPlay()
@@ -52,18 +51,19 @@ void UPlayerStatsComponent::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
 
-	GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, 2.0f);
+	//GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, 1.0f);
+	SprintingTimer(false);
 }
 
 void UPlayerStatsComponent::SprintingTimer(bool bIsRunning)
 {
 	if(bIsRunning == true)
 	{
-		GetWorld()->GetTimerManager().PauseTimer(StaminaHandle);
+		GetWorld()->GetTimerManager().ClearTimer(StaminaHandle);
 	}
-	else if(bIsRunning == false)
+	else
 	{
-		GetWorld()->GetTimerManager().UnPauseTimer(StaminaHandle);
+		GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, StaminaRecoveryDelay);
 	}
 }
 
@@ -266,7 +266,7 @@ void UPlayerStatsComponent::IncrementStamina(float Value)
 // Функция уменьшения выносливости
 void UPlayerStatsComponent::DecrementStamina(float Value)
 {
-	if (Stamina - Value > 0.0f)
+	if (Stamina != 0.0f && Stamina - Value > 0.0f)
 	{
 		Stamina -= Value;
 	}
