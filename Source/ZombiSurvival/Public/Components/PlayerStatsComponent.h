@@ -25,22 +25,6 @@ public:
 	bool Infected;
 
 	float GetStamina() const { return Stamina; }
-	float GetInfection() const { return Infection; }
-	float GetHunger() const { return Hunger; }
-	float GetThirst() const { return Thirst; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetInfection(float NewInfection) { Infection = NewInfection; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetStamina(float NewStamina) { Stamina = NewStamina; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetHunger(float NewHunger) { Hunger = NewHunger; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetThirst(float NewThirst) { Thirst = NewThirst; }
-	
 
 	// Восстановление голода
 	UFUNCTION(BlueprintCallable)
@@ -84,7 +68,7 @@ protected:
 	void IncrementInfection(float Value);
 
 	UFUNCTION(BlueprintCallable)
-	void DecrementInfection(float Value);
+	void DecrementInfection(float Value); 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float Infection; 
@@ -94,7 +78,10 @@ protected:
 
 	// Голод
 	void DecrementHunger(float Value);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void SetHunger(float NewHunger) { Hunger = NewHunger; }
+
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxHunger; 
 
@@ -108,6 +95,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void DecrementThirst(float Value);
 
+	UFUNCTION(BlueprintCallable)
+	void SetThirst(float NewThirst) { Thirst = NewThirst; }
+
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxThirst;
 
@@ -120,7 +110,8 @@ protected:
 	// Выносливость
 	void IncrementStamina(float Value);
 
-
+	UFUNCTION(BlueprintCallable)
+	void SetStamina(float NewStamina) { Thirst = NewStamina; }
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxStamina;
@@ -130,9 +121,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
 	float StaminaIncrementValue;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "100.0"))
-	float StaminaRecoveryDelay;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bOneStats = false;

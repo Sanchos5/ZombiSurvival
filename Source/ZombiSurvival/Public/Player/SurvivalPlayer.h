@@ -90,6 +90,10 @@ public:
 
 	
 
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
+		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
+
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void MeleeAttacking();

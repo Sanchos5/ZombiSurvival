@@ -2,19 +2,24 @@
 
 
 #include "Player/SurvivalPlayer.h"
-
+#include "EnhancedInputComponent.h"
+#include "Input/SurvivalInputConfig.h"
+#include "Input/SurvivalInputComponent.h"
+#include "ZombiSurvival/SurvivalGameplayTags.h"
+#include "Camera/CameraComponent.h"
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
+#include "Widgets/SWidget.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/InteractionComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Weapon/BaseMeleeWeapon.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
-#include "Weapon/BaseMeleeWeapon.h"
-#include "GameMode/SurvivalGameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "SaveSystem/BaseGameInstance.h"
-#include "SaveSystem/BaseSaveGame.h"
 #include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
@@ -55,36 +60,6 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	WalkSpeed = 200.0f;
 }
 
-void ASurvivalPlayer::EquipWeaponFromSave()
-{
-	switch (ActiveWeapon)
-	{
-	case AXE:
-		EquipAxe();
-		break;
-	case PISTOL:
-		EquipPistol();
-		break;
-	case SHOTGUN:
-		EquipShotgun();
-		break;
-	case NONE:
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("No Weapon"));
-		break;
-	}
-}
-
-void ASurvivalPlayer::InitPlayerSavedData()
-{
-	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
-	if (GameInstance)
-	{
-		GameInstance->InitPlayerSavedData();
-	}
-	EquipWeaponFromSave();
-}
-
 void ASurvivalPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -96,8 +71,6 @@ void ASurvivalPlayer::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
-
-	InitPlayerSavedData();
 
 	PlayerStats->Infected = true;
 
@@ -134,8 +107,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Jump);
 
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartSprinting);
-	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_TriggerSprinting);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_StartSprinting);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Completed, this, &ASurvivalPlayer::Input_StopSprinting);
 
 
@@ -152,51 +124,6 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_SwapToShotgun, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_SwapToShotgun);
 	
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
-}
-
-void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
-{
-	if (SaveObject)
-	{
-		FPlayerSaveData PlayerData;
-		PlayerData.Health = GetHealth();
-		PlayerData.Stamina = PlayerStats->GetStamina();
-		PlayerData.Infection = PlayerStats->GetInfection();
-		PlayerData.Hunger = PlayerStats->GetHunger();
-		PlayerData.Thirst = PlayerStats->GetThirst();
-		PlayerData.PlayerTransform = GetActorTransform();
-		PlayerData.ControllerRotation = GetController()->GetControlRotation();
-		PlayerData.Inventory = InventoryComponent->AllItems.MainInventory;
-		PlayerData.ActiveWeapon = ActiveWeapon;
-		PlayerData.bHaveAxe = bHaveAxe;
-		PlayerData.bHavePistol = bHavePistol;
-		PlayerData.bHaveShotgun = bHaveShotgun;
-		SaveObject->PlayerSaveData = PlayerData;
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats"));
-	}
-}
-
-void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
-{
-	if (SaveObject)
-	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Save Player Stats"));
-		FPlayerSaveData PlayerData = SaveObject->PlayerSaveData;
-		SetHealth(PlayerData.Health);
-		PlayerStats->SetStamina(PlayerData.Stamina);
-		PlayerStats->SetInfection(PlayerData.Infection);
-		PlayerStats->SetHunger(PlayerData.Hunger );
-		PlayerStats->SetThirst(PlayerData.Thirst);
-		SetActorTransform(PlayerData.PlayerTransform);
-		GetController()->SetControlRotation(PlayerData.ControllerRotation);
-		InventoryComponent->AllItems.MainInventory = PlayerData.Inventory;
-		ActiveWeapon = PlayerData.ActiveWeapon;
-		bHaveAxe = PlayerData.bHaveAxe;
-		bHavePistol = PlayerData.bHavePistol;
-		bHaveShotgun = PlayerData.bHaveShotgun;
-	}
 }
 
 void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
@@ -258,24 +185,19 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
 {
-	if (PlayerStats->GetStamina() > 10.0f)
-	{
-		bIsSprinting = true;
-		PlayerStats->SprintingTimer(true);
-	}
-}
-
-void ASurvivalPlayer::Input_TriggerSprinting(const FInputActionValue& InputActionValue)
-{
-	if (bIsSprinting == true)
+	if(PlayerStats->GetStamina() > 0.0f)
 	{
 		StaminaValue = 0.2f;
+		bIsSprinting = true;
+		
 		PlayerStats->DecrementStamina(StaminaValue);
-	}
 
-	if(PlayerStats->GetStamina() == 0.0f)
+		PlayerStats->SprintingTimer(true);
+	}
+	else if(PlayerStats->GetStamina() == 0.0f)
 	{
 		bIsSprinting = false;
+		PlayerStats->SprintingTimer(false);
 	}
 }
 
@@ -287,16 +209,10 @@ void ASurvivalPlayer::Input_StopSprinting(const FInputActionValue& InputActionVa
 
 void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionValue)
 {
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) 
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 	{
-		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
-		{
-			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-			PlayerController->bShowMouseCursor = true;
-		}
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		InventoryComponent->UpdateAllInventoryUI();
 		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		PlayerController->bShowMouseCursor = true;
 	}	
@@ -305,7 +221,7 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 {
 	APlayerController* PC = Cast<APlayerController>(GetController());
-	
+
 	if (IsValid(PauseWidgetClass))
 	{
 		if (!PC->IsPaused())
@@ -417,43 +333,25 @@ void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
 	PlayReloadMontage();
 }
 
-void ASurvivalPlayer::EquipAxe_Implementation()
+void ASurvivalPlayer::Input_SwapToAxe_Implementation(const FInputActionValue& InputActionValue)
 {
-	EquipBaseWeapon(AXE, bHaveAxe, AxeWeaponClass, AxeSocketName, false);
+	EquipWeapon(AXE, bHaveAxe, AxeWeaponClass, AxeSocketName, false);
 }
 
-void ASurvivalPlayer::Input_SwapToAxe(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::Input_SwapToPistol_Implementation(const FInputActionValue& InputActionValue)
 {
-	if (ActiveWeapon == AXE) return;
-	EquipAxe();
+	EquipWeapon(PISTOL, bHavePistol, PistolWeaponClass, PistolSocketName, true);
 }
 
-void ASurvivalPlayer::EquipPistol_Implementation()
+void ASurvivalPlayer::Input_SwapToShotgun_Implementation(const FInputActionValue& InputActionValue)
 {
-	EquipBaseWeapon(PISTOL, bHavePistol, PistolWeaponClass, PistolSocketName, true);
+	EquipWeapon(SHOTGUN, bHaveShotgun, ShotgunWeaponClass, ShotgunSocketName, true);
 }
 
-void ASurvivalPlayer::Input_SwapToPistol(const FInputActionValue& InputActionValue)
+void ASurvivalPlayer::EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
+	TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon)
 {
-	if (ActiveWeapon == PISTOL) return;
-	EquipPistol();
-}
-
-void ASurvivalPlayer::EquipShotgun_Implementation()
-{
-	EquipBaseWeapon(SHOTGUN, bHaveShotgun, ShotgunWeaponClass, ShotgunSocketName, true);
-}
-
-void ASurvivalPlayer::Input_SwapToShotgun(const FInputActionValue& InputActionValue)
-{
-	if (ActiveWeapon == SHOTGUN) return;
-	EquipShotgun();
-}
-
-void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
-                                      TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon)
-{
-	if (CanSwapWeapon == false || bHaveWeapon == false) return;
+	if (ActiveWeapon == SelectedWeapon || CanSwapWeapon == false || bHaveWeapon == false) return;
 
 	float OldDispencerMagazine = 0.f;
 
@@ -489,7 +387,6 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 				ABaseRangeWeapon* NewRangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
 				NewRangeWeapon->DispenserMagazine = DispenserMagazine;
 				DispenserMagazine = OldDispencerMagazine;
-				
 			}
 			ActiveWeaponref->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,SocketName);
 			ActiveWeaponref->Owner = this;
