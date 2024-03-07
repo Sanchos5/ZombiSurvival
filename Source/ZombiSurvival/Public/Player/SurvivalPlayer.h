@@ -3,15 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Camera/CameraComponent.h"
 #include "Player/SurvivalBaseCharacter.h"
 #include "GameplayTagContainer.h"
-#include "ZombiSurvival/SurvivalGameplayTags.h"
-#include "EnhancedInputComponent.h"
-#include "Input/SurvivalInputConfig.h"
-#include "Input/SurvivalInputComponent.h"
-#include "TimerManager.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "SurvivalPlayer.generated.h"
 
 class UBaseSaveGame;
@@ -64,7 +57,6 @@ public:
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
-	void Input_TriggerSprinting(const FInputActionValue& InputActionValue);
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 	void Input_PauseGame(const FInputActionValue& InputActionValue);
@@ -89,10 +81,6 @@ public:
 	void EquipShotgun();
 
 	
-
-	UFUNCTION(BlueprintCallable)
-	void EquipWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
-		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
 
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
@@ -220,5 +208,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
 
-	float StaminaValue = 0.2f;
+	float StaminaValue;
 };
