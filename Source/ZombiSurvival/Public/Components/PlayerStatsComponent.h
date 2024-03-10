@@ -120,7 +120,8 @@ protected:
 	// Выносливость
 	void IncrementStamina(float Value);
 
-
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
+	float StaminaRecoveryDelay;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults|PlayerStats", meta = (ClampMin = "0.0", ClampMax = "1000.0"))
 	float MaxStamina;
