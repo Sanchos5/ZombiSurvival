@@ -20,7 +20,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 	Start->SetupAttachment(GetRootComponent());
 
 	
-	Impuls = true;
+	bImpulse = true;
 }
 
 void ABaseRangeWeapon::Attack()
@@ -30,7 +30,7 @@ void ABaseRangeWeapon::Attack()
 
 void ABaseRangeWeapon::Fire()
 {
-	Impuls = true;
+	bImpulse = true;
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
@@ -132,7 +132,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
 
-			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Impuls == true)
+			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
 			{
 				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(SpreadX, SpreadY, SpreadZ)) * Impulse, HitResult.Location);
 			}
