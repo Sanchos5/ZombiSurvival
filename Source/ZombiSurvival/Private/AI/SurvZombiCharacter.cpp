@@ -5,12 +5,8 @@
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
-<<<<<<< HEAD
-
-=======
 #include "SaveSystem/BaseGameInstance.h"
 #include "Weapon/BaseMeleeWeapon.h"
->>>>>>> origin/Save-&-Load
 
 // Sets default values
 ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer) 

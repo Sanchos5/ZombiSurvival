@@ -10,14 +10,11 @@
 #include "Components/InventoryComponent.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
-<<<<<<< HEAD
 #include "Weapon/BaseMeleeWeapon.h"
-=======
 #include "GameMode/SurvivalGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/BaseGameInstance.h"
 #include "SaveSystem/BaseSaveGame.h"
->>>>>>> origin/Save-&-Load
 #include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
@@ -292,19 +289,16 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 {
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) 
 	{
-<<<<<<< HEAD
 		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 		{
 			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			PlayerController->bShowMouseCursor = true;
 		}
-=======
 		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 		InventoryComponent->UpdateAllInventoryUI();
 		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		PlayerController->bShowMouseCursor = true;
->>>>>>> origin/Save-&-Load
 	}	
 }
 
