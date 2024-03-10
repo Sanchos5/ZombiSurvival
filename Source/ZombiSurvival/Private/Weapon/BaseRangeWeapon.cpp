@@ -141,7 +141,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
 			{
-				Zombie->GetMesh()->AddImpulseAtLocation((TraceEnd + FVector(SpreadX, SpreadY, SpreadZ)) * Impulse, HitResult.Location);
+				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
 				bImpulse = false;
 			}
 		}
