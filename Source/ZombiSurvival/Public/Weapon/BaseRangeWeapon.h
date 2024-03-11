@@ -47,13 +47,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	float Impulse;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	float AimAssistDistance;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	USoundBase* ShotSound;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	USoundBase* EmptyMagazineSound;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* Scene;
 

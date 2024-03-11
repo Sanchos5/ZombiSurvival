@@ -26,6 +26,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 
 	
 	bImpulse = true;
+	AimAssistDistance = 5000.f;
 }
 
 void ABaseRangeWeapon::Attack()
@@ -93,9 +94,8 @@ void ABaseRangeWeapon::ShotLineTrace()
 		SurvivalCharacter->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	}
 
-	FVector TraceStart = Start->GetComponentLocation();
+	//FVector TraceStart = Start->GetComponentLocation();
 	
-	const float AimAssistDistance = 5000.f;
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
 	float SpreadX = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
 	float SpreadY = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
@@ -110,7 +110,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
 	
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), TraceStart, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
 
 
