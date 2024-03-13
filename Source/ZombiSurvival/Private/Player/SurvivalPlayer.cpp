@@ -418,7 +418,7 @@ void ASurvivalPlayer::Input_SwapToShotgun_Implementation(const FInputActionValue
 	
 		ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
 	
-		if (RangeWeapon && ActiveWeapon == SHOTGUN)
+		if (RangeWeapon && ActiveWeapon == PISTOL)
 		{
 			PistolDispenserMagazine = RangeWeapon->DispenserMagazine;
 			RangeWeapon->Destroy();
