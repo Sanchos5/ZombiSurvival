@@ -5,12 +5,7 @@
 
 #include "AI/SurvZombiCharacter.h"
 #include "Interface/PatronsInterface.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Perception/AISense_Damage.h"
-#include "Player/SurvivalBaseCharacter.h"
-#include "Player/SurvivalPlayer.h"
 #include "UI/HUDSurvival.h"
 #include "Widget/PlayerInterface.h"
 
@@ -45,7 +40,7 @@ void ABaseRangeWeapon::Fire()
 
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		for (int i = NumOfShotLine; i>0; --i)
+		for (int i = NumOfShotLine; i>0; i--)
 		{
 			ShotLineTrace();
 		}
@@ -126,13 +121,11 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
-				UE_LOG(LogTemp, Warning, TEXT("Hit Head"))
 			}
 			else
 			{
 				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
-				UE_LOG(LogTemp, Warning, TEXT("Hit not Head"))
 			}
 
 			// Report zombie that player damage him

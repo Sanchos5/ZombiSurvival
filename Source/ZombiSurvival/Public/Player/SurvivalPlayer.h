@@ -3,10 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "Player/SurvivalBaseCharacter.h"
 #include "GameplayTagContainer.h"
+#include "ZombiSurvival/SurvivalGameplayTags.h"
+#include "EnhancedInputComponent.h"
+#include "Input/SurvivalInputConfig.h"
+#include "Input/SurvivalInputComponent.h"
+#include "TimerManager.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "SurvivalPlayer.generated.h"
 
+class UBaseSaveGame;
 class ABaseWeapon;
 
 UENUM(BlueprintType)
@@ -38,6 +46,8 @@ class ZOMBISURVIVAL_API ASurvivalPlayer : public ASurvivalBaseCharacter
 public:
 	// Sets default values for this character's properties
 	ASurvivalPlayer(const class FObjectInitializer& ObjectInitializer);
+	void EquipWeaponFromSave();
+	void InitPlayerSavedData();
 
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFPSComponent() const { return FPSCamera; }
@@ -54,6 +64,7 @@ public:
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
+	void Input_TriggerSprinting(const FInputActionValue& InputActionValue);
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
 	void Input_OpenInventory(const FInputActionValue& InputActionValue);
 	void Input_PauseGame(const FInputActionValue& InputActionValue);
@@ -61,14 +72,23 @@ public:
 	
 
 	/** Swap Weapon */
-	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToAxe(const FInputActionValue& InputActionValue);
-	
-	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToPistol(const FInputActionValue& InputActionValue);
-	
-	UFUNCTION(BlueprintNativeEvent)
 	void Input_SwapToShotgun(const FInputActionValue& InputActionValue);
+	
+	void EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWeapon,
+		TSubclassOf<ABaseWeapon> SelectedWeaponClass, FName SocketName, bool bRangeWeapon);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipAxe();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipPistol();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EquipShotgun();
+
+	
 
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
@@ -79,12 +99,14 @@ public:
 	/** Reload Weapon */
 	UFUNCTION(BlueprintCallable)
 	void Input_Reloading(const FInputActionValue& InputActionValue);
+
+	
 	// End Enhanced Input Sample changes
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Defaults | Stats")
 	UPlayerStatsComponent* PlayerStats;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
 	TEnumAsByte<EActiveWeapon> ActiveWeapon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -97,6 +119,13 @@ public:
 	// Walking
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
 	float WalkSpeed;
+
+	// Save System
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerStats(UBaseSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerStats(UBaseSaveGame* SaveObject);
 
 protected:
 
@@ -116,30 +145,29 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
 	TSubclassOf<ABaseWeapon> ShotgunWeaponClass;
-
-	// TODO: One Weapon(Weapon in hand)
-
 	
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
 	ABaseWeapon* ActiveWeaponref;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHaveAxe;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHavePistol;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool bHaveShotgun;
+
+	UPROPERTY(BlueprintReadWrite, Category="Weapon")
+	bool bIsRangeWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool CanSwapWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
 	int Combo;
-	
-	int PistolDispenserMagazine;
-	int ShotgunDispenserMagazine;
+
+	int DispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	FName AxeSocketName;
@@ -172,6 +200,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Defaults | Widget")
 	TSubclassOf<UUserWidget> PauseWidgetClass;
 
+	UPROPERTY()
 	class UUserWidget* PauseWidget;
 
 private:
@@ -187,5 +216,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
 
-	float StaminaValue;
+	float StaminaValue = 0.2f;
 };

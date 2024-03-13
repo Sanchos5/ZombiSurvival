@@ -14,4 +14,6 @@ class ZOMBISURVIVAL_API ASurvivalPlayerCameraManager : public APlayerCameraManag
 {
 	GENERATED_BODY()
 	
+	ASurvivalPlayerCameraManager();
+
 };
