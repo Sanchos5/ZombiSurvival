@@ -115,6 +115,15 @@ void UBaseGameInstance::LoadGameData()
 				if (DestroyedActor->GetName() == Actor->GetName())
 				{
 					Actor->Destroy();
+					for (int32 i = 0; i < CurrentSaveGame->ItemSaveData.Num(); i++)
+					{
+						FItemSaveData ItemSaveData = CurrentSaveGame->ItemSaveData[i];
+						if (DestroyedActor->GetName() == ItemSaveData.ActorName)
+						{
+							CurrentSaveGame->ItemSaveData.RemoveAt(i);
+							break;
+						}
+					}
 					break;
 				}
 			}
@@ -122,14 +131,14 @@ void UBaseGameInstance::LoadGameData()
 			for (int32 i = 0; i < CurrentSaveGame->ItemSaveData.Num(); i++)
 			{
 				FItemSaveData ItemSaveData = CurrentSaveGame->ItemSaveData[i];
-				Actor->SetActorTransform(ItemSaveData.Transform);
-				const FString Msg = FString::Printf(TEXT("Actor Name: %s"), *ItemSaveData.ActorName);
-				if(GEngine)
-					GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Yellow, Msg);
+				
 				if (ItemSaveData.ActorName == Actor->GetName())
 				{
-					
-					
+					Actor->SetActorTransform(ItemSaveData.Transform);
+
+					const FString Msg = FString::Printf(TEXT("Actor Name: %s"), *ItemSaveData.ActorName);
+					if(GEngine)
+						GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Yellow, Msg);
 
 					FMemoryReader MemReader(ItemSaveData.ByteData);
 
