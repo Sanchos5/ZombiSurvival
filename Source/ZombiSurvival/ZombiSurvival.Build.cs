@@ -27,7 +27,8 @@ public class ZombiSurvival : ModuleRules
 			"GameplayTags",
             "GameplayTasks",
             "GameplayAbilities",
-            "UMG"
+            "UMG",
+            "Niagara"
             }
 		);
 
@@ -37,7 +38,6 @@ public class ZombiSurvival : ModuleRules
             "EnhancedInput",
             "Slate",
             "SlateCore",
-            "UMG",
             "AIModule"
             }
 		);

@@ -8,6 +8,7 @@
 #include "Perception/AISense_Damage.h"
 #include "UI/HUDSurvival.h"
 #include "Widget/PlayerInterface.h"
+#include "NiagaraFunctionLibrary.h"
 
 ABaseRangeWeapon::ABaseRangeWeapon()
 {
@@ -21,6 +22,7 @@ ABaseRangeWeapon::ABaseRangeWeapon()
 
 	
 	bImpulse = true;
+	bSpawnNS = true;
 	AimAssistDistance = 5000.f;
 }
 
@@ -32,6 +34,7 @@ void ABaseRangeWeapon::Attack()
 void ABaseRangeWeapon::Fire()
 {
 	bImpulse = true;
+	bSpawnNS = true;
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
@@ -106,7 +109,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 
 
 	if (bHit)
@@ -131,6 +134,13 @@ void ABaseRangeWeapon::ShotLineTrace()
 			// Report zombie that player damage him
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
+
+			if (IsValid(BloodNiagaraSystem) && bSpawnNS == true)
+			{
+				UKismetMathLibrary::MakeRotFromZ(HitResult.Normal);
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodNiagaraSystem, HitResult.Location);
+				bSpawnNS = false;
+			}
 
 			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
 			{

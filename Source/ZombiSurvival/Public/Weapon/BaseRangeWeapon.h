@@ -10,6 +10,7 @@
 #include "Player/SurvivalPlayer.h"
 #include "BaseRangeWeapon.generated.h"
 
+class UNiagaraSystem;
 class UPlayerInterface;
 
 UCLASS()
@@ -41,6 +42,9 @@ protected:
 	bool bImpulse;
 
 	UPROPERTY()
+	bool bSpawnNS;
+
+	UPROPERTY()
 	UPlayerInterface* PlayerInterface;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
@@ -60,6 +64,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	USoundBase* EmptyMagazineSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	UNiagaraSystem* BloodNiagaraSystem;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* Scene;
