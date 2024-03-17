@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "SaveSystem/BaseGameInstance.h"
 #include "SurvivalBaseCharacter.generated.h"
 
 class USoundBase;

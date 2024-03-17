@@ -12,8 +12,6 @@
 #include "Components/TraceComponent.h"
 #include "Weapon/BaseMeleeWeapon.h"
 #include "GameMode/SurvivalGameMode.h"
-#include "Kismet/GameplayStatics.h"
-#include "SaveSystem/BaseGameInstance.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Weapon/BaseRangeWeapon.h"
 
