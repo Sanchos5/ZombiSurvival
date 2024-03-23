@@ -12,6 +12,7 @@
 #include "Input/SurvivalInputComponent.h"
 #include "TimerManager.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "SurvivalPlayer.generated.h"
 
 class UBaseSaveGame;
