@@ -37,6 +37,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void ShotLineTrace();
+	void WeaponRecoil();
+	void BackCameraPosition();
+	void ClearTimer();
 
 	UPROPERTY()
 	bool bImpulse;
@@ -67,6 +70,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	UNiagaraSystem* BloodNiagaraSystem;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	float RecoilRange;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
+	UAnimMontage* CharacterRecoilMontage;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* Scene;
@@ -76,4 +85,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
+
+private:
+	FRotator PlayerControlRotation;
+
+	FTimerHandle RecoilTimerHandle;
+	FTimerHandle ClearTimerHandle;
 };

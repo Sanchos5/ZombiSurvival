@@ -39,7 +39,7 @@ void ABaseRangeWeapon::Fire()
 	{
 		DispenserMagazine -= 1.f;
 		UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
-		// TODO: Spawn VFX
+		WeaponRecoil();
 
 		//Interface to subtract patrons in UI
 		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
@@ -149,6 +149,36 @@ void ABaseRangeWeapon::ShotLineTrace()
 			}
 		}
 	}
+}
+
+void ABaseRangeWeapon::WeaponRecoil()
+{
+	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
+	if (IsValid(Player) && IsValid(CharacterRecoilMontage))
+	{
+		Player->PlayAnimMontage(CharacterRecoilMontage);
+		PlayerControlRotation = Player->GetControlRotation();
+		Player->AddControllerPitchInput(FMath::RandRange(-3.f, -RecoilRange));
+		Player->AddControllerYawInput(FMath::RandRange(-RecoilRange, -RecoilRange/2.5f));
+		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, 0.01f, true);
+		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, 0.25f, false);
+		Player->bRecoil = true;
+	}
+}
+
+void ABaseRangeWeapon::BackCameraPosition()
+{
+	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
+	if (IsValid(Player))
+	{
+		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(), PlayerControlRotation, 0.2, true));
+	}
+}
+
+void ABaseRangeWeapon::ClearTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(RecoilTimerHandle);
+	Cast<ASurvivalPlayer>(GetOwner())->bRecoil = false;
 }
 
 
