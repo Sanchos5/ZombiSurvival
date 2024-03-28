@@ -50,10 +50,6 @@
 		{
 			"Name": "WaterExtras",
 			"Enabled": true
-		},
-		{
-			"Name": "MovieRenderPipeline",
-			"Enabled": true
 		}
 	]
 }
