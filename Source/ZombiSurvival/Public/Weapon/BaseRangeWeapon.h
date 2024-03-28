@@ -37,6 +37,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void ShotLineTrace();
+	void ShotLineTraceDecal(float SpreadX, float SpreadY, float SpreadZ);
 	void WeaponRecoil();
 	void BackCameraPosition();
 	void ClearTimer();
@@ -85,6 +86,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
+
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	class UMaterial* BloodDecal;
 
 private:
 	FRotator PlayerControlRotation;

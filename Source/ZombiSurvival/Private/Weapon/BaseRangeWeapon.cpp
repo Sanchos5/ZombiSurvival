@@ -10,6 +10,10 @@
 #include "Widget/PlayerInterface.h"
 #include "NiagaraFunctionLibrary.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Engine/DecalActor.h"
+#include "Components/DecalComponent.h"
+
 ABaseRangeWeapon::ABaseRangeWeapon()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -109,9 +113,9 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-
-
+		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+	
+	
 	if (bHit)
 	{
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
@@ -147,8 +151,43 @@ void ABaseRangeWeapon::ShotLineTrace()
 				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
 				bImpulse = false;
 			}
+			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+
 		}
 	}
+}
+void ABaseRangeWeapon::ShotLineTraceDecal (float SpreadX, float SpreadY, float SpreadZ)
+{
+	ASurvivalBaseCharacter* SurvivalCharacter = Cast<ASurvivalBaseCharacter> (Owner);
+	
+	FVector EyeLocation;
+	FRotator EyeRotation;
+
+	if (SurvivalCharacter)
+	{
+		SurvivalCharacter->GetActorEyesViewPoint (EyeLocation, EyeRotation);
+	}
+
+	//FVector TraceStart = Start->GetComponentLocation();
+
+	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector () * AimAssistDistance/10);
+	
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add (SurvivalCharacter);
+	
+	FHitResult HitResult;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add (UEngineTypes::ConvertToObjectType (ECC_WorldStatic));
+
+
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
+		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+	
+	FVector Size_decal (100.0f, 100.0f, 100.0f);
+	
+	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), BloodDecal, Size_decal, HitResult.Location, EyeRotation);
+
 }
 
 void ABaseRangeWeapon::WeaponRecoil()
