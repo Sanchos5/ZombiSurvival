@@ -469,6 +469,15 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 		{
 			ActiveWeaponref->Destroy();
 		}
+		
+		if (ActiveWeapon == PISTOL )
+		{
+			PistolDispenserMagazine = OldDispencerMagazine;
+		}
+		if (ActiveWeapon == SHOTGUN)
+		{
+			ShotgunDispenserMagazine = OldDispencerMagazine;
+		}
 	}
 
 	
@@ -483,13 +492,20 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 			if (bIsRangeWeapon)
 			{
 				ABaseRangeWeapon* NewRangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
-				NewRangeWeapon->DispenserMagazine = DispenserMagazine;
-				DispenserMagazine = OldDispencerMagazine;
-				
+				if (SelectedWeapon == SHOTGUN)
+				{
+					//PistolDispenserMagazine = OldDispencerMagazine;
+					NewRangeWeapon->DispenserMagazine = ShotgunDispenserMagazine;
+				}
+				else
+				{	
+					NewRangeWeapon->DispenserMagazine = PistolDispenserMagazine;
+				}
 			}
 			ActiveWeaponref->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,SocketName);
 			ActiveWeaponref->Owner = this;
 			ActiveWeapon = SelectedWeapon;
 		}
 	}
+	
 }

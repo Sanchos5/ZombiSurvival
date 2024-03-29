@@ -171,7 +171,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	int Combo;
 
-	int DispenserMagazine;
+	int ShotgunDispenserMagazine;
+	int PistolDispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	FName AxeSocketName;
