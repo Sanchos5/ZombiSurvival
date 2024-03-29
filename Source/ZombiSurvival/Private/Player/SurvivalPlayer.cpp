@@ -170,8 +170,8 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
 		SaveObject->PlayerSaveData = PlayerData;
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats"));
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats"));
 	}
 }
 
@@ -179,8 +179,8 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Save Player Stats"));
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Save Player Stats"));
 		FPlayerSaveData PlayerData = SaveObject->PlayerSaveData;
 		SetHealth(PlayerData.Health);
 		PlayerStats->SetStamina(PlayerData.Stamina);
@@ -341,11 +341,11 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 		break;
 		
 	case PISTOL:
-		RangeAttacking(ReloadShotgun);
+		RangeAttacking(ReloadShotgun, RecoilShotgun);
 		break;
 		
 	case SHOTGUN:
-		RangeAttacking(ReloadShotgun);
+		RangeAttacking(ReloadShotgun, RecoilShotgun);
 		break;
 		
 	default:
@@ -377,9 +377,10 @@ void ASurvivalPlayer::MeleeAttacking()
 	}
 }
 
-void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage)
+void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage, UAnimMontage* RecoilMontage)
 {
-	if (ActiveWeaponref != nullptr && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadMontage))
+	if (ActiveWeaponref != nullptr && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadMontage)
+		&& !GetMesh()->GetAnimInstance()->Montage_IsPlaying(RecoilMontage))
 	{
 		ActiveWeaponref->Attack();
 	}
@@ -395,14 +396,16 @@ bool ASurvivalPlayer::PlayReloadMontage()
 	
 	if (RangeWeapon->DispenserMagazine == RangeWeapon->MaxDispenserMagazine ||
 		RangeWeapon->PatronsInInventory <= 0.f) return false;
+
+	UAnimInstance* PlayerAnimInstance = GetMesh()->GetAnimInstance();
 	
 	
-	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr)
+	if (ActiveWeapon == SHOTGUN && ReloadShotgun != nullptr && !PlayerAnimInstance->Montage_IsPlaying(ReloadShotgun))
 	{
 		PlayAnimMontage(ReloadShotgun);
 		return true;
 	}
-	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr)
+	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr  && !PlayerAnimInstance->Montage_IsPlaying(ReloadPistol))
 	{
 		PlayAnimMontage(ReloadPistol);
 		return true;

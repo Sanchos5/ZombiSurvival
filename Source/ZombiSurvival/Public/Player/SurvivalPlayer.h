@@ -94,7 +94,7 @@ public:
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void MeleeAttacking();
-	void RangeAttacking(UAnimMontage* ReloadMontage);
+	void RangeAttacking(UAnimMontage* ReloadMontage, UAnimMontage* RecoilAnim);
 	bool PlayReloadMontage();
 
 	/** Reload Weapon */
@@ -196,6 +196,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	UAnimMontage* ReloadPistol;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* RecoilShotgun;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UAnimMontage* RecoilPistol;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	float AttackPlayRate;
