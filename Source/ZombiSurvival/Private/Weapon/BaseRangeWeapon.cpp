@@ -235,7 +235,8 @@ void ABaseRangeWeapon::BackCameraPosition()
 	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
 	if (IsValid(Player))
 	{
-		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(), PlayerControlRotation, 0.2, true));
+		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(),
+			PlayerControlRotation, 0.2, true));
 	}
 }
 
