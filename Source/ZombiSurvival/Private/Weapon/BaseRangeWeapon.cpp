@@ -51,6 +51,7 @@ void ABaseRangeWeapon::Fire()
 		{
 			ShotLineTrace();
 		}
+		ShotLineTraceVFX();
 		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
 	}
 	else
@@ -95,8 +96,6 @@ void ABaseRangeWeapon::ShotLineTrace()
 	{
 		SurvivalCharacter->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	}
-
-	//FVector TraceStart = Start->GetComponentLocation();
 	
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
 	float SpreadX = UKismetMathLibrary::RandomFloatInRange(-Accuracy, Accuracy);
@@ -138,13 +137,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			// Report zombie that player damage him
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
-
-			if (IsValid(BloodNiagaraSystem) && bSpawnNS == true)
-			{
-				UKismetMathLibrary::MakeRotFromZ(HitResult.Normal);
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodNiagaraSystem, HitResult.Location);
-				bSpawnNS = false;
-			}
+			
 
 			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
 			{
@@ -156,7 +149,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 		}
 	}
 }
-void ABaseRangeWeapon::ShotLineTraceDecal (float SpreadX, float SpreadY, float SpreadZ)
+void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float SpreadZ)
 {
 	ASurvivalBaseCharacter* SurvivalCharacter = Cast<ASurvivalBaseCharacter> (Owner);
 	
@@ -167,8 +160,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal (float SpreadX, float SpreadY, float S
 	{
 		SurvivalCharacter->GetActorEyesViewPoint (EyeLocation, EyeRotation);
 	}
-
-	//FVector TraceStart = Start->GetComponentLocation();
+	
 
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector () * AimAssistDistance/10);
 	
@@ -188,6 +180,39 @@ void ABaseRangeWeapon::ShotLineTraceDecal (float SpreadX, float SpreadY, float S
 	
 	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), BloodDecal, Size_decal, HitResult.Location, EyeRotation);
 
+}
+
+void ABaseRangeWeapon::ShotLineTraceVFX()
+{
+	ASurvivalBaseCharacter* SurvivalCharacter = Cast<ASurvivalBaseCharacter>(Owner);
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	
+	if (SurvivalCharacter)
+	{
+		SurvivalCharacter->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	}
+	
+	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
+	
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(SurvivalCharacter);
+	
+	FHitResult HitResult;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	
+	
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd, ObjectTypes, true,
+		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+	if (bHit)
+	{
+		if (IsValid(BloodNiagaraSystem))
+		{			
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodNiagaraSystem, HitResult.Location, UKismetMathLibrary::MakeRotFromZ(HitResult.Normal));
+		}
+	}
 }
 
 void ABaseRangeWeapon::WeaponRecoil()

@@ -38,6 +38,7 @@ protected:
 	virtual void BeginPlay() override;
 	void ShotLineTrace();
 	void ShotLineTraceDecal(float SpreadX, float SpreadY, float SpreadZ);
+	void ShotLineTraceVFX();
 	void WeaponRecoil();
 	void BackCameraPosition();
 	void ClearTimer();
