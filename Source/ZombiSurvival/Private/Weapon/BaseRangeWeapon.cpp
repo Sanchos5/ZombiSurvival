@@ -109,6 +109,8 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
 	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
@@ -145,7 +147,6 @@ void ABaseRangeWeapon::ShotLineTrace()
 				bImpulse = false;
 			}
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-
 		}
 	}
 }
@@ -202,7 +203,6 @@ void ABaseRangeWeapon::ShotLineTraceVFX()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);

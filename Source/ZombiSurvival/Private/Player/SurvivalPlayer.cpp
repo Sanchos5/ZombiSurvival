@@ -67,8 +67,7 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 		EquipShotgun();
 		break;
 	case NONE:
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("No Weapon"));
+		
 		break;
 	}
 }
@@ -170,8 +169,6 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
 		SaveObject->PlayerSaveData = PlayerData;
-		//if(GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats"));
 	}
 }
 
@@ -179,8 +176,6 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		//if(GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Save Player Stats"));
 		FPlayerSaveData PlayerData = SaveObject->PlayerSaveData;
 		SetHealth(PlayerData.Health);
 		PlayerStats->SetStamina(PlayerData.Stamina);

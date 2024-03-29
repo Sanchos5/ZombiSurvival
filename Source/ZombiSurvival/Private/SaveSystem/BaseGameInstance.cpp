@@ -44,8 +44,6 @@ void UBaseGameInstance::SaveGameData()
 	if (PlayerCharacter)
 	{
 		PlayerCharacter->SavePlayerStats(CurrentSaveGame);
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save Player Stats in subsystem"));
 	}
 
 	CurrentSaveGame->ItemSaveData.Empty();
@@ -82,16 +80,11 @@ void UBaseGameInstance::SaveGameData()
 		CurrentSaveGame->ItemSaveData.Add(ItemSaveData);
 	}
 	
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Save"));
-	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
 
 void UBaseGameInstance::LoadGameData()
 {
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load Start"));
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
 	{
 		CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
@@ -136,10 +129,6 @@ void UBaseGameInstance::LoadGameData()
 				{
 					Actor->SetActorTransform(ItemSaveData.Transform);
 
-					const FString Msg = FString::Printf(TEXT("Actor Name: %s"), *ItemSaveData.ActorName);
-					if(GEngine)
-						GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Yellow, Msg);
-
 					FMemoryReader MemReader(ItemSaveData.ByteData);
 
 					FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
@@ -163,9 +152,6 @@ void UBaseGameInstance::LoadGameData()
 				if (SpawnedActor)
 				{
 					SpawnedActor->Rename(*ItemSaveData.ActorName);
-					//const FString Msg = FString::Printf(TEXT("Actor Name: %s"), *ItemSaveData.ActorName);
-					//if(GEngine)
-					//	GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Red, Msg);
 					SpawnedActor->SetActorTransform(ItemSaveData.Transform);
 
 					FMemoryReader MemReader(ItemSaveData.ByteData);
@@ -191,6 +177,5 @@ void UBaseGameInstance::LoadGameData()
 		CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
 	}
 	
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Load"));
+
 }
