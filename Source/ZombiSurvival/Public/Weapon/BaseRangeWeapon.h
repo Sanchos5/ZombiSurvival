@@ -21,6 +21,7 @@ class ZOMBISURVIVAL_API ABaseRangeWeapon : public ABaseWeapon
 public:
 	ABaseRangeWeapon();
 	virtual void Attack() override;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int DispenserMagazine;
@@ -31,8 +32,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
 
-	UFUNCTION(BlueprintNativeEvent)
+	
 	void Fire();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Shot();
 	void GetPlayerInterface();
 
 protected:

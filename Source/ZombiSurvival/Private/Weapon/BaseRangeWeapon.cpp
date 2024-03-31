@@ -35,24 +35,29 @@ void ABaseRangeWeapon::Attack()
 	Fire();
 }
 
-void ABaseRangeWeapon::Fire_Implementation()
+void ABaseRangeWeapon::Shot_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
+	WeaponRecoil();
+
+	//Interface to subtract patrons in UI
+	IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
+	for (int i = NumOfShotLine; i>0; i--)
+	{
+		ShotLineTrace();
+	}
+	ShotLineTraceVFX();
+	MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+}
+
+void ABaseRangeWeapon::Fire()
 {
 	bImpulse = true;
 	bSpawnNS = true;
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
-		UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
-		WeaponRecoil();
-
-		//Interface to subtract patrons in UI
-		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		for (int i = NumOfShotLine; i>0; i--)
-		{
-			ShotLineTrace();
-		}
-		ShotLineTraceVFX();
-		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+		Shot();
 	}
 	else
 	{
