@@ -35,6 +35,21 @@ void ABaseRangeWeapon::Attack()
 	Fire();
 }
 
+void ABaseRangeWeapon::Shot_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
+	WeaponRecoil();
+
+	//Interface to subtract patrons in UI
+	IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
+	for (int i = NumOfShotLine; i>0; i--)
+	{
+		ShotLineTrace();
+	}
+	ShotLineTraceVFX();
+	MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+}
+
 void ABaseRangeWeapon::Fire()
 {
 	bImpulse = true;
@@ -42,17 +57,7 @@ void ABaseRangeWeapon::Fire()
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
-		UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
-		WeaponRecoil();
-
-		//Interface to subtract patrons in UI
-		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		for (int i = NumOfShotLine; i>0; i--)
-		{
-			ShotLineTrace();
-		}
-		ShotLineTraceVFX();
-		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+		Shot();
 	}
 	else
 	{
@@ -148,7 +153,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			}
 
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-			//дырка от пули на зомби
+			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			
 			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
 				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
@@ -156,7 +161,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 		}
 		else
 		{
-			//дырки от пуль на материалах
+			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
@@ -187,7 +192,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	//брызги крови на стене
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }

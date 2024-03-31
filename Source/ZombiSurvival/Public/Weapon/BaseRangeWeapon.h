@@ -21,6 +21,7 @@ class ZOMBISURVIVAL_API ABaseRangeWeapon : public ABaseWeapon
 public:
 	ABaseRangeWeapon();
 	virtual void Attack() override;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int DispenserMagazine;
@@ -31,7 +32,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
 
-	virtual void Fire();
+	
+	void Fire();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Shot();
 	void GetPlayerInterface();
 
 protected:
@@ -88,7 +93,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
 
-	//ссылки на декали
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	class UMaterial* DecalBlood;
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
@@ -96,7 +101,7 @@ protected:
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	class UMaterialInstance* DecalBloodPawn;
 
-	//размер декалей
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	FVector ScaleDecalBloodStatic;
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")

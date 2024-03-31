@@ -45,5 +45,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
 	float Damage;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
+	USoundBase* HitSound;	
 };
