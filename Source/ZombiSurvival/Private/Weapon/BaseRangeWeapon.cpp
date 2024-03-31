@@ -114,7 +114,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 	
 	
 	if (bHit)
@@ -175,7 +175,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 	
 	FVector Size_decal (100.0f, 100.0f, 100.0f);
 	
@@ -205,7 +205,7 @@ void ABaseRangeWeapon::ShotLineTraceVFX()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd, ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 	if (bHit)
 	{
 		if (IsValid(BloodNiagaraSystem))
