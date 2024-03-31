@@ -35,7 +35,7 @@ void ABaseRangeWeapon::Attack()
 	Fire();
 }
 
-void ABaseRangeWeapon::Fire()
+void ABaseRangeWeapon::Fire_Implementation()
 {
 	bImpulse = true;
 	bSpawnNS = true;
@@ -148,7 +148,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			}
 
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-			//дырка от пули на зомби
+			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			
 			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
 				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
@@ -156,7 +156,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 		}
 		else
 		{
-			//дырки от пуль на материалах
+			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
@@ -187,7 +187,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	//брызги крови на стене
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }

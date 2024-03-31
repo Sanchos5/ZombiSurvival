@@ -31,7 +31,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
 
-	virtual void Fire();
+	UFUNCTION(BlueprintNativeEvent)
+	void Fire();
 	void GetPlayerInterface();
 
 protected:
@@ -88,7 +89,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
 
-	//ссылки на декали
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	class UMaterial* DecalBlood;
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
@@ -96,7 +97,7 @@ protected:
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	class UMaterialInstance* DecalBloodPawn;
 
-	//размер декалей
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	FVector ScaleDecalBloodStatic;
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
