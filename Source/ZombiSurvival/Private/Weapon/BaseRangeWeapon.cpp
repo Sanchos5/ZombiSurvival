@@ -146,7 +146,18 @@ void ABaseRangeWeapon::ShotLineTrace()
 				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
 				bImpulse = false;
 			}
+
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+			//дырка от пули на зомби
+			
+			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
+				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
+				HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+		}
+		else
+		{
+			//дырки от пуль на материалах
+			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }
@@ -176,10 +187,8 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	
-	FVector Size_decal (100.0f, 100.0f, 100.0f);
-	
-	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), BloodDecal, Size_decal, HitResult.Location, EyeRotation);
+	//брызги крови на стене
+	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }
 

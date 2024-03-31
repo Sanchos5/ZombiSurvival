@@ -88,8 +88,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
 
+	//ссылки на декали
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
-	class UMaterial* BloodDecal;
+	class UMaterial* DecalBlood;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	class UMaterialInstance* DecalMetal;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	class UMaterialInstance* DecalBloodPawn;
+
+	//размер декалей
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalBloodStatic;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalMetal;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalBloodPawn;
 
 private:
 	FRotator PlayerControlRotation;
