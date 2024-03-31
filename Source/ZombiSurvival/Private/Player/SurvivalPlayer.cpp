@@ -151,16 +151,6 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Jump);
 }
 
-float ASurvivalPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
-{
-	if (Health > 0.f && IsValid(SoundHit))
-	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundHit);
-	}
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
 void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 {
 	if (SaveObject)

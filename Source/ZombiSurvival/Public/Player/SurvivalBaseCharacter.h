@@ -38,7 +38,7 @@ public:
 	FOnHealthChangeDelegate OnHealthChange;
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsDead = false;
+	bool bIsDying = false;
 
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;

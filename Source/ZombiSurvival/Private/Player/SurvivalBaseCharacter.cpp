@@ -30,8 +30,6 @@ float ASurvivalBaseCharacter::GetHealth() const
 
 float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
-	if (bIsDead == true) return 0.f;
-	
 	if(Damage > 0.f)
 	{
 		Health -= Damage;
@@ -39,8 +37,10 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 		if (Health <= 0.f)
 		{
 			Health = 0.0f;
+			bIsDying = true;
 			OnDeath(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : NULL, DamageCauser);
 		}
+
 		OnHealthChange.Broadcast(Health, MaxHealth);
 	}
 	return Damage;
@@ -54,7 +54,11 @@ void ASurvivalBaseCharacter::AddHealth(float Heal)
 
 void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
 {
-	bIsDead = true;
+	/*if (bIsDying)
+	{
+		return;
+	}*/
+	bIsDying = true;
 
 	if(SoundDeath)
 	{
