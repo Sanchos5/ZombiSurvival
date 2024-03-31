@@ -90,7 +90,6 @@ public:
 	void EquipShotgun();
 
 	
-
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void MeleeAttacking();
@@ -132,10 +131,13 @@ public:
 	bool bRecoil = false;
 
 protected:
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* SoundHit;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
