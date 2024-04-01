@@ -2,8 +2,8 @@
 
 
 #include "Components/InteractionComponent.h"
-#include "Blueprint/UserWidget.h"
 #include "Interface/InteractionInterface.h"
+#include "Widget/InteractionWidget.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -43,15 +43,13 @@ void UInteractionComponent::FindBestInteractable()
 	Shape.SetSphere(TraceRadius);
 
 	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
-
-	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+	
 
 	// Clear ref before trying to fill
 	FocusedActor = nullptr;
 
 	for (FHitResult Hit : Hits)
 	{
-		//DrawDebugSphere(GetWorld(), Hit.ImpactPoint, TraceRadius, 32, LineColor, false, 0.0f);
 		
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor)
@@ -68,6 +66,7 @@ void UInteractionComponent::FindBestInteractable()
 	{
 		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
 		{
+			InteractionWidget->InteractionActor = FocusedActor;
 			InteractionWidget->AddToViewport();
 		}
 	}
@@ -80,7 +79,6 @@ void UInteractionComponent::FindBestInteractable()
 	}
 
 	StartInteractionTimer();	
-	//DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 0.0f);
 }
 
 void UInteractionComponent::StartInteractionTimer()
@@ -94,7 +92,7 @@ void UInteractionComponent::BeginPlay()
 
 	if (ensure(InteractionWidgetClass))
 	{
-		InteractionWidget = CreateWidget(GetWorld(), InteractionWidgetClass);
+		InteractionWidget = Cast<UInteractionWidget>(CreateWidget(GetWorld(), InteractionWidgetClass));
 	}
 	StartInteractionTimer();
 }

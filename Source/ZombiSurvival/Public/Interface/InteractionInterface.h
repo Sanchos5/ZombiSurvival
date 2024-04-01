@@ -24,4 +24,7 @@ class ZOMBISURVIVAL_API IInteractionInterface
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FText GetInteractText();
 };

@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InteractionComponent.generated.h"
 
-class UUserWidget;
+class UInteractionWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBISURVIVAL_API UInteractionComponent : public UActorComponent
@@ -40,7 +40,7 @@ protected:
 	TSubclassOf<UUserWidget> InteractionWidgetClass;
 
 	UPROPERTY(BlueprintReadOnly)
-	UUserWidget* InteractionWidget;
+	UInteractionWidget* InteractionWidget;
 
 	FTimerHandle InteractionTimer;
 };
