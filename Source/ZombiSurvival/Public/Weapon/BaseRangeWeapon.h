@@ -109,6 +109,9 @@ protected:
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
 	FVector ScaleDecalBloodPawn;
 
+	UPROPERTY(EditDefaultsOnly, Category="Debug")
+	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
+
 private:
 	FRotator PlayerControlRotation;
 

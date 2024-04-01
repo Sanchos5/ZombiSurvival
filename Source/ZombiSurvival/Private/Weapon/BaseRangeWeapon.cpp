@@ -114,16 +114,18 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
 	
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
-		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+		ActorsToIgnore, DrawDebugTrace, HitResult, true);
 	
 	
 	if (bHit)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Actor: %s"), *HitResult.GetActor()->GetName())
+
+			
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
 		if (Zombie)
 		{
