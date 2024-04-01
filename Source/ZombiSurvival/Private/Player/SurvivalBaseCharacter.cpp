@@ -34,7 +34,7 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 	{
 		Health -= Damage;
 
-		if (Health <= 0.f)
+		if (Health <= 0.f && bIsDying != true)
 		{
 			Health = 0.0f;
 			bIsDying = true;

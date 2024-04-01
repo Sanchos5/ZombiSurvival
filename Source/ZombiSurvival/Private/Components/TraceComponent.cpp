@@ -19,6 +19,8 @@ void UTraceComponent::BeginPlay()
 
 void UTraceComponent::TraceHit()
 {
+	bool bPlaySoundOnce = true;
+	
 	if (MeleeWeapon == nullptr) return;
 
 	FVector Start = MeleeWeapon->GetStartLocation();
@@ -41,8 +43,11 @@ void UTraceComponent::TraceHit()
 		TSubclassOf<class UDamageType> DamageTypeClass;
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
 		{
-			
 			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
+			if (bPlaySoundOnce)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
+			}
 			ActorsToIgnore.Add(Enemy);
 		}
 	}

@@ -35,6 +35,21 @@ void ABaseRangeWeapon::Attack()
 	Fire();
 }
 
+void ABaseRangeWeapon::Shot_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
+	WeaponRecoil();
+
+	//Interface to subtract patrons in UI
+	IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
+	for (int i = NumOfShotLine; i>0; i--)
+	{
+		ShotLineTrace();
+	}
+	ShotLineTraceVFX();
+	MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+}
+
 void ABaseRangeWeapon::Fire()
 {
 	bImpulse = true;
@@ -42,17 +57,7 @@ void ABaseRangeWeapon::Fire()
 	if (DispenserMagazine > 0.f)
 	{
 		DispenserMagazine -= 1.f;
-		UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
-		WeaponRecoil();
-
-		//Interface to subtract patrons in UI
-		IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
-		for (int i = NumOfShotLine; i>0; i--)
-		{
-			ShotLineTrace();
-		}
-		ShotLineTraceVFX();
-		MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
+		Shot();
 	}
 	else
 	{
@@ -146,7 +151,18 @@ void ABaseRangeWeapon::ShotLineTrace()
 				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
 				bImpulse = false;
 			}
+
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+			//����� �� ���� �� �����
+			
+			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
+				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
+				HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+		}
+		else
+		{
+			//����� �� ���� �� ����������
+			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }
@@ -176,10 +192,8 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	
-	FVector Size_decal (100.0f, 100.0f, 100.0f);
-	
-	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), BloodDecal, Size_decal, HitResult.Location, EyeRotation);
+	//������ ����� �� �����
+	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }
 

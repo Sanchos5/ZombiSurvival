@@ -21,6 +21,7 @@ class ZOMBISURVIVAL_API ABaseRangeWeapon : public ABaseWeapon
 public:
 	ABaseRangeWeapon();
 	virtual void Attack() override;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int DispenserMagazine;
@@ -31,7 +32,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
 
-	virtual void Fire();
+	
+	void Fire();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Shot();
 	void GetPlayerInterface();
 
 protected:
@@ -88,8 +93,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxRangeNoise = 0.0f;
 
+	//������ �� ������
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
-	class UMaterial* BloodDecal;
+	class UMaterial* DecalBlood;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	class UMaterialInstance* DecalMetal;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	class UMaterialInstance* DecalBloodPawn;
+
+	//������ �������
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalBloodStatic;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalMetal;
+	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
+	FVector ScaleDecalBloodPawn;
 
 private:
 	FRotator PlayerControlRotation;
