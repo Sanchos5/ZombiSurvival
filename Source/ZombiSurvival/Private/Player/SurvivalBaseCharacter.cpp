@@ -30,14 +30,15 @@ float ASurvivalBaseCharacter::GetHealth() const
 
 float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
+	if (bIsDying == true) return 0.f;
+	
 	if(Damage > 0.f)
 	{
 		Health -= Damage;
 
-		if (Health <= 0.f && bIsDying != true)
+		if (Health <= 0.f)
 		{
 			Health = 0.0f;
-			bIsDying = true;
 			OnDeath(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : NULL, DamageCauser);
 		}
 
@@ -54,12 +55,6 @@ void ASurvivalBaseCharacter::AddHealth(float Heal)
 
 void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
 {
-	/*if (bIsDying)
-	{
-		return;
-	}*/
-	bIsDying = true;
-
 	if(SoundDeath)
 	{
 		FVector SpawnLocation = GetActorLocation();
@@ -77,4 +72,5 @@ void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& Da
 	Mesh1P->SetAllBodiesSimulatePhysics(true);
 
 	DisableInput(nullptr);
+	bIsDying = true;
 }

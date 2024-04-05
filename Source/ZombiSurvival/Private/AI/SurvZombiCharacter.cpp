@@ -2,6 +2,9 @@
 
 
 #include "AI/SurvZombiCharacter.h"
+
+#include "AIController.h"
+#include "BrainComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
@@ -83,6 +86,13 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	if (GameInstance)
 	{
 		GameInstance->AddDestroyedActor(this);
+	}
+
+	const auto AIController = Cast<AAIController>(Controller);
+	if (AIController && AIController->BrainComponent)
+	{
+		//AIController->BrainComponent->StopLogic("Killed");
+		AIController->BrainComponent->Cleanup();
 	}
 }
 
