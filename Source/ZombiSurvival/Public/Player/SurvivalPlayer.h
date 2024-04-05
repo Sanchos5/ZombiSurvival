@@ -13,6 +13,7 @@
 #include "TimerManager.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "QuestionSystem/QuestComponent.h"
 #include "SurvivalPlayer.generated.h"
 
 class UBaseSaveGame;
@@ -216,6 +217,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest", meta = (AllowPrivateAccess = "true"))
+	class UQuestComponent* QuestComponent;
 
 	float StaminaValue = 0.2f;
 };
