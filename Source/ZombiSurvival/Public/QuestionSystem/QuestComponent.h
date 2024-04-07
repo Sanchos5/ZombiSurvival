@@ -74,15 +74,15 @@ protected:
 
 public:
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnUpdateWidgetChangeDelegate OnUpdateWidget;
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnQuestReachedChangeDelegate OnQuestReached;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnQuestItemIteratedChangeDelegate OnQuestItemIterated;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnQuestItemInteractChangeDelegate OnQuestItemInteract;
 };
