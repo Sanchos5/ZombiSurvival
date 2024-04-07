@@ -122,10 +122,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	
 	if (bHit)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Actor: %s"), *HitResult.GetActor()->GetName())
-
-			
+	{			
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
 		if (Zombie)
 		{
@@ -238,10 +235,10 @@ void ABaseRangeWeapon::WeaponRecoil()
 	{
 		Player->PlayAnimMontage(CharacterRecoilMontage);
 		PlayerControlRotation = Player->GetControlRotation();
-		Player->AddControllerPitchInput(FMath::RandRange(-3.f, -RecoilRange));
-		Player->AddControllerYawInput(FMath::RandRange(-RecoilRange, -RecoilRange/2.5f));
+		Player->AddControllerPitchInput(FMath::RandRange(-RecoilRange/2.f, -RecoilRange));
+		//Player->AddControllerYawInput(FMath::RandRange(-RecoilRange, -RecoilRange/2.5f));
 		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, 0.01f, true);
-		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, 0.25f, false);
+		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, RecoilTimeClear, false);
 		Player->bRecoil = true;
 	}
 }
@@ -252,7 +249,7 @@ void ABaseRangeWeapon::BackCameraPosition()
 	if (IsValid(Player))
 	{
 		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(),
-			PlayerControlRotation, 0.2, true));
+			PlayerControlRotation, AlphaRotator, true));
 	}
 }
 
