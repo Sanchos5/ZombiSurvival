@@ -39,7 +39,7 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 
-	QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
+	//QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
 
 	AxeSocketName = TEXT("MeleeWeaponSocket");
 	CanAttack = true;
@@ -287,13 +287,21 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 		{
 			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+			InventoryComponent->UpdateAllInventoryUI();
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			PlayerController->bShowMouseCursor = true;
 		}
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		InventoryComponent->UpdateAllInventoryUI();
-		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->bShowMouseCursor = true;
+		else
+		{
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+			//InventoryComponent->UpdateAllInventoryUI();
+			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerController->bShowMouseCursor = false;
+		}
+		//UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+		//InventoryComponent->UpdateAllInventoryUI();
+		//InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		//PlayerController->bShowMouseCursor = true;
 	}	
 }
 

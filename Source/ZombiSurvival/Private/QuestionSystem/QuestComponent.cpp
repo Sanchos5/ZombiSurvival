@@ -15,16 +15,15 @@ UQuestComponent::UQuestComponent()
 
 void UQuestComponent::SetQuestDT_Implementation(const UDataTable* QuestDT)
 {
-	//FQuest Quest;
-	for(int i = 0; i < QuestDataList.Num(); i++)
-	{
-		QuestDataList[i];
-	}
+	
+	//OnQuestReached.Broadcast(Type, Object);
+	//OnQuestItemIterated.Broadcast(Type, Object);
+	//OnQuestItemInteract.Broadcast(Type, Object);
 }
 
 void UQuestComponent::StartQuest_Implementation()
 {
-	OnUpdateWidget.Broadcast();
+	OnUpdateWidget.Broadcast(QuestData);
 }
 
 // Called when the game starts
@@ -36,12 +35,11 @@ void UQuestComponent::BeginPlay()
 	{
 		if (QuestWidgetClass)
 		{
-			QuestWidget = CreateWidget(GetWorld(), QuestWidgetClass);
-			QuestWidget->AddToViewport();
-
-			StartQuest_Implementation();
+			//QuestWidget = CreateWidget(GetWorld(), QuestWidgetClass);
+			//QuestWidget->AddToViewport();
+			OnUpdateWidget.Broadcast(QuestData);
 		}
 
-		SetQuestDT_Implementation(QuestDataTable);
+		//SetQuestDT_Implementation(QuestDataTable);
 	}
 }
