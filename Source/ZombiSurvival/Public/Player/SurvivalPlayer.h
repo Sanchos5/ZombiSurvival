@@ -138,6 +138,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
 
@@ -214,6 +216,9 @@ protected:
 
 	UPROPERTY()
 	class UUserWidget* PauseWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Defaults | Widget")
+	TSubclassOf<UUserWidget> DeathWidgetClass;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
