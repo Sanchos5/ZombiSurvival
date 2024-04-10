@@ -108,6 +108,18 @@ void ASurvivalPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ASurvivalPlayer::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
+{
+	Super::OnDeath(KillingDamage, DamageEvent, PawnInstigator, DamageCauser);
+
+	if(DeathWidgetClass)
+	{
+		UUserWidget* DeathWidget;
+		DeathWidget = CreateWidget<UUserWidget>(GetWorld(), DeathWidgetClass);
+		DeathWidget->AddToViewport();
+	}
+}
+
 void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
