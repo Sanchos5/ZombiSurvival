@@ -49,10 +49,10 @@ struct FQuestIterate
 	bool bCompleted = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CurrentAmount;
+	int CurrentAmount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MaxAmount;
+	int MaxAmount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EQuestType Type = EQuestType::Iterate;
@@ -111,14 +111,14 @@ struct FQuestProgression
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CompletedSteps;
+	int CompletedSteps;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CurrentQuestIndex;
+	int CurrentQuestIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FQuest CurrentQuestData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bGoNextChapter;
+	bool bGoNextChapter = false;
 };
