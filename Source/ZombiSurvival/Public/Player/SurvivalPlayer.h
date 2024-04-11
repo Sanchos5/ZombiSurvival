@@ -128,9 +128,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void LoadPlayerStats(UBaseSaveGame* SaveObject);
 
-	//Recoil
-	bool bRecoil = false;
-
 protected:
 
 	virtual void BeginPlay() override;

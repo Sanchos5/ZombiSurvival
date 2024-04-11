@@ -56,7 +56,7 @@ void ABaseRangeWeapon::Fire()
 	bSpawnNS = true;
 	if (DispenserMagazine > 0.f)
 	{
-		DispenserMagazine -= 1.f;
+		DispenserMagazine -= 1.;		
 		Shot();
 	}
 	else
@@ -230,33 +230,37 @@ void ABaseRangeWeapon::ShotLineTraceVFX()
 
 void ABaseRangeWeapon::WeaponRecoil()
 {
+	DoOnce = true;
 	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
 	if (IsValid(Player) && IsValid(CharacterRecoilMontage))
 	{
-		Player->PlayAnimMontage(CharacterRecoilMontage);
-		PlayerControlRotation = Player->GetControlRotation();
+		OldControlPitch = UKismetMathLibrary::NormalizeAxis(Player->GetControlRotation().Pitch);
 		Player->AddControllerPitchInput(FMath::RandRange(-RecoilRange/2.f, -RecoilRange));
-		//Player->AddControllerYawInput(FMath::RandRange(-RecoilRange, -RecoilRange/2.5f));
-		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, 0.01f, true);
+		Player->PlayAnimMontage(CharacterRecoilMontage);
+		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, BackPositionFrequency, true);
 		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, RecoilTimeClear, false);
-		Player->bRecoil = true;
 	}
 }
 
 void ABaseRangeWeapon::BackCameraPosition()
 {
+	
 	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
 	if (IsValid(Player))
 	{
-		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(),
-			PlayerControlRotation, AlphaRotator, true));
+		if (DoOnce)
+		{
+			NewControlPitch = UKismetMathLibrary::NormalizeAxis(Player->GetControlRotation().Pitch);
+			DoOnce = false;
+		}
+		float DeltaPitch = OldControlPitch - NewControlPitch;
+		Player->AddControllerPitchInput(-DeltaPitch/DeltaPitchDivider);
 	}
 }
 
 void ABaseRangeWeapon::ClearTimer()
 {
 	GetWorld()->GetTimerManager().ClearTimer(RecoilTimerHandle);
-	Cast<ASurvivalPlayer>(GetOwner())->bRecoil = false;
 }
 
 

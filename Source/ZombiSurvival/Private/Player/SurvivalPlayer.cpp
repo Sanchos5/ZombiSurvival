@@ -219,7 +219,7 @@ void ASurvivalPlayer::Input_Move(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Look(const FInputActionValue& InputActionValue)
 {
-	if (Controller != nullptr && bRecoil == false)
+	if (Controller != nullptr)
 	{
 		const FVector2D LookValue = InputActionValue.Get<FVector2D>();
 		if (LookValue.IsNearlyZero(0.1))

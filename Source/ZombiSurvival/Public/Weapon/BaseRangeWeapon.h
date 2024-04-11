@@ -82,7 +82,10 @@ protected:
 	float RecoilRange;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
-	float AlphaRotator = 0.0f;
+	float BackPositionFrequency = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float DeltaPitchDivider = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float RecoilTimeClear = 0.0f;
@@ -121,7 +124,10 @@ protected:
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 private:
-	FRotator PlayerControlRotation;
+	float OldControlPitch;
+	float NewControlPitch;
+
+	bool DoOnce = true;
 
 	FTimerHandle RecoilTimerHandle;
 	FTimerHandle ClearTimerHandle;
