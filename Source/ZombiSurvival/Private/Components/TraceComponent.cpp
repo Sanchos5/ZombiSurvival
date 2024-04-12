@@ -3,6 +3,8 @@
 
 #include "Components/TraceComponent.h"
 
+#include "Perception/AISense_Damage.h"
+
 
 UTraceComponent::UTraceComponent()
 {
@@ -44,6 +46,9 @@ void UTraceComponent::TraceHit()
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
 		{
 			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
+			UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
+			Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
+			
 			if (bPlaySoundOnce)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
