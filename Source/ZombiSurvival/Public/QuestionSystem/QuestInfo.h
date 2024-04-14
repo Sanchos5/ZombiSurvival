@@ -4,6 +4,8 @@
 #include "Engine/DataTable.h"
 #include "Actor/InventoryItem.h"
 #include "Structes/ItemInfo.h"
+#include "Enum/ItemType.h"
+#include "QuestionSystem/BaseReachLocation.h"
 #include "QuestInfo.generated.h"
 
 UENUM(BlueprintType)
@@ -25,7 +27,10 @@ struct FQuestReach
 	FText Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> Objects;
+	TSubclassOf<ABaseReachLocation> Reached;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ReachID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCompleted = false;
@@ -44,6 +49,9 @@ struct FQuestIterate
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AInventoryItem> Objects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCompleted = false;
