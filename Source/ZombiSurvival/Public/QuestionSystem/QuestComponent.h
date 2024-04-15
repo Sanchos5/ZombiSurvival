@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Quest")
 	TSubclassOf<UUserWidget> QuestWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FQuest QuestData;
 
 protected:
@@ -65,7 +65,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TArray<FName> QuestNames;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FQuest> QuestDataList;
 	
 	EQuestType Type;
