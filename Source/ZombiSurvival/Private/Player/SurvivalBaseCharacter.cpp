@@ -47,6 +47,36 @@ float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const
 	return Damage;
 }
 
+void ASurvivalBaseCharacter::GetHit_Implementation(FName BoneName)
+{
+	if (!IsValid(GetHitAnim) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetHitAnim)) return;
+	
+	FName StartSection = FName("Default");
+
+	if (BoneName == FName("head"))
+	{
+		StartSection = FName("HeadReact");
+	}
+	else if (BoneName == FName("hand_l") || BoneName == FName("lowerarm_l") || BoneName == FName("upperarm_l"))
+	{
+		StartSection = FName("LeftArmReact");
+	}
+	else if (BoneName == FName("hand_r") || BoneName == FName("lowerarm_r") || BoneName == FName("upperarm_r"))
+	{
+		StartSection = FName("RightArmReact");
+	}
+	else if (BoneName == FName("thigh_l") || BoneName == FName("calf_l") || BoneName == FName("foot_l"))
+	{
+		StartSection = FName("LeftLegReact");
+	}
+	else if (BoneName == FName("thigh_r") || BoneName == FName("calf_r") || BoneName == FName("foot_r"))
+	{
+		StartSection = FName("RightLegReact");
+	}
+	
+	PlayAnimMontage(GetHitAnim, 1, StartSection);
+}
+
 void ASurvivalBaseCharacter::AddHealth(float Heal)
 {
 	if (Heal <= 0.f) return;

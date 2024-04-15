@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
@@ -23,6 +24,16 @@ ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectI
 	MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
 
+}
+
+void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
+{
+	const auto AIController = Cast<AAIController>(Controller);
+	if (AIController && AIController->BrainComponent)
+	{
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Damaged"), true);
+	}
+	Super::GetHit_Implementation(BoneName);
 }
 
 void ASurvZombiCharacter::CreateLeftWeapon()
@@ -91,7 +102,6 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	const auto AIController = Cast<AAIController>(Controller);
 	if (AIController && AIController->BrainComponent)
 	{
-		//AIController->BrainComponent->StopLogic("Killed");
 		AIController->BrainComponent->Cleanup();
 	}
 }

@@ -2,7 +2,8 @@
 
 
 #include "Player/SurvivalPlayer.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "SaveSystem/BaseGameInstance.h"
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,8 +11,6 @@
 #include "Components/InventoryComponent.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
-#include "Weapon/BaseMeleeWeapon.h"
-#include "GameMode/SurvivalGameMode.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Weapon/BaseRangeWeapon.h"
 

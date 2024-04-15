@@ -48,6 +48,11 @@ void UTraceComponent::TraceHit()
 			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
 			Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
+
+			if (Cast<ICombatInterface>(Enemy))
+			{
+				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.BoneName);
+			}
 			
 			if (bPlaySoundOnce)
 			{

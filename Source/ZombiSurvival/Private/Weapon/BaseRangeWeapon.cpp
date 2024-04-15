@@ -140,6 +140,11 @@ void ABaseRangeWeapon::ShotLineTrace()
 					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 			}
 
+			if (Cast<ICombatInterface>(Zombie))
+			{
+				Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie,HitResult.BoneName);
+			}
+
 			// Report zombie that player damage him
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
 				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
