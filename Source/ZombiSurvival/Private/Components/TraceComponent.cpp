@@ -3,6 +3,9 @@
 
 #include "Components/TraceComponent.h"
 
+#include "AIController.h"
+#include "AI/SurvZombiCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Perception/AISense_Damage.h"
 
@@ -22,7 +25,7 @@ void UTraceComponent::BeginPlay()
 
 void UTraceComponent::TraceHit()
 {
-	bool bPlaySoundOnce = true;
+	bool bDoOnce = true;
 	
 	if (MeleeWeapon == nullptr) return;
 
@@ -53,21 +56,42 @@ void UTraceComponent::TraceHit()
 		TSubclassOf<class UDamageType> DamageTypeClass;
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
 		{
-			UGameplayStatics::ApplyDamage(Enemy, Damage,
+			ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(Enemy);
+			if (Zombie)
+			{
+				const AAIController* AIController = Cast<AAIController>(Zombie->Controller);
+				if (IsValid(AIController) && AIController->GetBlackboardComponent()->GetValueAsObject(FName("Player")) == nullptr)
+				{
+				
+					UGameplayStatics::ApplyDamage(Enemy, Enemy->Health + 1000.f,
+						nullptr, WeaponOwner, DamageTypeClass);
+				}
+			}
+			else
+			{
+				UGameplayStatics::ApplyDamage(Enemy, Damage,
 				nullptr,WeaponOwner, DamageTypeClass);
-			
-			UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
-			Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
+			}
 
+			if (Cast<ASurvZombiCharacter>(Enemy))
+			{
+				UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
+				Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
+			}
+			
 			if (Cast<ICombatInterface>(Enemy))
 			{
 				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.BoneName);
 			}
 			
-			if (bPlaySoundOnce)
+			if (bDoOnce)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
-				bPlaySoundOnce = false;
+				if (Zombie->GetMesh()->IsSimulatingPhysics() == true)
+				{
+					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
+				}
+				bDoOnce = false;
 			}
 			
 			UGameplayStatics::SpawnDecalAttached (

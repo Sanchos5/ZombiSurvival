@@ -33,6 +33,7 @@ void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
 	{
 		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Damaged"), true);
 	}
+	
 	Super::GetHit_Implementation(BoneName);
 }
 
