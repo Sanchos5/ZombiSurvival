@@ -75,7 +75,7 @@ struct FQuestInteract : public FTableRowBase
 	FText Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AInventoryItem> Objects;
+	TSubclassOf<AActor> Objects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCompleted = false;
