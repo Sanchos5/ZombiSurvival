@@ -45,6 +45,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FQuest QuestData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemType> ItemType = EI_HealthMedicines;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString QuestID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCompleted = false;
+
 protected:
 
 	// Called when the game starts
