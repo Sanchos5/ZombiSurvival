@@ -23,7 +23,6 @@ ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectI
 
 	MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
-
 }
 
 void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)

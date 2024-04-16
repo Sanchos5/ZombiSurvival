@@ -4,6 +4,7 @@
 #include "Components/TraceComponent.h"
 
 #include "AIController.h"
+#include "GameplayLibrary.h"
 #include "AI/SurvZombiCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -54,8 +55,11 @@ void UTraceComponent::TraceHit()
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
 		TSubclassOf<class UDamageType> DamageTypeClass;
-		if (Enemy && !ActorsToIgnore.Contains(Enemy))
+
+		UE_LOG(LogTemp, Warning, TEXT("An Actor's name is %s"), *Enemy->GetName());
+		if (IsValid(Enemy) && !ActorsToIgnore.Contains(Enemy) && UGameplayLibrary::IsNotFriend(Enemy, WeaponOwner))
 		{
+			UE_LOG(LogTemp, Error, TEXT("An Actor's name is %s"), *Enemy->GetName());
 			ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(Enemy);
 			if (Zombie)
 			{
@@ -87,10 +91,10 @@ void UTraceComponent::TraceHit()
 			if (bDoOnce)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
-				if (Zombie->GetMesh()->IsSimulatingPhysics() == true)
+				/*if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Zombie)
 				{
 					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
-				}
+				}*/
 				bDoOnce = false;
 			}
 			
