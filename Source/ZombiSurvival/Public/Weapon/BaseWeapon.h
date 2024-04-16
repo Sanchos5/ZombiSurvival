@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float Damage;
 
-	UPROPERTY()
-	AActor* WeaponOwner;
+	UPROPERTY (EditDefaultsOnly, Category = "Weapon Mechanics")
+	float DamageHead;
+	
+	UPROPERTY (EditDefaultsOnly, Category = "Weapon Mechanics")
+	float DamageLimbs;
 };

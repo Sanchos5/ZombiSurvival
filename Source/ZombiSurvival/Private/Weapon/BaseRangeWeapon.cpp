@@ -131,14 +131,26 @@ void ABaseRangeWeapon::ShotLineTrace()
 			
 			if(HitResult.BoneName == TEXT("head"))
 			{
-				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
-					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageHead - 2.f, DamageHead + 2.f);
+			}
+			else if(HitResult.BoneName == TEXT ("spine_01")
+				|| HitResult.BoneName == TEXT ("spine_02")
+				|| HitResult.BoneName == TEXT ("spine_03")
+				|| HitResult.BoneName == TEXT ("neck_01")
+				|| HitResult.BoneName == TEXT ("pelvis")
+				|| HitResult.BoneName == TEXT ("clavicle_l")
+				|| HitResult.BoneName == TEXT ("clavicle_r"))
+			{
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (Damage - 2.f, Damage + 2.f);
 			}
 			else
 			{
-				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
-					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs - 2.f, DamageLimbs + 2.f);
 			}
+
+
+			UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
+				SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 
 			if (Cast<ICombatInterface>(Zombie))
 			{
@@ -157,7 +169,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			}
 
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-			//����� �� ���� �� �����
+		
 			
 			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
 				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
@@ -165,7 +177,6 @@ void ABaseRangeWeapon::ShotLineTrace()
 		}
 		else
 		{
-			//����� �� ���� �� ����������
 			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
@@ -196,7 +207,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	//������ ����� �� �����
+
 	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }

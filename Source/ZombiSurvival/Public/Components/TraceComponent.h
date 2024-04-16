@@ -42,9 +42,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TraceComponent")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	USoundBase* HitSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float WeaponImpulse;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float Damage;
 
-	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
-	USoundBase* HitSound;	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	UMaterialInstance* DecalBloodPawn;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	UMaterialInstance* DecalMetal;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	FVector ScaleDecalBloodPawn;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	FVector ScaleDecalMetal;
 };

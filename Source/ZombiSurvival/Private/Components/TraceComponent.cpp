@@ -3,6 +3,7 @@
 
 #include "Components/TraceComponent.h"
 
+#include "Kismet/KismetMathLibrary.h"
 #include "Perception/AISense_Damage.h"
 
 
@@ -30,8 +31,15 @@ void UTraceComponent::TraceHit()
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 	Objects.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	Objects.Add (UEngineTypes::ConvertToObjectType (ECC_WorldStatic));
 	
 	ASurvivalBaseCharacter* WeaponOwner = Cast<ASurvivalBaseCharacter>(MeleeWeapon->Owner);
+
+	if (WeaponOwner == nullptr) return;
+
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	WeaponOwner->GetActorEyesViewPoint (EyeLocation, EyeRotation);
 	
 	ActorsToIgnore.Add(WeaponOwner);
 	TArray<FHitResult> SphereHitResults;
@@ -45,7 +53,9 @@ void UTraceComponent::TraceHit()
 		TSubclassOf<class UDamageType> DamageTypeClass;
 		if (Enemy && !ActorsToIgnore.Contains(Enemy))
 		{
-			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
+			UGameplayStatics::ApplyDamage(Enemy, Damage,
+				nullptr,WeaponOwner, DamageTypeClass);
+			
 			UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
 			Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
 
@@ -57,8 +67,18 @@ void UTraceComponent::TraceHit()
 			if (bPlaySoundOnce)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
+				bPlaySoundOnce = false;
 			}
+			
+			UGameplayStatics::SpawnDecalAttached (
+			DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
+			HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+
 			ActorsToIgnore.Add(Enemy);
+		}
+		else
+		{
+			UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }
