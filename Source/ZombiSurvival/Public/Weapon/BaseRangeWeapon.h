@@ -47,6 +47,7 @@ protected:
 	void WeaponRecoil();
 	void BackCameraPosition();
 	void ClearTimer();
+	float CalculateDamage(AActor* TargetActor, float Damage);
 
 	UPROPERTY()
 	bool bImpulse;
@@ -92,6 +93,21 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float MaxRangeNoise = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxDamageDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MinDamageDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxRange;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MinDamageDivider;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxToMinDamageDivider;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	UAnimMontage* CharacterRecoilMontage;

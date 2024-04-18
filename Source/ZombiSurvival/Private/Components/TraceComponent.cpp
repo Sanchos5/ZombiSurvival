@@ -66,7 +66,6 @@ void UTraceComponent::TraceHit()
 				const AAIController* AIController = Cast<AAIController>(Zombie->Controller);
 				if (IsValid(AIController) && AIController->GetBlackboardComponent()->GetValueAsObject(FName("Player")) == nullptr)
 				{
-				
 					UGameplayStatics::ApplyDamage(Enemy, Enemy->Health + 1000.f,
 						nullptr, WeaponOwner, DamageTypeClass);
 				}

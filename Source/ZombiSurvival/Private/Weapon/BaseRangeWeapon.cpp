@@ -119,10 +119,11 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, DrawDebugTrace, HitResult, true);
-	
+
 	
 	if (bHit)
-	{			
+	{
+		
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
 		if (Zombie)
 		{
@@ -148,36 +149,36 @@ void ABaseRangeWeapon::ShotLineTrace()
 				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs - 2.f, DamageLimbs + 2.f);
 			}
 
+			DamagetoZombie = CalculateDamage(Zombie, DamagetoZombie);
 
 			UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
 				SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 
-			if (Cast<ICombatInterface>(Zombie))
+			if (DamagetoZombie > 0.f)
 			{
-				Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie,HitResult.BoneName);
+				if (Cast<ICombatInterface>(Zombie))
+				{
+					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie,HitResult.BoneName);
+				}
+				
+				// Report zombie that player damage him
+				UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
+					DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
+
+				if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
+				{
+					Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
+					bImpulse = false;
+				}
+				ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+				
+				UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (),
+					HitResult.BoneName,HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
 			}
-
-			// Report zombie that player damage him
-			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
-				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
-			
-
-			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
-			{
-				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
-				bImpulse = false;
-			}
-
-			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-		
-			
-			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
-				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
-				HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
 		}
 		else
 		{
-			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }
@@ -277,6 +278,32 @@ void ABaseRangeWeapon::BackCameraPosition()
 void ABaseRangeWeapon::ClearTimer()
 {
 	GetWorld()->GetTimerManager().ClearTimer(RecoilTimerHandle);
+}
+
+float ABaseRangeWeapon::CalculateDamage(AActor* TargetActor, float FinalDamage)
+{
+	// Calculate Damage based on distance
+	float DistanceToTarget = GetDistanceTo(TargetActor);
+	if (DistanceToTarget <= MaxDamageDistance)
+	{
+		FinalDamage *= 1.f;
+	}
+	else if (DistanceToTarget >= MaxRange)
+	{
+		FinalDamage = 0.f;
+	}
+	else if (DistanceToTarget > MinDamageDistance)
+	{
+		FinalDamage = FinalDamage / MinDamageDivider;
+	}
+	else
+	{
+		FinalDamage = FinalDamage - ((DistanceToTarget - FinalDamage) / MaxToMinDamageDivider);
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("%f"), DistanceToTarget)
+	UE_LOG(LogTemp, Warning, TEXT("%f"), FinalDamage)
+	return FinalDamage;
 }
 
 
