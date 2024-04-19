@@ -59,16 +59,18 @@ void ABaseRangeWeapon::Fire()
 		DispenserMagazine -= 1.;		
 		Shot();
 	}
-	else
+	else if (PatronsInInventory > 0.f)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), EmptyMagazineSound);
 		ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(Owner);
 		if (Player)
 		{
 			Player->PlayReloadMontage();
 		}
 	}
-	
+	else
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), EmptyMagazineSound);
+	}
 }
 
 void ABaseRangeWeapon::GetPlayerInterface()

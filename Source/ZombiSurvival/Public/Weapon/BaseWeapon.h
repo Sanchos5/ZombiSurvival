@@ -15,6 +15,7 @@ public:
 	ABaseWeapon();
 
 	virtual void Attack();
+	float GetDamage() { return Damage; }
 
 protected:
 	virtual void BeginPlay() override;

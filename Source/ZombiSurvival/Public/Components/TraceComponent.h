@@ -49,9 +49,6 @@ protected:
 	float WeaponImpulse;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
-	float Damage;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	UMaterialInstance* DecalBloodPawn;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")

@@ -68,16 +68,15 @@ void UTraceComponent::TraceHit()
 						nullptr, WeaponOwner, DamageTypeClass);
 				}
 			}
-			else
-			{
-				UGameplayStatics::ApplyDamage(Enemy, Damage,
-				nullptr,WeaponOwner, DamageTypeClass);
-			}
+			
+			UGameplayStatics::ApplyDamage(Enemy, MeleeWeapon->GetDamage(),
+			nullptr,WeaponOwner, DamageTypeClass);
+			
 
 			if (Zombie)
 			{
 				UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
-				Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
+				MeleeWeapon->GetDamage(), WeaponOwner->GetActorLocation(), HitResult.Location);
 			}
 			
 			if (Cast<ICombatInterface>(Enemy))
