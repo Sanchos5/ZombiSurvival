@@ -154,6 +154,8 @@ void ABaseRangeWeapon::ShotLineTrace()
 			UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
 				SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 
+			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+
 			if (DamagetoZombie > 0.f)
 			{
 				if (Cast<ICombatInterface>(Zombie))
@@ -170,7 +172,6 @@ void ABaseRangeWeapon::ShotLineTrace()
 					Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
 					bImpulse = false;
 				}
-				ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
 				
 				UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (),
 					HitResult.BoneName,HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
@@ -193,7 +194,6 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 	{
 		SurvivalCharacter->GetActorEyesViewPoint (EyeLocation, EyeRotation);
 	}
-	
 
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector () * AimAssistDistance/10);
 	
@@ -300,9 +300,7 @@ float ABaseRangeWeapon::CalculateDamage(AActor* TargetActor, float FinalDamage)
 	{
 		FinalDamage = FinalDamage - ((DistanceToTarget - FinalDamage) / MaxToMinDamageDivider);
 	}
-
-	UE_LOG(LogTemp, Error, TEXT("%f"), DistanceToTarget)
-	UE_LOG(LogTemp, Warning, TEXT("%f"), FinalDamage)
+	
 	return FinalDamage;
 }
 

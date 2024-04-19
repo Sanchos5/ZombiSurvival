@@ -55,11 +55,9 @@ void UTraceComponent::TraceHit()
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
 		TSubclassOf<class UDamageType> DamageTypeClass;
-
-		UE_LOG(LogTemp, Warning, TEXT("An Actor's name is %s"), *Enemy->GetName());
+		
 		if (IsValid(Enemy) && !ActorsToIgnore.Contains(Enemy) && UGameplayLibrary::IsNotFriend(Enemy, WeaponOwner))
 		{
-			UE_LOG(LogTemp, Error, TEXT("An Actor's name is %s"), *Enemy->GetName());
 			ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(Enemy);
 			if (Zombie)
 			{
