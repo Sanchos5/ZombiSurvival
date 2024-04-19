@@ -25,17 +25,6 @@ ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectI
 	MeshComponent->SetupAttachment(GetRootComponent());
 }
 
-void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
-{
-	const auto AIController = Cast<AAIController>(Controller);
-	if (AIController && AIController->BrainComponent)
-	{
-		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Damaged"), true);
-	}
-	
-	Super::GetHit_Implementation(BoneName);
-}
-
 void ASurvZombiCharacter::CreateLeftWeapon()
 {
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(TEXT("LeftWeaponSocket"));
@@ -48,6 +37,43 @@ void ASurvZombiCharacter::CreateLeftWeapon()
 			LeftMeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
 		}
 	}
+}
+
+void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
+{
+	const auto AIController = Cast<AAIController>(Controller);
+	if (!IsValid(GetHitAnim) || AIController->GetBlackboardComponent()->GetValueAsBool(FName("Damaged"))) return;
+
+	
+	if (AIController && AIController->BrainComponent)
+	{
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Damaged"), true);
+	}
+	
+	FName StartSection = FName("Default");
+
+	if (BoneName == FName("head"))
+	{
+		StartSection = FName("HeadReact");
+	}
+	else if (BoneName == FName("hand_l") || BoneName == FName("lowerarm_l") || BoneName == FName("upperarm_l"))
+	{
+		StartSection = FName("LeftArmReact");
+	}
+	else if (BoneName == FName("hand_r") || BoneName == FName("lowerarm_r") || BoneName == FName("upperarm_r"))
+	{
+		StartSection = FName("RightArmReact");
+	}
+	else if (BoneName == FName("thigh_l") || BoneName == FName("calf_l") || BoneName == FName("foot_l"))
+	{
+		StartSection = FName("LeftLegReact");
+	}
+	else if (BoneName == FName("thigh_r") || BoneName == FName("calf_r") || BoneName == FName("foot_r"))
+	{
+		StartSection = FName("RightLegReact");
+	}
+	
+	PlayAnimMontage(GetHitAnim, 1, StartSection);
 }
 
 void ASurvZombiCharacter::CreateRightWeapon()

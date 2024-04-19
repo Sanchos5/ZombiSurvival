@@ -74,7 +74,7 @@ void UTraceComponent::TraceHit()
 				nullptr,WeaponOwner, DamageTypeClass);
 			}
 
-			if (Cast<ASurvZombiCharacter>(Enemy))
+			if (Zombie)
 			{
 				UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
 				Damage, WeaponOwner->GetActorLocation(), HitResult.Location);
