@@ -45,7 +45,7 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 	// Combat Interface
-	virtual void GetHit_Implementation(FName BoneName) override;
+	virtual void GetHit_Implementation(FName PhysicalMaterialName) override;
 	// End Combat Interface
 
 protected:

@@ -9,6 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Perception/AISense_Damage.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 
 UTraceComponent::UTraceComponent()
@@ -81,7 +82,7 @@ void UTraceComponent::TraceHit()
 			
 			if (Cast<ICombatInterface>(Enemy))
 			{
-				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.BoneName);
+				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.PhysMaterial->GetFName());
 			}
 			
 			if (bDoOnce)

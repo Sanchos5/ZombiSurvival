@@ -39,7 +39,7 @@ void ASurvZombiCharacter::CreateLeftWeapon()
 	}
 }
 
-void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
+void ASurvZombiCharacter::GetHit_Implementation(FName PhysicalMaterialName)
 {
 	const auto AIController = Cast<AAIController>(Controller);
 	if (!IsValid(GetHitAnim) || AIController->GetBlackboardComponent()->GetValueAsBool(FName("Damaged"))) return;
@@ -52,23 +52,23 @@ void ASurvZombiCharacter::GetHit_Implementation(FName BoneName)
 	
 	FName StartSection = FName("Default");
 
-	if (BoneName == FName("head"))
+	if (PhysicalMaterialName == FName("PM_Head"))
 	{
 		StartSection = FName("HeadReact");
 	}
-	else if (BoneName == FName("hand_l") || BoneName == FName("lowerarm_l") || BoneName == FName("upperarm_l"))
+	else if (PhysicalMaterialName == FName("PM_LeftArm"))
 	{
 		StartSection = FName("LeftArmReact");
 	}
-	else if (BoneName == FName("hand_r") || BoneName == FName("lowerarm_r") || BoneName == FName("upperarm_r"))
+	else if (PhysicalMaterialName == FName("PM_RightArm"))
 	{
 		StartSection = FName("RightArmReact");
 	}
-	else if (BoneName == FName("thigh_l") || BoneName == FName("calf_l") || BoneName == FName("foot_l"))
+	else if (PhysicalMaterialName == FName("PM_LeftLeg"))
 	{
 		StartSection = FName("LeftLegReact");
 	}
-	else if (BoneName == FName("thigh_r") || BoneName == FName("calf_r") || BoneName == FName("foot_r"))
+	else if (PhysicalMaterialName == FName("PM_RightLeg"))
 	{
 		StartSection = FName("RightLegReact");
 	}

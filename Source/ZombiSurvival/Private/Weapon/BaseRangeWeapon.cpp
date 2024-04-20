@@ -9,10 +9,10 @@
 #include "UI/HUDSurvival.h"
 #include "Widget/PlayerInterface.h"
 #include "NiagaraFunctionLibrary.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DecalActor.h"
 #include "Components/DecalComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 ABaseRangeWeapon::ABaseRangeWeapon()
 {
@@ -162,7 +162,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				if (Cast<ICombatInterface>(Zombie))
 				{
-					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie,HitResult.BoneName);
+					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie, HitResult.PhysMaterial->GetFName());
 				}
 				
 				// Report zombie that player damage him
