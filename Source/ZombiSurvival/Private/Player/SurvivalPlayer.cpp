@@ -144,6 +144,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Jump);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Completed, this, &ASurvivalPlayer::Input_StopJumping);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartSprinting);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_TriggerSprinting);
@@ -261,6 +262,11 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 		PlayerStats->DecrementStamina(StaminaValue);
 		Jump();
 	}
+}
+
+void ASurvivalPlayer::Input_StopJumping(const FInputActionValue& InputActionValue)
+{
+	PlayerStats->SprintingTimer(false);
 }
 
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)

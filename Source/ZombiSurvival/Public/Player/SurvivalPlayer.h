@@ -65,6 +65,7 @@ public:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
+	void Input_StopJumping(const FInputActionValue& InputActionValue);
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
 	void Input_TriggerSprinting(const FInputActionValue& InputActionValue);
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
