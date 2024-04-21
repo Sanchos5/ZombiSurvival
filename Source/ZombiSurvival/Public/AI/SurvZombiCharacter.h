@@ -22,6 +22,8 @@ class ZOMBISURVIVAL_API ASurvZombiCharacter : public ASurvivalBaseCharacter
 public:
 	// Sets default values for this character's properties
 	ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer);
+
+	virtual void GetHit_Implementation(FName PhysicalMaterialName) override;
 	
 
 protected:

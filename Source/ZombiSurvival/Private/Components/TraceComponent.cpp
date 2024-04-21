@@ -3,6 +3,14 @@
 
 #include "Components/TraceComponent.h"
 
+#include "AIController.h"
+#include "GameplayLibrary.h"
+#include "AI/SurvZombiCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Perception/AISense_Damage.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+
 
 UTraceComponent::UTraceComponent()
 {
@@ -19,7 +27,7 @@ void UTraceComponent::BeginPlay()
 
 void UTraceComponent::TraceHit()
 {
-	bool bPlaySoundOnce = true;
+	bool bDoOnce = true;
 	
 	if (MeleeWeapon == nullptr) return;
 
@@ -28,8 +36,15 @@ void UTraceComponent::TraceHit()
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 	Objects.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	Objects.Add (UEngineTypes::ConvertToObjectType (ECC_WorldStatic));
 	
 	ASurvivalBaseCharacter* WeaponOwner = Cast<ASurvivalBaseCharacter>(MeleeWeapon->Owner);
+
+	if (WeaponOwner == nullptr) return;
+
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	WeaponOwner->GetActorEyesViewPoint (EyeLocation, EyeRotation);
 	
 	ActorsToIgnore.Add(WeaponOwner);
 	TArray<FHitResult> SphereHitResults;
@@ -41,14 +56,54 @@ void UTraceComponent::TraceHit()
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
 		TSubclassOf<class UDamageType> DamageTypeClass;
-		if (Enemy && !ActorsToIgnore.Contains(Enemy))
+		
+		if (IsValid(Enemy) && !ActorsToIgnore.Contains(Enemy) && UGameplayLibrary::IsNotFriend(Enemy, WeaponOwner))
 		{
-			UGameplayStatics::ApplyDamage(Enemy, Damage,nullptr,WeaponOwner, DamageTypeClass);
-			if (bPlaySoundOnce)
+			ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(Enemy);
+			if (Zombie)
+			{
+				const AAIController* AIController = Cast<AAIController>(Zombie->Controller);
+				if (IsValid(AIController) && AIController->GetBlackboardComponent()->GetValueAsObject(FName("Player")) == nullptr)
+				{
+					UGameplayStatics::ApplyDamage(Enemy, Enemy->Health + 1000.f,
+						nullptr, WeaponOwner, DamageTypeClass);
+				}
+			}
+			
+			UGameplayStatics::ApplyDamage(Enemy, MeleeWeapon->GetDamage(),
+			nullptr,WeaponOwner, DamageTypeClass);
+			
+
+			if (Zombie)
+			{
+				UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
+				MeleeWeapon->GetDamage(), WeaponOwner->GetActorLocation(), HitResult.Location);
+			}
+			
+			if (Cast<ICombatInterface>(Enemy))
+			{
+				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.PhysMaterial->GetFName());
+			}
+			
+			if (bDoOnce)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
+				/*if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Zombie)
+				{
+					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
+				}*/
+				bDoOnce = false;
 			}
+			
+			UGameplayStatics::SpawnDecalAttached (
+			DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
+			HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+
 			ActorsToIgnore.Add(Enemy);
+		}
+		else
+		{
+			UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }

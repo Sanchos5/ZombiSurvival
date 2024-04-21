@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveSystem/BaseGameInstance.h"
 #include "SurvivalBaseCharacter.generated.h"
@@ -13,7 +14,7 @@ class USoundBase;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangeDelegate, float, Health, float, MaxHealth);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class ZOMBISURVIVAL_API ASurvivalBaseCharacter : public ACharacter
+class ZOMBISURVIVAL_API ASurvivalBaseCharacter : public ACharacter, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -43,6 +44,10 @@ public:
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
+	// Combat Interface
+	virtual void GetHit_Implementation(FName PhysicalMaterialName) override;
+	// End Combat Interface
+
 protected:
 	UFUNCTION(BlueprintCallable)
 	void AddHealth(float Heal);
@@ -51,4 +56,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	USoundBase* SoundDeath;
+
+	UPROPERTY(EditDefaultsOnly, Category="GetHit")
+	UAnimMontage* GetHitAnim;
 };
