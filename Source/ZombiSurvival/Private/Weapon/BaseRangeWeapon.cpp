@@ -300,7 +300,7 @@ float ABaseRangeWeapon::CalculateDamage(AActor* TargetActor, float FinalDamage)
 	}
 	else
 	{
-		FinalDamage = FinalDamage - ((DistanceToTarget - FinalDamage) / MaxToMinDamageDivider);
+		FinalDamage = FinalDamage * (1-((DistanceToTarget-MaxDamageDistance)/MinDamageDistance));
 	}
 	
 	return FinalDamage;
