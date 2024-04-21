@@ -28,6 +28,10 @@ class ZOMBISURVIVAL_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	static UInventoryComponent* FindInventoryComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UInventoryComponent>() : nullptr); }
+
 	UInventoryComponent();
 	void SetSizeForInventory();
 

@@ -2,6 +2,10 @@
 
 
 #include "AI/SurvZombiCharacter.h"
+
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TraceComponent.h"
@@ -19,7 +23,6 @@ ASurvZombiCharacter::ASurvZombiCharacter(const class FObjectInitializer& ObjectI
 
 	MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
-
 }
 
 void ASurvZombiCharacter::CreateLeftWeapon()
@@ -34,6 +37,43 @@ void ASurvZombiCharacter::CreateLeftWeapon()
 			LeftMeleeWeaponref->GetTraceComponent()->MeleeWeapon->SetOwner(this);
 		}
 	}
+}
+
+void ASurvZombiCharacter::GetHit_Implementation(FName PhysicalMaterialName)
+{
+	const auto AIController = Cast<AAIController>(Controller);
+	if (!IsValid(GetHitAnim) || AIController->GetBlackboardComponent()->GetValueAsBool(FName("Damaged"))) return;
+
+	
+	if (AIController && AIController->BrainComponent)
+	{
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Damaged"), true);
+	}
+	
+	FName StartSection = FName("Default");
+
+	if (PhysicalMaterialName == FName("PM_Head"))
+	{
+		StartSection = FName("HeadReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_LeftArm"))
+	{
+		StartSection = FName("LeftArmReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_RightArm"))
+	{
+		StartSection = FName("RightArmReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_LeftLeg"))
+	{
+		StartSection = FName("LeftLegReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_RightLeg"))
+	{
+		StartSection = FName("RightLegReact");
+	}
+	
+	PlayAnimMontage(GetHitAnim, 1, StartSection);
 }
 
 void ASurvZombiCharacter::CreateRightWeapon()
@@ -83,6 +123,12 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	if (GameInstance)
 	{
 		GameInstance->AddDestroyedActor(this);
+	}
+
+	const auto AIController = Cast<AAIController>(Controller);
+	if (AIController && AIController->BrainComponent)
+	{
+		AIController->BrainComponent->Cleanup();
 	}
 }
 

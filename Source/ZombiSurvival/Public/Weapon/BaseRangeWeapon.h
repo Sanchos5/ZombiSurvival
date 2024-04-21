@@ -47,6 +47,7 @@ protected:
 	void WeaponRecoil();
 	void BackCameraPosition();
 	void ClearTimer();
+	float CalculateDamage(AActor* TargetActor, float Damage);
 
 	UPROPERTY()
 	bool bImpulse;
@@ -81,6 +82,33 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	float RecoilRange;
 
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float BackPositionFrequency = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float DeltaPitchDivider = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float RecoilTimeClear = 0.0f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	float MaxRangeNoise = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxDamageDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MinDamageDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxRange;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MinDamageDivider;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|DamageCalculation")
+	float MaxToMinDamageDivider;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	UAnimMontage* CharacterRecoilMontage;
 	
@@ -90,8 +118,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USceneComponent* Start;
 
-	UPROPERTY(EditDefaultsOnly)
-	float MaxRangeNoise = 0.0f;
+
 
 	//������ �� ������
 	UPROPERTY (EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Mechanics")
@@ -113,7 +140,10 @@ protected:
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 private:
-	FRotator PlayerControlRotation;
+	float OldControlPitch;
+	float NewControlPitch;
+
+	bool DoOnce = true;
 
 	FTimerHandle RecoilTimerHandle;
 	FTimerHandle ClearTimerHandle;

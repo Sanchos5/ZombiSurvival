@@ -9,10 +9,10 @@
 #include "UI/HUDSurvival.h"
 #include "Widget/PlayerInterface.h"
 #include "NiagaraFunctionLibrary.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DecalActor.h"
 #include "Components/DecalComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 ABaseRangeWeapon::ABaseRangeWeapon()
 {
@@ -56,19 +56,21 @@ void ABaseRangeWeapon::Fire()
 	bSpawnNS = true;
 	if (DispenserMagazine > 0.f)
 	{
-		DispenserMagazine -= 1.f;
+		DispenserMagazine -= 1.;		
 		Shot();
 	}
-	else
+	else if (PatronsInInventory > 0.f)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), EmptyMagazineSound);
 		ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(Owner);
 		if (Player)
 		{
 			Player->PlayReloadMontage();
 		}
 	}
-	
+	else
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), EmptyMagazineSound);
+	}
 }
 
 void ABaseRangeWeapon::GetPlayerInterface()
@@ -119,13 +121,11 @@ void ABaseRangeWeapon::ShotLineTrace()
 	
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, DrawDebugTrace, HitResult, true);
-	
+
 	
 	if (bHit)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Actor: %s"), *HitResult.GetActor()->GetName())
-
-			
+		
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
 		if (Zombie)
 		{
@@ -134,37 +134,54 @@ void ABaseRangeWeapon::ShotLineTrace()
 			
 			if(HitResult.BoneName == TEXT("head"))
 			{
-				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie * 3.f,
-					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageHead - 2.f, DamageHead + 2.f);
+			}
+			else if(HitResult.BoneName == TEXT ("spine_01")
+				|| HitResult.BoneName == TEXT ("spine_02")
+				|| HitResult.BoneName == TEXT ("spine_03")
+				|| HitResult.BoneName == TEXT ("neck_01")
+				|| HitResult.BoneName == TEXT ("pelvis")
+				|| HitResult.BoneName == TEXT ("clavicle_l")
+				|| HitResult.BoneName == TEXT ("clavicle_r"))
+			{
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (Damage - 2.f, Damage + 2.f);
 			}
 			else
 			{
-				UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
-					SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs - 2.f, DamageLimbs + 2.f);
 			}
 
-			// Report zombie that player damage him
-			UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
-				DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
-			
+			DamagetoZombie = CalculateDamage(Zombie, DamagetoZombie);
 
-			if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
-			{
-				Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
-				bImpulse = false;
-			}
+			UGameplayStatics::ApplyDamage(Zombie, DamagetoZombie,
+				SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
-			//����� �� ���� �� �����
-			
-			UDecalComponent* Decal_Blood_Pawn = UGameplayStatics::SpawnDecalAttached (
-				DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
-				HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+
+			if (DamagetoZombie > 0.f)
+			{
+				if (Cast<ICombatInterface>(Zombie))
+				{
+					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie, HitResult.PhysMaterial->GetFName());
+				}
+				
+				// Report zombie that player damage him
+				UAISense_Damage::ReportDamageEvent(GetWorld(), Zombie, SurvivalCharacter,
+					DamagetoZombie, SurvivalCharacter->GetActorLocation(), HitResult.Location);
+
+				if (Zombie->GetMesh()->IsSimulatingPhysics() == true && bImpulse == true)
+				{
+					Zombie->GetMesh()->AddImpulseAtLocation(-HitResult.ImpactNormal * Impulse, HitResult.Location);
+					bImpulse = false;
+				}
+				
+				UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (),
+					HitResult.BoneName,HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+			}
 		}
 		else
 		{
-			//����� �� ���� �� ����������
-			UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }
@@ -179,7 +196,6 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 	{
 		SurvivalCharacter->GetActorEyesViewPoint (EyeLocation, EyeRotation);
 	}
-	
 
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector () * AimAssistDistance/10);
 	
@@ -194,7 +210,7 @@ void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float Sp
 
 	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects (GetWorld (), EyeLocation, TraceEnd + FVector (SpreadX, SpreadY, SpreadZ)/10, ObjectTypes, true,
 		ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-	//������ ����� �� �����
+
 	UDecalComponent* MyDecal = UGameplayStatics::SpawnDecalAtLocation (GetWorld(), DecalBlood, ScaleDecalBloodStatic, HitResult.Location, EyeRotation);
 
 }
@@ -233,33 +249,61 @@ void ABaseRangeWeapon::ShotLineTraceVFX()
 
 void ABaseRangeWeapon::WeaponRecoil()
 {
+	DoOnce = true;
 	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
 	if (IsValid(Player) && IsValid(CharacterRecoilMontage))
 	{
+		OldControlPitch = UKismetMathLibrary::NormalizeAxis(Player->GetControlRotation().Pitch);
+		Player->AddControllerPitchInput(FMath::RandRange(-RecoilRange/2.f, -RecoilRange));
 		Player->PlayAnimMontage(CharacterRecoilMontage);
-		PlayerControlRotation = Player->GetControlRotation();
-		Player->AddControllerPitchInput(FMath::RandRange(-3.f, -RecoilRange));
-		Player->AddControllerYawInput(FMath::RandRange(-RecoilRange, -RecoilRange/2.5f));
-		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, 0.01f, true);
-		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, 0.25f, false);
-		Player->bRecoil = true;
+		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, BackPositionFrequency, true);
+		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, RecoilTimeClear, false);
 	}
 }
 
 void ABaseRangeWeapon::BackCameraPosition()
 {
+	
 	ASurvivalPlayer* Player = Cast<ASurvivalPlayer>(GetOwner());
 	if (IsValid(Player))
 	{
-		Player->GetController()->SetControlRotation(UKismetMathLibrary::RLerp(Player->GetController()->GetControlRotation(),
-			PlayerControlRotation, 0.2, true));
+		if (DoOnce)
+		{
+			NewControlPitch = UKismetMathLibrary::NormalizeAxis(Player->GetControlRotation().Pitch);
+			DoOnce = false;
+		}
+		float DeltaPitch = OldControlPitch - NewControlPitch;
+		Player->AddControllerPitchInput(-DeltaPitch/DeltaPitchDivider);
 	}
 }
 
 void ABaseRangeWeapon::ClearTimer()
 {
 	GetWorld()->GetTimerManager().ClearTimer(RecoilTimerHandle);
-	Cast<ASurvivalPlayer>(GetOwner())->bRecoil = false;
+}
+
+float ABaseRangeWeapon::CalculateDamage(AActor* TargetActor, float FinalDamage)
+{
+	// Calculate Damage based on distance
+	float DistanceToTarget = GetDistanceTo(TargetActor);
+	if (DistanceToTarget <= MaxDamageDistance)
+	{
+		FinalDamage *= 1.f;
+	}
+	else if (DistanceToTarget >= MaxRange)
+	{
+		FinalDamage = 0.f;
+	}
+	else if (DistanceToTarget > MinDamageDistance)
+	{
+		FinalDamage = FinalDamage / MinDamageDivider;
+	}
+	else
+	{
+		FinalDamage = FinalDamage * (1-((DistanceToTarget-MaxDamageDistance)/MinDamageDistance));
+	}
+	
+	return FinalDamage;
 }
 
 

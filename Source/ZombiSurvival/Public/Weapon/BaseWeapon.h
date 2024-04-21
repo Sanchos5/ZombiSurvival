@@ -15,6 +15,7 @@ public:
 	ABaseWeapon();
 
 	virtual void Attack();
+	float GetDamage() { return Damage; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -22,6 +23,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float Damage;
 
-	UPROPERTY()
-	AActor* WeaponOwner;
+	UPROPERTY (EditDefaultsOnly, Category = "Weapon Mechanics")
+	float DamageHead;
+	
+	UPROPERTY (EditDefaultsOnly, Category = "Weapon Mechanics")
+	float DamageLimbs;
 };

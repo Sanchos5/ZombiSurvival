@@ -30,20 +30,51 @@ float ASurvivalBaseCharacter::GetHealth() const
 
 float ASurvivalBaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
+	if (bIsDying == true) return 0.f;
+	
 	if(Damage > 0.f)
 	{
 		Health -= Damage;
 
-		if (Health <= 0.f && bIsDying != true)
+		if (Health <= 0.f)
 		{
 			Health = 0.0f;
-			bIsDying = true;
 			OnDeath(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : NULL, DamageCauser);
 		}
 
 		OnHealthChange.Broadcast(Health, MaxHealth);
 	}
 	return Damage;
+}
+
+void ASurvivalBaseCharacter::GetHit_Implementation(FName PhysicalMaterialName)
+{
+	if (!IsValid(GetHitAnim) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(GetHitAnim)) return;
+	
+	FName StartSection = FName("Default");
+
+	if (PhysicalMaterialName == FName("PM_Head"))
+	{
+		StartSection = FName("HeadReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_LeftArm"))
+	{
+		StartSection = FName("LeftArmReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_RightArm"))
+	{
+		StartSection = FName("RightArmReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_LeftLeg"))
+	{
+		StartSection = FName("LeftLegReact");
+	}
+	else if (PhysicalMaterialName == FName("PM_RightLeg"))
+	{
+		StartSection = FName("RightLegReact");
+	}
+	
+	PlayAnimMontage(GetHitAnim, 1, StartSection);
 }
 
 void ASurvivalBaseCharacter::AddHealth(float Heal)
@@ -54,12 +85,6 @@ void ASurvivalBaseCharacter::AddHealth(float Heal)
 
 void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
 {
-	/*if (bIsDying)
-	{
-		return;
-	}*/
-	bIsDying = true;
-
 	if(SoundDeath)
 	{
 		FVector SpawnLocation = GetActorLocation();
@@ -77,4 +102,5 @@ void ASurvivalBaseCharacter::OnDeath(float KillingDamage, FDamageEvent const& Da
 	Mesh1P->SetAllBodiesSimulatePhysics(true);
 
 	DisableInput(nullptr);
+	bIsDying = true;
 }

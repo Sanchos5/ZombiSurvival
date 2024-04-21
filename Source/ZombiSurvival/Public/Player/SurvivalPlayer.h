@@ -13,6 +13,7 @@
 #include "TimerManager.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "QuestionSystem/QuestComponent.h"
 #include "SurvivalPlayer.generated.h"
 
 class UBaseSaveGame;
@@ -64,6 +65,7 @@ public:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
+	void Input_StopJumping(const FInputActionValue& InputActionValue);
 	void Input_StartSprinting(const FInputActionValue& InputActionValue);
 	void Input_TriggerSprinting(const FInputActionValue& InputActionValue);
 	void Input_StopSprinting(const FInputActionValue& InputActionValue);
@@ -128,15 +130,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void LoadPlayerStats(UBaseSaveGame* SaveObject);
 
-	//Recoil
-	bool bRecoil = false;
-
 protected:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
 
@@ -214,6 +215,9 @@ protected:
 	UPROPERTY()
 	class UUserWidget* PauseWidget;
 
+	UPROPERTY(EditAnywhere, Category = "Defaults | Widget")
+	TSubclassOf<UUserWidget> DeathWidgetClass;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* FPSCamera;
@@ -226,6 +230,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess = "true"))
 	UInteractionComponent* InteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Quest", meta = (AllowPrivateAccess = "true"))
+	class UQuestComponent* QuestComponent;
 
 	float StaminaValue = 0.2f;
 };

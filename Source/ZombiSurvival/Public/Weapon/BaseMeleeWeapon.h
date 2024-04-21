@@ -7,6 +7,7 @@
 #include "BaseMeleeWeapon.generated.h"
 
 class UTraceComponent;
+class UMaterialInstance;
 
 UCLASS()
 class ZOMBISURVIVAL_API ABaseMeleeWeapon : public ABaseWeapon
@@ -31,7 +32,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* End;
-
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess= "true"))
