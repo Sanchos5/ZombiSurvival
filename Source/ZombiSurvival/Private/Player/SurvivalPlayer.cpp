@@ -38,6 +38,8 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 
+	//QuestComponent = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComponent"));
+
 	AxeSocketName = TEXT("MeleeWeaponSocket");
 	CanAttack = true;
 	CanSwapWeapon = true;
@@ -105,6 +107,18 @@ void ASurvivalPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ASurvivalPlayer::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
+{
+	Super::OnDeath(KillingDamage, DamageEvent, PawnInstigator, DamageCauser);
+
+	if(DeathWidgetClass)
+	{
+		UUserWidget* DeathWidget;
+		DeathWidget = CreateWidget<UUserWidget>(GetWorld(), DeathWidgetClass);
+		DeathWidget->AddToViewport();
+	}
+}
+
 void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
@@ -129,6 +143,7 @@ void ASurvivalPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_Look);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_Jump);
+	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Completed, this, &ASurvivalPlayer::Input_StopJumping);
 
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Started, this, &ASurvivalPlayer::Input_StartSprinting);
 	SurvivalInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ASurvivalPlayer::Input_TriggerSprinting);
@@ -248,6 +263,11 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 	}
 }
 
+void ASurvivalPlayer::Input_StopJumping(const FInputActionValue& InputActionValue)
+{
+	PlayerStats->SprintingTimer(false);
+}
+
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
 {
 	if (PlayerStats->GetStamina() > 10.0f)
@@ -284,13 +304,21 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
 		{
 			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+			InventoryComponent->UpdateAllInventoryUI();
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			PlayerController->bShowMouseCursor = true;
 		}
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		InventoryComponent->UpdateAllInventoryUI();
-		InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->bShowMouseCursor = true;
+		else
+		{
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+			//InventoryComponent->UpdateAllInventoryUI();
+			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerController->bShowMouseCursor = false;
+		}
+		//UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+		//InventoryComponent->UpdateAllInventoryUI();
+		//InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		//PlayerController->bShowMouseCursor = true;
 	}	
 }
 
