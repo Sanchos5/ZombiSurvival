@@ -91,12 +91,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void EquipShotgun();
 
-	
-
 	/** Attack */
 	void Input_Attacking(const FInputActionValue& InputActionValue);
 	void MeleeAttacking();
 	void RangeAttacking(UAnimMontage* ReloadMontage, UAnimMontage* RecoilAnim);
+
+	/** Reload */
 	bool PlayReloadMontage();
 
 	/** Reload Weapon */
@@ -137,18 +137,24 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+	
+	void PistolStartReload();
+	void PistolCycleReload();
+
+	FTimerHandle StartReloadTimer;
+	FTimerHandle CycleReloadTimer;
 
 	UPROPERTY(EditDefaultsOnly, Category="Camera")
 	FName CameraSocketName;
 
 	// Weapon
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon|Axe")
 	TSubclassOf<ABaseWeapon> AxeWeaponClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon|Pistol")
 	TSubclassOf<ABaseWeapon> PistolWeaponClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon|Shotgun")
 	TSubclassOf<ABaseWeapon> ShotgunWeaponClass;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Weapon")
@@ -175,34 +181,43 @@ protected:
 	int ShotgunDispenserMagazine;
 	int PistolDispenserMagazine;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Axe")
 	FName AxeSocketName;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
 	FName PistolSocketName;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Shotgun")
 	FName ShotgunSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
+	FName CycleSocketName;
 
 	UPROPERTY(BlueprintReadWrite, Category="Weapon")
 	bool CanAttack;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Axe")
 	UAnimMontage* FirstAttack;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Axe")
 	UAnimMontage* SecondAttack;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Shotgun")
 	UAnimMontage* ReloadShotgun;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
-	UAnimMontage* ReloadPistol;
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
+	UAnimMontage* ReloadStartPistol;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
+	UAnimMontage* ReloadCyclePistol;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
+	UAnimMontage* ReloadEndPistol;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Shotgun")
 	UAnimMontage* RecoilShotgun;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
 	UAnimMontage* RecoilPistol;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")

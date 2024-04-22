@@ -427,12 +427,45 @@ bool ASurvivalPlayer::PlayReloadMontage()
 		PlayAnimMontage(ReloadShotgun);
 		return true;
 	}
-	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr  && !PlayerAnimInstance->Montage_IsPlaying(ReloadPistol))
+	if (ActiveWeapon == PISTOL)
 	{
-		PlayAnimMontage(ReloadPistol);
+		PistolStartReload();
 		return true;
 	}
 	return false;
+}
+
+void ASurvivalPlayer::PistolStartReload()
+{
+	UAnimInstance* PlayerAnimInstance = GetMesh()->GetAnimInstance();
+	
+	if (ReloadStartPistol == nullptr || ReloadCyclePistol == nullptr || ReloadEndPistol == nullptr || PlayerAnimInstance->Montage_IsPlaying(ReloadStartPistol)
+		|| PlayerAnimInstance->Montage_IsPlaying(ReloadCyclePistol) || PlayerAnimInstance->Montage_IsPlaying(ReloadEndPistol))
+	{
+		return;	
+	}
+	
+	float AnimLength = PlayAnimMontage(ReloadStartPistol);
+	GetWorld()->GetTimerManager().SetTimer(StartReloadTimer, this, &ASurvivalPlayer::PistolCycleReload, AnimLength, false);
+}
+
+void ASurvivalPlayer::PistolCycleReload()
+{
+	ABaseRangeWeapon* Pistol = Cast<ABaseRangeWeapon>(ActiveWeaponref);
+	if (IsValid(Pistol))
+	{
+		float DeltaNumPatrons = Pistol->MaxDispenserMagazine - Pistol->DispenserMagazine;
+		if (DeltaNumPatrons > 0.f)
+		{
+			float AnimLength = PlayAnimMontage(ReloadCyclePistol);
+			GetWorld()->GetTimerManager().SetTimer(CycleReloadTimer, this, &ASurvivalPlayer::PistolCycleReload, AnimLength, false);
+		}
+		if (DeltaNumPatrons <= 0.f)
+		{
+			PlayAnimMontage(ReloadEndPistol);
+		}
+	}
+	
 }
 
 void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)
