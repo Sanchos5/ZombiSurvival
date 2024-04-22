@@ -410,9 +410,7 @@ void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage, UAnimMontage* 
 
 bool ASurvivalPlayer::PlayReloadMontage()
 {
-	
-	if (ActiveWeaponref == nullptr || ActiveWeapon == AXE || ActiveWeapon == NONE ||
-		GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun)) return false;
+	if (ActiveWeaponref == nullptr || ActiveWeapon == AXE || ActiveWeapon == NONE) return false;
 	
 	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
 	
