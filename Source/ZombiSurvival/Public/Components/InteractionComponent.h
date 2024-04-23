@@ -30,14 +30,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float TraceDistance;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Trace")
-	float TraceRadius;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	TEnumAsByte<ECollisionChannel> CollisionChannel;
 
-	UPROPERTY(EditDefaultsOnly, Category="Debug")
+	UPROPERTY(EditDefaultsOnly, Category="Trace|Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")

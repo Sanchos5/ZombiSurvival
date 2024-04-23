@@ -2,14 +2,16 @@
 
 
 #include "Components/InteractionComponent.h"
+
+#include "GameFramework/Character.h"
 #include "Interface/InteractionInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Widget/InteractionWidget.h"
 
 UInteractionComponent::UInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	TraceRadius = 20.0f;
+	
 	TraceDistance = 150.0f;
 	CollisionChannel = ECC_WorldDynamic;
 }
@@ -26,19 +28,19 @@ void UInteractionComponent::PrimaryInteract()
 void UInteractionComponent::FindBestInteractable()
 {
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
-	//FCollisionObjectQueryParams ObjectQueryParams;
-	//ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
-
-	AActor* MyOwner = GetOwner();
 
 	FVector EyeLocation;
 	FRotator EyeRotation;
-	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f);
+	APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0.f);
+	if (!IsValid(PlayerCharacter) || !IsValid(PlayerCamera)) return;
+	
+	PlayerCamera->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
 	FVector End = EyeLocation + (EyeRotation.Vector() * TraceDistance);
 
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(MyOwner);
+	ActorsToIgnore.Add(PlayerCharacter);
 
 	FHitResult HitResult;
 
@@ -46,27 +48,29 @@ void UInteractionComponent::FindBestInteractable()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(CollisionChannel));
 	
 	
-	bool bBlockingHit =  UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
+	bool bBlock = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
 		ActorsToIgnore, DrawDebugTrace, HitResult, true);
 	
 
 	// Clear ref before trying to fill
 	FocusedActor = nullptr;
 
+	
 	AActor* HitActor = HitResult.GetActor();
+	
 	if (HitActor)
 	{
 		if (HitActor->Implements<UInteractionInterface>())
 		{
 			FocusedActor = HitActor;
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *FocusedActor.GetName())
 		}
 	}
+	
+	
 
 	if (FocusedActor)
 	{
 		InteractionWidget->InteractionActor = FocusedActor;
-		UE_LOG(LogTemp, Error, TEXT("%s"), *InteractionWidget->InteractionActor->GetName())
 		
 		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
 		{
