@@ -26,8 +26,8 @@ void UInteractionComponent::PrimaryInteract()
 void UInteractionComponent::FindBestInteractable()
 {
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
+	//FCollisionObjectQueryParams ObjectQueryParams;
+	//ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
 
 	AActor* MyOwner = GetOwner();
 
@@ -37,36 +37,39 @@ void UInteractionComponent::FindBestInteractable()
 
 	FVector End = EyeLocation + (EyeRotation.Vector() * TraceDistance);
 
-	TArray<FHitResult> Hits;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(MyOwner);
 
-	FCollisionShape Shape;
-	Shape.SetSphere(TraceRadius);
+	FHitResult HitResult;
 
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(CollisionChannel));
+	
+	
+	bool bBlockingHit =  UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
+		ActorsToIgnore, DrawDebugTrace, HitResult, true);
 	
 
 	// Clear ref before trying to fill
 	FocusedActor = nullptr;
 
-	for (FHitResult Hit : Hits)
+	AActor* HitActor = HitResult.GetActor();
+	if (HitActor)
 	{
-		
-		AActor* HitActor = Hit.GetActor();
-		if (HitActor)
+		if (HitActor->Implements<UInteractionInterface>())
 		{
-			if (HitActor->Implements<UInteractionInterface>())
-			{
-				FocusedActor = HitActor;
-				break;
-			}
+			FocusedActor = HitActor;
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *FocusedActor.GetName())
 		}
 	}
 
 	if (FocusedActor)
 	{
+		InteractionWidget->InteractionActor = FocusedActor;
+		UE_LOG(LogTemp, Error, TEXT("%s"), *InteractionWidget->InteractionActor->GetName())
+		
 		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
 		{
-			InteractionWidget->InteractionActor = FocusedActor;
 			InteractionWidget->AddToViewport();
 		}
 	}
