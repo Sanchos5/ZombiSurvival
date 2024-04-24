@@ -42,30 +42,31 @@ void UInteractionComponent::FindBestInteractable()
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(PlayerCharacter);
 
-	FHitResult HitResult;
+	TArray<FHitResult> HitResults;
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(CollisionChannel));
 	
 	
-	bool bBlock = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
-		ActorsToIgnore, DrawDebugTrace, HitResult, true);
+	bool bBlock = UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
+		ActorsToIgnore, DrawDebugTrace, HitResults, true);
 	
 
 	// Clear ref before trying to fill
 	FocusedActor = nullptr;
 
-	
-	AActor* HitActor = HitResult.GetActor();
-	
-	if (HitActor)
+	for (FHitResult HitResult : HitResults)
 	{
-		if (HitActor->Implements<UInteractionInterface>())
-		{
-			FocusedActor = HitActor;
-		}
-	}
+		AActor* HitActor = HitResult.GetActor();
 	
+		if (HitActor)
+		{
+			if (HitActor->Implements<UInteractionInterface>())
+			{
+				FocusedActor = HitActor;
+			}
+		}
+	}	
 	
 
 	if (FocusedActor)
