@@ -95,15 +95,15 @@ void UTraceComponent::TraceHit()
 				bDoOnce = false;
 			}
 			
-			UGameplayStatics::SpawnDecalAttached (
-			DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
-			HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+			UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn,
+				HitResult.Component.Get (), HitResult.BoneName,HitResult.ImpactPoint,
+				EyeRotation, EAttachLocation::KeepWorldPosition);
 
 			ActorsToIgnore.Add(Enemy);
 		}
 		else
 		{
-			UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }

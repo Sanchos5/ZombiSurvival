@@ -356,6 +356,14 @@ void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 {
+	if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadStartPistol) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadCyclePistol))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(StartReloadTimer);
+		GetWorld()->GetTimerManager().ClearTimer(CycleReloadTimer);
+		
+		PlayAnimMontage(ReloadCancelPistol);
+	}
+	
 	switch (ActiveWeapon)
 	{
 	case AXE:
@@ -463,7 +471,6 @@ void ASurvivalPlayer::PistolCycleReload()
 			PlayAnimMontage(ReloadEndPistol);
 		}
 	}
-	
 }
 
 void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)

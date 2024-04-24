@@ -214,6 +214,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
 	UAnimMontage* ReloadEndPistol;
 
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Pistol")
+	UAnimMontage* ReloadCancelPistol;
+
 	UPROPERTY(EditDefaultsOnly, Category="Weapon|Shotgun")
 	UAnimMontage* RecoilShotgun;
 
