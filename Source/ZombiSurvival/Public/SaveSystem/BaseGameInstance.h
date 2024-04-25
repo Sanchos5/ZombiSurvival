@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void LoadGameData();
 
+	UPROPERTY(BlueprintReadWrite)
+	FString LastSaveGame;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSlotName(FString Name);
+
 protected:
 	UBaseGameInstance();
 

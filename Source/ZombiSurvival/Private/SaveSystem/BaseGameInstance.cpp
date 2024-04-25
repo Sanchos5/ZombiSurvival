@@ -16,6 +16,11 @@ UBaseGameInstance::UBaseGameInstance()
 	SlotName = "Slot1";
 }
 
+void UBaseGameInstance::SetSlotName(FString Name)
+{
+	SlotName = Name;
+}
+
 void UBaseGameInstance::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -81,6 +86,7 @@ void UBaseGameInstance::SaveGameData()
 	}
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
+	LastSaveGame = SlotName;
 }
 
 void UBaseGameInstance::LoadGameData()
@@ -176,6 +182,4 @@ void UBaseGameInstance::LoadGameData()
 	{
 		CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
 	}
-	
-
 }
