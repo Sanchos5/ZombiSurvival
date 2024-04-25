@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UBaseSaveGame> CurrentSaveGame;
 
+	UPROPERTY()
+	TArray<AActor*> ActorsToDestroy;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Save Game")
 	FString SlotName;
 };

@@ -13,7 +13,6 @@
 
 UBaseGameInstance::UBaseGameInstance()
 {
-	SlotName = "Slot1";
 }
 
 void UBaseGameInstance::SetSlotName(FString Name)
@@ -24,6 +23,8 @@ void UBaseGameInstance::SetSlotName(FString Name)
 void UBaseGameInstance::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+
+	CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
 }
 
 void UBaseGameInstance::InitPlayerSavedData()
@@ -40,7 +41,7 @@ void UBaseGameInstance::InitPlayerSavedData()
 
 void UBaseGameInstance::AddDestroyedActor(AActor* DestroyedActor)
 {
-	//CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
+	CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
 }
 
 void UBaseGameInstance::SaveGameData()
