@@ -95,8 +95,6 @@ void ASurvivalPlayer::BeginPlay()
 		}
 	}
 
-	InitPlayerSavedData();
-
 	PlayerStats->Infected = true;
 
 	OnHealthChange.Broadcast(Health, MaxHealth);
