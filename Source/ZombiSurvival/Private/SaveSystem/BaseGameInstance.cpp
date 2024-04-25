@@ -40,7 +40,7 @@ void UBaseGameInstance::InitPlayerSavedData()
 
 void UBaseGameInstance::AddDestroyedActor(AActor* DestroyedActor)
 {
-	CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
+	//CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
 }
 
 void UBaseGameInstance::SaveGameData()
