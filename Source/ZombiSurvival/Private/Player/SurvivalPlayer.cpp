@@ -308,13 +308,6 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			PlayerController->bShowMouseCursor = true;
 		}
-		else
-		{
-			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
-			//InventoryComponent->UpdateAllInventoryUI();
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-			PlayerController->bShowMouseCursor = false;
-		}
 	}	
 }
 
@@ -331,13 +324,6 @@ void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			PC->bShowMouseCursor = true;
-		}
-		else
-		{
-			PauseWidget->RemoveFromParent();
-			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
-			UGameplayStatics::SetGamePaused(GetWorld(), false);
-			PC->bShowMouseCursor = false;
 		}
 	}
 }

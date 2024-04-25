@@ -73,9 +73,13 @@ void UInteractionComponent::FindBestInteractable()
 	{
 		InteractionWidget->InteractionActor = FocusedActor;
 		
-		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
+		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport() && !Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
 		{
 			InteractionWidget->AddToViewport();
+		}
+		else if (Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
+		{
+			InteractionWidget->RemoveFromParent();
 		}
 	}
 	else
