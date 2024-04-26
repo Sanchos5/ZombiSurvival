@@ -176,7 +176,7 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	}
 	StopAnimMontage();
 
-	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
+	USaveGameSystem* GameInstance = GetGameInstance()->GetSubsystem<USaveGameSystem>();
 	if (GameInstance)
 	{
 		GameInstance->AddDestroyedActor(this);

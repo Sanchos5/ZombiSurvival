@@ -3,7 +3,7 @@
 
 #include "Player/SurvivalPlayer.h"
 #include "Kismet/GameplayStatics.h"
-#include "SaveSystem/BaseGameInstance.h"
+#include "..\..\Public\SaveSystem\SaveGameSystem.h"
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -75,7 +75,7 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 
 void ASurvivalPlayer::InitPlayerSavedData()
 {
-	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
+	USaveGameSystem* GameInstance = GetGameInstance()->GetSubsystem<USaveGameSystem>();
 	if (GameInstance)
 	{
 		GameInstance->InitPlayerSavedData();

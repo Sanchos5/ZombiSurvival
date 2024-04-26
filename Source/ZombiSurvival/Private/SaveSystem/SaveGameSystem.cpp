@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "SaveSystem/BaseGameInstance.h"
-
+#include "SaveGameSystem.h"
 #include "EngineUtils.h"
 #include "Actor/InventoryItem.h"
 #include "Interface/SavalableObjectInterface.h"
@@ -11,23 +9,30 @@
 #include "SaveSystem/BaseSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
-UBaseGameInstance::UBaseGameInstance()
+USaveGameSystem::USaveGameSystem()
 {
 }
 
-void UBaseGameInstance::SetSlotName(FString Name)
+void USaveGameSystem::SetSlotName(FString Name)
 {
 	SlotName = Name;
 }
 
-void UBaseGameInstance::Initialize(FSubsystemCollectionBase& Collection)
+void USaveGameSystem::TakeScreenShot(bool bCaptureUI, bool bAddSuffix)
+{
+	FString CurrentDateTime = FDateTime::Now().ToString(TEXT("%Y-%m-%d %H-%M"));
+	FScreenshotRequest* request = new FScreenshotRequest();
+	request->RequestScreenshot("ScreenShot " + CurrentDateTime, bCaptureUI, false);
+}
+
+void USaveGameSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
 	CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
 }
 
-void UBaseGameInstance::InitPlayerSavedData()
+void USaveGameSystem::InitPlayerSavedData()
 {
 	ASurvivalPlayer* PlayerCharacter = Cast<ASurvivalPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f));
 	if (PlayerCharacter)
@@ -39,12 +44,12 @@ void UBaseGameInstance::InitPlayerSavedData()
 	}
 }
 
-void UBaseGameInstance::AddDestroyedActor(AActor* DestroyedActor)
+void USaveGameSystem::AddDestroyedActor(AActor* DestroyedActor)
 {
 	CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
 }
 
-void UBaseGameInstance::SaveGameData()
+void USaveGameSystem::SaveGameData()
 {
 	ASurvivalPlayer* PlayerCharacter = Cast<ASurvivalPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f));
 	if (PlayerCharacter)
@@ -90,7 +95,7 @@ void UBaseGameInstance::SaveGameData()
 	LastSaveGame = SlotName;
 }
 
-void UBaseGameInstance::LoadGameData()
+void USaveGameSystem::LoadGameData()
 {
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
 	{

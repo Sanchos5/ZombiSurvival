@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "BaseGameInstance.generated.h"
+#include "SaveGameSystem.generated.h"
 
 class UBaseSaveGame;
 
-UCLASS(meta=(DisplayName="SaveGame System"))
-class ZOMBISURVIVAL_API UBaseGameInstance : public UGameInstanceSubsystem
+UCLASS(meta=(DisplayName="SaveGameSystem"))
+class ZOMBISURVIVAL_API USaveGameSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
 public:
+	USaveGameSystem();
 	void InitPlayerSavedData();
 
 	UFUNCTION(BlueprintCallable)
@@ -34,9 +35,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSlotName(FString Name);
 
-protected:
-	UBaseGameInstance();
+	UFUNCTION(Exec, BlueprintCallable)
+	static void TakeScreenShot(bool bCaptureUI, bool bAddSuffix);
 
+protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UBaseSaveGame> CurrentSaveGame;
 

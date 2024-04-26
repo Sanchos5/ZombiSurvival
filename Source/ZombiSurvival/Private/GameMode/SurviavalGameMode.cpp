@@ -2,7 +2,7 @@
 
 
 #include "GameMode/SurvivalGameMode.h"
-#include "SaveSystem/BaseGameInstance.h"
+#include "..\..\Public\SaveSystem\SaveGameSystem.h"
 
 void ASurvivalGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
