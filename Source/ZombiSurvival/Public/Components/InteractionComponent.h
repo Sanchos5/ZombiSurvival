@@ -30,6 +30,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float TraceDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float TraceRadius;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	TEnumAsByte<ECollisionChannel> CollisionChannel;

@@ -48,7 +48,7 @@ void UInteractionComponent::FindBestInteractable()
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(CollisionChannel));
 	
 	
-	bool bBlock = UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), EyeLocation, End, ObjectTypes, true,
+	bool bBlock = UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), EyeLocation, End, TraceRadius, ObjectTypes, true,
 		ActorsToIgnore, DrawDebugTrace, HitResults, true);
 	
 

@@ -111,19 +111,27 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(SurvivalCharacter);
+
+	FVector StartLocation = Start->GetComponentLocation();
 	
 	FHitResult HitResult;
+	FHitResult HitResultCollision;
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
-	
-	
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
-		ActorsToIgnore, DrawDebugTrace, HitResult, true);
 
 	
-	if (bHit)
+	
+	
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), StartLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
+		ActorsToIgnore, DrawDebugTrace, HitResult, true);
+
+	bool bCollisionHit = UKismetSystemLibrary::LineTraceSingleByProfile(GetWorld(), StartLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), FName("BoxCollision"),
+		true, ActorsToIgnore, DrawDebugTrace, HitResultCollision, true);
+
+	
+	if (bHit && bCollisionHit)
 	{
 		
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
@@ -132,23 +140,28 @@ void ABaseRangeWeapon::ShotLineTrace()
 			float DamagetoZombie = UKismetMathLibrary::RandomFloatInRange(Damage - 2.f, Damage + 2.f);
 			TSubclassOf<class UDamageType> DamageTypeClass;
 			
-			if(HitResult.BoneName == TEXT("head"))
+			if(HitResultCollision.Component->GetFName() == FName("upperarm_l"))
 			{
 				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageHead - 2.f, DamageHead + 2.f);
 			}
-			else if(HitResult.BoneName == TEXT ("spine_01")
-				|| HitResult.BoneName == TEXT ("spine_02")
-				|| HitResult.BoneName == TEXT ("spine_03")
-				|| HitResult.BoneName == TEXT ("neck_01")
-				|| HitResult.BoneName == TEXT ("pelvis")
-				|| HitResult.BoneName == TEXT ("clavicle_l")
-				|| HitResult.BoneName == TEXT ("clavicle_r"))
+			else if(HitResultCollision.Component->GetFName() == FName("upperarm_l")
+				|| HitResultCollision.Component->GetFName() == FName ("lowerarm_l")
+				|| HitResultCollision.Component->GetFName() == FName ("hand_l")
+				|| HitResultCollision.Component->GetFName() == FName ("hand_r")
+				|| HitResultCollision.Component->GetFName() == FName ("lowerarm_r")
+				|| HitResultCollision.Component->GetFName() == FName ("upperarm_r")
+				|| HitResultCollision.Component->GetFName() == FName ("thigh_l")
+				|| HitResultCollision.Component->GetFName() == FName ("calf_l")
+				|| HitResultCollision.Component->GetFName() == FName ("foot_l")
+				|| HitResultCollision.Component->GetFName() == FName ("thigh_r")
+				|| HitResultCollision.Component->GetFName() == FName ("calf_r")
+				|| HitResultCollision.Component->GetFName() == FName ("foot_r"))
 			{
-				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (Damage - 2.f, Damage + 2.f);
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs  - 2.f,DamageLimbs + 2.f);
 			}
 			else
 			{
-				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs - 2.f, DamageLimbs + 2.f);
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (Damage - 2.f, Damage + 2.f);
 			}
 
 			DamagetoZombie = CalculateDamage(Zombie, DamagetoZombie);
@@ -157,12 +170,13 @@ void ABaseRangeWeapon::ShotLineTrace()
 				SurvivalCharacter->GetController(), SurvivalCharacter,DamageTypeClass );
 
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
+			
 
 			if (DamagetoZombie > 0.f)
 			{
 				if (Cast<ICombatInterface>(Zombie))
 				{
-					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie, HitResult.PhysMaterial->GetFName());
+					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie, HitResultCollision.Component->GetFName());
 				}
 				
 				// Report zombie that player damage him
