@@ -64,6 +64,7 @@ void UInteractionComponent::FindBestInteractable()
 			if (HitActor->Implements<UInteractionInterface>())
 			{
 				FocusedActor = HitActor;
+				break;
 			}
 		}
 	}	
