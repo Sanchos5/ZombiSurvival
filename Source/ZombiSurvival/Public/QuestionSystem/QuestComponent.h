@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCompleted = false;
 
+	int32 GetCurrentQuestIndex() { return CurrentQuestIndex; }
+	void SetCurrentQuestIndex(int32 CurrentInt) { CurrentQuestIndex = CurrentInt; }
+
 protected:
 
 	// Called when the game starts

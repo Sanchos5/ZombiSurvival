@@ -46,6 +46,12 @@ struct ZOMBISURVIVAL_API FPlayerSaveData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHaveShotgun;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurrentQuestIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<uint8> ByteData;
+
 	FPlayerSaveData();
 	~FPlayerSaveData();
 };

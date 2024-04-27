@@ -176,10 +176,10 @@ void ASurvZombiCharacter::OnDeath(float KillingDamage, FDamageEvent const& Damag
 	}
 	StopAnimMontage();
 
-	USaveGameSystem* GameInstance = GetGameInstance()->GetSubsystem<USaveGameSystem>();
-	if (GameInstance)
+	USaveGameSystem* SaveGameSystem = GetGameInstance()->GetSubsystem<USaveGameSystem>();
+	if (SaveGameSystem)
 	{
-		GameInstance->AddDestroyedActor(this);
+		SaveGameSystem->AddDestroyedActor(this->GetName());
 	}
 
 	const auto AIController = Cast<AAIController>(Controller);

@@ -12,6 +12,7 @@
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
 #include "SaveSystem/BaseSaveGame.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
@@ -94,6 +95,9 @@ void ASurvivalPlayer::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	InitPlayerSavedData();
+	
 
 	PlayerStats->Infected = true;
 
@@ -180,6 +184,20 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHaveAxe = bHaveAxe;
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
+		UQuestComponent* PlayerQuestComponent = Cast<UQuestComponent>(GetComponentByClass(UQuestComponent::StaticClass()));
+		if (IsValid(PlayerQuestComponent))
+		{
+			 PlayerData.CurrentQuestIndex  = PlayerQuestComponent->GetCurrentQuestIndex();
+		}
+
+		// Pass the array to fill with data from Actor
+		FMemoryWriter MemWriter(PlayerData.ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		// Find only variables with UPROPERTY(SaveGame)
+		Ar.ArIsSaveGame = true;
+		// Converts Actor's SaveGame UPROPERTIES into binary array
+		this->Serialize(Ar);
+
 		SaveObject->PlayerSaveData = PlayerData;
 	}
 }
@@ -201,6 +219,13 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		bHaveAxe = PlayerData.bHaveAxe;
 		bHavePistol = PlayerData.bHavePistol;
 		bHaveShotgun = PlayerData.bHaveShotgun;
+		
+		FMemoryReader MemReader(PlayerData.ByteData);
+
+		FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+		Ar.ArIsSaveGame = true;
+		// Convert binary array back into actor's variables
+		this->Serialize(Ar);
 	}
 }
 

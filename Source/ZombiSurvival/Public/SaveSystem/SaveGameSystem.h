@@ -6,6 +6,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "SaveGameSystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoadDataEnd, bool, bLoad);
+
 class UBaseSaveGame;
 
 UCLASS(meta=(DisplayName="SaveGameSystem"))
@@ -17,8 +19,11 @@ public:
 	USaveGameSystem();
 	void InitPlayerSavedData();
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnLoadDataEnd OnLoadDataEnd;
+
 	UFUNCTION(BlueprintCallable)
-	void AddDestroyedActor(AActor* DestroyedActor);
+	void AddDestroyedActor(FString DestroyedActor);
 
 	/* Initialize Subsystem, good moment to load in SaveGameSettings variables */
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -29,18 +34,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void LoadGameData();
 
-	UPROPERTY(BlueprintReadWrite)
-	FString LastSaveGame;
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString LastSaveGameName;
 
 	UFUNCTION(BlueprintCallable)
 	void SetSlotName(FString Name);
 
-	UFUNCTION(Exec, BlueprintCallable)
-	static void TakeScreenShot(bool bCaptureUI, bool bAddSuffix);
-
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UBaseSaveGame> CurrentSaveGame;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UBaseSaveGame> LastSaveGame;
 
 	UPROPERTY()
 	TArray<AActor*> ActorsToDestroy;

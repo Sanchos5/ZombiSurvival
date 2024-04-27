@@ -52,6 +52,7 @@ void UTraceComponent::TraceHit()
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
 		ActorsToIgnore, DrawDebugTrace, SphereHitResults, true);
 
+	
 	for (FHitResult HitResult : SphereHitResults)
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());

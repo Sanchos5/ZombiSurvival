@@ -18,24 +18,36 @@ void USaveGameSystem::SetSlotName(FString Name)
 	SlotName = Name;
 }
 
-void USaveGameSystem::TakeScreenShot(bool bCaptureUI, bool bAddSuffix)
-{
-	FString CurrentDateTime = FDateTime::Now().ToString(TEXT("%Y-%m-%d %H-%M"));
-	FScreenshotRequest* request = new FScreenshotRequest();
-	request->RequestScreenshot("ScreenShot " + CurrentDateTime, bCaptureUI, false);
-}
-
 void USaveGameSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
 	CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
+	LastSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
+
+	USaveGameSystem* SaveGameSystem = GetGameInstance()->GetSubsystem<USaveGameSystem>();
+	if (SaveGameSystem)
+	{
+		SlotName = "LastSave";
+		if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+		{
+			LastSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+			if (LastSaveGame == nullptr)
+			{
+				return;
+			}
+			FMemoryReader MemReader(LastSaveGame->ByteData);
+			FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+			Ar.ArIsSaveGame = true;
+			SaveGameSystem->Serialize(Ar);
+		}
+	}
 }
 
 void USaveGameSystem::InitPlayerSavedData()
 {
 	ASurvivalPlayer* PlayerCharacter = Cast<ASurvivalPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f));
-	if (PlayerCharacter)
+	if (PlayerCharacter && CurrentSaveGame != nullptr)
 	{
 		if (CurrentSaveGame->PlayerSaveData.Health != 0.f)
 		{
@@ -44,20 +56,20 @@ void USaveGameSystem::InitPlayerSavedData()
 	}
 }
 
-void USaveGameSystem::AddDestroyedActor(AActor* DestroyedActor)
+void USaveGameSystem::AddDestroyedActor(FString DestroyedActor)
 {
 	CurrentSaveGame->ActorsToDestroy.Add(DestroyedActor);
 }
 
 void USaveGameSystem::SaveGameData()
 {
+	CurrentSaveGame->ItemSaveData.Empty();
+
 	ASurvivalPlayer* PlayerCharacter = Cast<ASurvivalPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f));
 	if (PlayerCharacter)
 	{
 		PlayerCharacter->SavePlayerStats(CurrentSaveGame);
 	}
-
-	CurrentSaveGame->ItemSaveData.Empty();
 
 	for (FActorIterator It(GetWorld()); It; ++It)
 	{		
@@ -78,7 +90,6 @@ void USaveGameSystem::SaveGameData()
 			ItemSaveData.Item = ItemObject->Item;
 		}
 		
-
 		// Pass the array to fill with data from Actor
 		FMemoryWriter MemWriter(ItemSaveData.ByteData);
 
@@ -92,13 +103,25 @@ void USaveGameSystem::SaveGameData()
 	}
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
-	LastSaveGame = SlotName;
+
+	USaveGameSystem* SaveGameSystem = GetGameInstance()->GetSubsystem<USaveGameSystem>();
+	if (SaveGameSystem)
+	{
+		SaveGameSystem->LastSaveGameName = SlotName;
+		FMemoryWriter MemWriter(LastSaveGame->ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		Ar.ArIsSaveGame = true;
+		SaveGameSystem->Serialize(Ar);;
+		UGameplayStatics::SaveGameToSlot(LastSaveGame, "LastSave", 0);
+	}
 }
 
 void USaveGameSystem::LoadGameData()
 {
+	
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
 	{
+		
 		CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
 		if (CurrentSaveGame == nullptr)
 		{
@@ -107,23 +130,23 @@ void USaveGameSystem::LoadGameData()
 		
 		for (FActorIterator It(GetWorld()); It; ++It)
 		{
-			AActor* Actor = *It;
-			
+			AActor* Actor = *It;			
 			
 			if (!IsValid(Actor) || !UKismetSystemLibrary::DoesImplementInterface(Actor, USavalableObjectInterface::StaticClass()))
 			{
 				continue;
 			}
 
-			for (AActor* DestroyedActor: CurrentSaveGame->ActorsToDestroy)
+			for (FString DestroyedActorName : CurrentSaveGame->ActorsToDestroy)
 			{
-				if (DestroyedActor->GetName() == Actor->GetName())
+				
+				if (DestroyedActorName == Actor->GetName())
 				{
 					Actor->Destroy();
 					for (int32 i = 0; i < CurrentSaveGame->ItemSaveData.Num(); i++)
 					{
 						FItemSaveData ItemSaveData = CurrentSaveGame->ItemSaveData[i];
-						if (DestroyedActor->GetName() == ItemSaveData.ActorName)
+						if (DestroyedActorName == ItemSaveData.ActorName)
 						{
 							CurrentSaveGame->ItemSaveData.RemoveAt(i);
 							break;
@@ -183,9 +206,11 @@ void USaveGameSystem::LoadGameData()
 				}
 			}
 		}
+		OnLoadDataEnd.Broadcast(true);
 	}
 	else
 	{
 		CurrentSaveGame = Cast<UBaseSaveGame>(UGameplayStatics::CreateSaveGameObject(UBaseSaveGame::StaticClass()));
+		
 	}
 }
