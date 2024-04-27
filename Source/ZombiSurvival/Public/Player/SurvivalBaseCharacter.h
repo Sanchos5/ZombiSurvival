@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
-#include "SaveSystem/BaseGameInstance.h"
+#include "..\SaveSystem\SaveGameSystem.h"
 #include "SurvivalBaseCharacter.generated.h"
 
 class USoundBase;
@@ -43,10 +43,6 @@ public:
 
 	//Damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-
-	// Combat Interface
-	virtual void GetHit_Implementation(FName PhysicalMaterialName) override;
-	// End Combat Interface
 
 protected:
 	UFUNCTION(BlueprintCallable)

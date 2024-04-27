@@ -24,5 +24,8 @@ public:
 	TArray<FItemSaveData> ItemSaveData;
 
 	UPROPERTY(BlueprintReadWrite, Category="Save Data")
-	TArray<AActor*> ActorsToDestroy;
+	TArray<FString> ActorsToDestroy;
+
+	UPROPERTY(BlueprintReadWrite, Category="Save Data")
+	TArray<uint8> ByteData;
 };

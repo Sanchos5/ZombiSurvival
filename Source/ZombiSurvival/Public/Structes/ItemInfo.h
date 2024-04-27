@@ -38,6 +38,9 @@ struct ZOMBISURVIVAL_API FItemInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float NumbertoSubtract;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector ScaleItem;
+
 	FItemInfo();
 	~FItemInfo();
 };

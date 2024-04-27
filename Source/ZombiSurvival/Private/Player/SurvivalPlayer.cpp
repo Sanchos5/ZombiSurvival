@@ -3,7 +3,7 @@
 
 #include "Player/SurvivalPlayer.h"
 #include "Kismet/GameplayStatics.h"
-#include "SaveSystem/BaseGameInstance.h"
+#include "..\..\Public\SaveSystem\SaveGameSystem.h"
 #include "Components/SurvivalCharMovementComponent.h"
 #include "Components/PlayerStatsComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -12,6 +12,7 @@
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
 #include "SaveSystem/BaseSaveGame.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Weapon/BaseRangeWeapon.h"
 
 // Sets default values
@@ -75,7 +76,7 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 
 void ASurvivalPlayer::InitPlayerSavedData()
 {
-	UBaseGameInstance* GameInstance = GetGameInstance()->GetSubsystem<UBaseGameInstance>();
+	USaveGameSystem* GameInstance = GetGameInstance()->GetSubsystem<USaveGameSystem>();
 	if (GameInstance)
 	{
 		GameInstance->InitPlayerSavedData();
@@ -96,6 +97,7 @@ void ASurvivalPlayer::BeginPlay()
 	}
 
 	InitPlayerSavedData();
+	
 
 	PlayerStats->Infected = true;
 
@@ -182,6 +184,20 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHaveAxe = bHaveAxe;
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
+		UQuestComponent* PlayerQuestComponent = Cast<UQuestComponent>(GetComponentByClass(UQuestComponent::StaticClass()));
+		if (IsValid(PlayerQuestComponent))
+		{
+			 PlayerData.CurrentQuestIndex  = PlayerQuestComponent->GetCurrentQuestIndex();
+		}
+
+		// Pass the array to fill with data from Actor
+		FMemoryWriter MemWriter(PlayerData.ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		// Find only variables with UPROPERTY(SaveGame)
+		Ar.ArIsSaveGame = true;
+		// Converts Actor's SaveGame UPROPERTIES into binary array
+		this->Serialize(Ar);
+
 		SaveObject->PlayerSaveData = PlayerData;
 	}
 }
@@ -203,6 +219,13 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		bHaveAxe = PlayerData.bHaveAxe;
 		bHavePistol = PlayerData.bHavePistol;
 		bHaveShotgun = PlayerData.bHaveShotgun;
+		
+		FMemoryReader MemReader(PlayerData.ByteData);
+
+		FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+		Ar.ArIsSaveGame = true;
+		// Convert binary array back into actor's variables
+		this->Serialize(Ar);
 	}
 }
 
@@ -308,17 +331,6 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			PlayerController->bShowMouseCursor = true;
 		}
-		else
-		{
-			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
-			//InventoryComponent->UpdateAllInventoryUI();
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-			PlayerController->bShowMouseCursor = false;
-		}
-		//UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		//InventoryComponent->UpdateAllInventoryUI();
-		//InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		//PlayerController->bShowMouseCursor = true;
 	}	
 }
 
@@ -336,13 +348,6 @@ void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			PC->bShowMouseCursor = true;
 		}
-		else
-		{
-			PauseWidget->RemoveFromParent();
-			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
-			UGameplayStatics::SetGamePaused(GetWorld(), false);
-			PC->bShowMouseCursor = false;
-		}
 	}
 }
 
@@ -356,6 +361,14 @@ void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 {
+	if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadStartPistol) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadCyclePistol))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(StartReloadTimer);
+		GetWorld()->GetTimerManager().ClearTimer(CycleReloadTimer);
+		
+		PlayAnimMontage(ReloadCancelPistol);
+	}
+	
 	switch (ActiveWeapon)
 	{
 	case AXE:
@@ -410,9 +423,7 @@ void ASurvivalPlayer::RangeAttacking(UAnimMontage* ReloadMontage, UAnimMontage* 
 
 bool ASurvivalPlayer::PlayReloadMontage()
 {
-	
-	if (ActiveWeaponref == nullptr || ActiveWeapon == AXE || ActiveWeapon == NONE ||
-		GetMesh()->GetAnimInstance()->Montage_IsPlaying(ReloadShotgun)) return false;
+	if (ActiveWeaponref == nullptr || ActiveWeapon == AXE || ActiveWeapon == NONE) return false;
 	
 	ABaseRangeWeapon* RangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
 	
@@ -427,12 +438,44 @@ bool ASurvivalPlayer::PlayReloadMontage()
 		PlayAnimMontage(ReloadShotgun);
 		return true;
 	}
-	if (ActiveWeapon == PISTOL && ReloadPistol != nullptr  && !PlayerAnimInstance->Montage_IsPlaying(ReloadPistol))
+	if (ActiveWeapon == PISTOL)
 	{
-		PlayAnimMontage(ReloadPistol);
+		PistolStartReload();
 		return true;
 	}
 	return false;
+}
+
+void ASurvivalPlayer::PistolStartReload()
+{
+	UAnimInstance* PlayerAnimInstance = GetMesh()->GetAnimInstance();
+	
+	if (ReloadStartPistol == nullptr || ReloadCyclePistol == nullptr || ReloadEndPistol == nullptr || PlayerAnimInstance->Montage_IsPlaying(ReloadStartPistol)
+		|| PlayerAnimInstance->Montage_IsPlaying(ReloadCyclePistol) || PlayerAnimInstance->Montage_IsPlaying(ReloadEndPistol))
+	{
+		return;	
+	}
+	
+	float AnimLength = PlayAnimMontage(ReloadStartPistol);
+	GetWorld()->GetTimerManager().SetTimer(StartReloadTimer, this, &ASurvivalPlayer::PistolCycleReload, AnimLength, false);
+}
+
+void ASurvivalPlayer::PistolCycleReload()
+{
+	ABaseRangeWeapon* Pistol = Cast<ABaseRangeWeapon>(ActiveWeaponref);
+	if (IsValid(Pistol))
+	{
+		float DeltaNumPatrons = Pistol->MaxDispenserMagazine - Pistol->DispenserMagazine;
+		if (DeltaNumPatrons > 0.f)
+		{
+			float AnimLength = PlayAnimMontage(ReloadCyclePistol);
+			GetWorld()->GetTimerManager().SetTimer(CycleReloadTimer, this, &ASurvivalPlayer::PistolCycleReload, AnimLength, false);
+		}
+		if (DeltaNumPatrons <= 0.f)
+		{
+			PlayAnimMontage(ReloadEndPistol);
+		}
+	}
 }
 
 void ASurvivalPlayer::Input_Reloading(const FInputActionValue& InputActionValue)

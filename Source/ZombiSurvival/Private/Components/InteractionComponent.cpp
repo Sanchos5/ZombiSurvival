@@ -2,14 +2,16 @@
 
 
 #include "Components/InteractionComponent.h"
+
+#include "GameFramework/Character.h"
 #include "Interface/InteractionInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Widget/InteractionWidget.h"
 
 UInteractionComponent::UInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	TraceRadius = 20.0f;
+	
 	TraceDistance = 150.0f;
 	CollisionChannel = ECC_WorldDynamic;
 }
@@ -26,48 +28,58 @@ void UInteractionComponent::PrimaryInteract()
 void UInteractionComponent::FindBestInteractable()
 {
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(CollisionChannel);
-
-	AActor* MyOwner = GetOwner();
 
 	FVector EyeLocation;
 	FRotator EyeRotation;
-	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f);
+	APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0.f);
+	if (!IsValid(PlayerCharacter) || !IsValid(PlayerCamera)) return;
+	
+	PlayerCamera->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
 	FVector End = EyeLocation + (EyeRotation.Vector() * TraceDistance);
 
-	TArray<FHitResult> Hits;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(PlayerCharacter);
 
-	FCollisionShape Shape;
-	Shape.SetSphere(TraceRadius);
+	TArray<FHitResult> HitResults;
 
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(CollisionChannel));
+	
+	
+	bool bBlock = UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), EyeLocation, End, TraceRadius, ObjectTypes, true,
+		ActorsToIgnore, DrawDebugTrace, HitResults, true);
 	
 
 	// Clear ref before trying to fill
 	FocusedActor = nullptr;
 
-	for (FHitResult Hit : Hits)
+	for (FHitResult HitResult : HitResults)
 	{
-		
-		AActor* HitActor = Hit.GetActor();
+		AActor* HitActor = HitResult.GetActor();
+	
 		if (HitActor)
 		{
 			if (HitActor->Implements<UInteractionInterface>())
 			{
 				FocusedActor = HitActor;
-				break;
 			}
 		}
-	}
+	}	
+	
 
 	if (FocusedActor)
 	{
-		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport())
+		InteractionWidget->InteractionActor = FocusedActor;
+		
+		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport() && !Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
 		{
-			InteractionWidget->InteractionActor = FocusedActor;
 			InteractionWidget->AddToViewport();
+		}
+		else if (Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
+		{
+			InteractionWidget->RemoveFromParent();
 		}
 	}
 	else

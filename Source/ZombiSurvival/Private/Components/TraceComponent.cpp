@@ -52,6 +52,7 @@ void UTraceComponent::TraceHit()
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
 		ActorsToIgnore, DrawDebugTrace, SphereHitResults, true);
 
+	
 	for (FHitResult HitResult : SphereHitResults)
 	{
 		ASurvivalBaseCharacter* Enemy = Cast<ASurvivalBaseCharacter>(HitResult.GetActor());
@@ -95,15 +96,15 @@ void UTraceComponent::TraceHit()
 				bDoOnce = false;
 			}
 			
-			UGameplayStatics::SpawnDecalAttached (
-			DecalBloodPawn, ScaleDecalBloodPawn, HitResult.Component.Get (), HitResult.BoneName,
-			HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
+			UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn,
+				HitResult.Component.Get (), HitResult.BoneName,HitResult.ImpactPoint,
+				EyeRotation, EAttachLocation::KeepWorldPosition);
 
 			ActorsToIgnore.Add(Enemy);
 		}
 		else
 		{
-			UGameplayStatics::SpawnDecalAtLocation (GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
 }

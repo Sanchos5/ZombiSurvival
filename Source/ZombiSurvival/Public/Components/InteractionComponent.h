@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "InteractionComponent.generated.h"
 
 class UInteractionWidget;
@@ -32,9 +33,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float TraceRadius;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	TEnumAsByte<ECollisionChannel> CollisionChannel;
+
+	UPROPERTY(EditDefaultsOnly, Category="Trace|Debug")
+	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace = EDrawDebugTrace::ForDuration;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> InteractionWidgetClass;

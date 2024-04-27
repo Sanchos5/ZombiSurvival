@@ -9,6 +9,7 @@ FItemInfo::FItemInfo()
 	NumbertoRestore = 0.f;
 	NumbertoSubtract = 0.f;
 	ItemType = EI_NONE;
+	ScaleItem = FVector(1.f);
 }
 
 FItemInfo::~FItemInfo()
