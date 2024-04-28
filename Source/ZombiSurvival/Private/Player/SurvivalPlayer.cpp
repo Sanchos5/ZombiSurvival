@@ -315,10 +315,6 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 			PlayerController->bShowMouseCursor = false;
 		}
-		//UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
-		//InventoryComponent->UpdateAllInventoryUI();
-		//InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-		//PlayerController->bShowMouseCursor = true;
 	}	
 }
 
@@ -383,18 +379,25 @@ void ASurvivalPlayer::MeleeAttacking()
 	
 	if (FirstAttack != nullptr || SecondAttack != nullptr)
 	{
-		switch (Combo)
+		if (PlayerStats->GetStamina() > 20.0f)
 		{
-		case 0:
-			PlayAnimMontage(FirstAttack, AttackPlayRate);
-			Combo = 1;
-			break;
-		case 1:
-			PlayAnimMontage(SecondAttack, AttackPlayRate);
-			Combo = 0;
-			break;
-		default:
-			break;
+			StaminaValue = 20.0f;
+			PlayerStats->DecrementStamina(StaminaValue);
+			PlayerStats->SprintingTimer(false);
+
+			switch (Combo)
+			{
+			case 0:
+				PlayAnimMontage(FirstAttack, AttackPlayRate);
+				Combo = 1;
+				break;
+			case 1:
+				PlayAnimMontage(SecondAttack, AttackPlayRate);
+				Combo = 0;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
