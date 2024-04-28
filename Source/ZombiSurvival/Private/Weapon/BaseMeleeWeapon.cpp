@@ -33,5 +33,18 @@ FVector ABaseMeleeWeapon::GetEndLocation()
 void ABaseMeleeWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Dynamicmaterial = Mesh->CreateDynamicMaterialInstance(0, Material, "AxeDecal");
+
 	
+
+	Dynamicmaterial = UMaterialInstanceDynamic::Create(Material, this);
+	Mesh->SetMaterial(0, Dynamicmaterial);
+
+	//Dynamicmaterial->SetScalarParameterValue("AxeDecal", 1.0f);
+}
+
+void ABaseMeleeWeapon::GetDynamicMaterial(float ParameterValue)
+{
+	Dynamicmaterial->SetScalarParameterValue("AxeDecal", ParameterValue);
 }

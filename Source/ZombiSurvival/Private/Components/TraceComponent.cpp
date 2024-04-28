@@ -69,6 +69,9 @@ void UTraceComponent::TraceHit()
 					UGameplayStatics::ApplyDamage(Enemy, Enemy->Health + 1000.f,
 						nullptr, WeaponOwner, DamageTypeClass);
 				}
+
+				MeleeWeapon->GetDynamicMaterial(1.0f);
+
 			}
 			
 			UGameplayStatics::ApplyDamage(Enemy, MeleeWeapon->GetDamage(),
