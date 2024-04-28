@@ -59,4 +59,5 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	FVector ScaleDecalMetal;
+
 };

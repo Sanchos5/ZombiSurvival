@@ -21,6 +21,13 @@ public:
 
 	UTraceComponent* GetTraceComponent() { return TraceComponent; }
 
+	UMaterialInstanceDynamic* Dynamicmaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Defaults")
+	UMaterialInterface* Material;
+
+	void GetDynamicMaterial(float ParameterValue);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -32,6 +39,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* End;
+
+	FTimerHandle DecalHandle;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess= "true"))
