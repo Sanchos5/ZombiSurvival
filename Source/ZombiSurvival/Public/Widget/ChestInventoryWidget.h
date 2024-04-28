@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerItemsInInventoryUI(TArray<FSlot> AllItems, UWrapBox* WrapBox);
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	AActor* ChestOwner;
 
 	UPROPERTY(EditAnywhere, Category="UI")

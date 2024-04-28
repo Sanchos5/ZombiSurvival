@@ -40,6 +40,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
 	FAllItem AllItems;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 
 	// Update Slots in Inventory Widget	
 	UFUNCTION(BlueprintCallable)
@@ -51,9 +54,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	float InventorySize;
-
-	UPROPERTY(EditAnywhere, Category="Widget")
-	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	UDataTable* ItemInfoDataTable;

@@ -32,18 +32,6 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SetSizeForInventory();
-
-	if (IsValid(InventoryWidgetClass))
-	{
-		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
-
-		if (InventoryWidget)
-		{
-			InventoryWidget->AddToViewport();
-			InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
-		}
-		UpdateAllInventoryUI();
-	}
 }
 
 bool UInventoryComponent::AddToInventory(FSlot Item)

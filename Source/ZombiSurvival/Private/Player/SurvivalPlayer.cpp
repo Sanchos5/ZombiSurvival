@@ -97,7 +97,6 @@ void ASurvivalPlayer::BeginPlay()
 	}
 
 	InitPlayerSavedData();
-	
 
 	PlayerStats->Infected = true;
 
@@ -324,11 +323,13 @@ void ASurvivalPlayer::Input_OpenInventory(const FInputActionValue& InputActionVa
 {
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) 
 	{
-		if (InventoryComponent->InventoryWidget != nullptr && PlayerController != nullptr)
+		UInventoryWidget* InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryComponent->InventoryWidgetClass);
+		if (InventoryWidget != nullptr && PlayerController != nullptr)
 		{
-			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
+			InventoryComponent->InventoryWidget = InventoryWidget;
 			InventoryComponent->UpdateAllInventoryUI();
-			InventoryComponent->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+			InventoryComponent->InventoryWidget->AddToViewport();
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerController, InventoryComponent->InventoryWidget);
 			PlayerController->bShowMouseCursor = true;
 		}
 	}	

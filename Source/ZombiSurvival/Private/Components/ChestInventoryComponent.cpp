@@ -23,16 +23,16 @@ void UChestInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(InventoryWidgetClass))
+	/*if (IsValid(InventoryWidgetClass))
 	{
 		ChestInventoryWidget = Cast<UChestInventoryWidget>(CreateWidget(GetWorld(), InventoryWidgetClass));
 		ChestInventoryWidget->AddToViewport();
 		ChestInventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 		ChestInventoryWidget->ChestOwner = GetOwner();
-	}
+	}*/
 	
 	SetSizeForInventory();
-	UpdateChestInventoryUI();
+	//UpdateChestInventoryUI();
 }
 
 void UChestInventoryComponent::UpdateChestInventoryUI()
