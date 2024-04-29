@@ -31,7 +31,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	int PatronsInInventory;
-
 	
 	void Fire();
 

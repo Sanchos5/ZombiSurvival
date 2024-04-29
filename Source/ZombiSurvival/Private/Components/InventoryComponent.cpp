@@ -20,6 +20,7 @@ void UInventoryComponent::SetSizeForInventory()
 
 void UInventoryComponent::UpdateAllInventoryUI()
 {
+	if (!IsValid(InventoryWidget)) return;
 	InventoryWidget->UpdateItemsInInventoryUI(AllItems.MainInventory, InventoryWidget->Wb_MainInventory);
 	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Patrons, InventoryWidget->Wb_Patrons);
 	InventoryWidget->UpdateItemsInSortInventoryUI(AllItems.Drinks, InventoryWidget->Wb_Drinks);
