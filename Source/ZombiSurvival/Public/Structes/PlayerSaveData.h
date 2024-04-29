@@ -50,6 +50,12 @@ struct ZOMBISURVIVAL_API FPlayerSaveData
 	int32 CurrentQuestIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PatronsInShotgun;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PatronsInPistol;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<uint8> ByteData;
 
 	FPlayerSaveData();

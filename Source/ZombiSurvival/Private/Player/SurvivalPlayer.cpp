@@ -183,6 +183,9 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		PlayerData.bHaveAxe = bHaveAxe;
 		PlayerData.bHavePistol = bHavePistol;
 		PlayerData.bHaveShotgun = bHaveShotgun;
+		PlayerData.PatronsInShotgun = ShotgunDispenserMagazine;
+		PlayerData.PatronsInPistol = PistolDispenserMagazine;
+		
 		UQuestComponent* PlayerQuestComponent = Cast<UQuestComponent>(GetComponentByClass(UQuestComponent::StaticClass()));
 		if (IsValid(PlayerQuestComponent))
 		{
@@ -218,6 +221,8 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		bHaveAxe = PlayerData.bHaveAxe;
 		bHavePistol = PlayerData.bHavePistol;
 		bHaveShotgun = PlayerData.bHaveShotgun;
+		ShotgunDispenserMagazine = PlayerData.PatronsInShotgun;
+		PistolDispenserMagazine = PlayerData.PatronsInPistol;
 		
 		FMemoryReader MemReader(PlayerData.ByteData);
 
@@ -393,12 +398,12 @@ void ASurvivalPlayer::Input_Attacking(const FInputActionValue& InputActionValue)
 void ASurvivalPlayer::MeleeAttacking()
 {
 	if (CanAttack == false) return;
-	CanAttack = false;
 	
 	if (FirstAttack != nullptr || SecondAttack != nullptr)
 	{
 		if (PlayerStats->GetStamina() > 20.0f)
 		{
+			CanAttack = false;
 			StaminaValue = 20.0f;
 			PlayerStats->DecrementStamina(StaminaValue);
 			PlayerStats->SprintingTimer(false);
@@ -474,12 +479,12 @@ void ASurvivalPlayer::PistolCycleReload()
 	if (IsValid(Pistol))
 	{
 		float DeltaNumPatrons = Pistol->MaxDispenserMagazine - Pistol->DispenserMagazine;
-		if (DeltaNumPatrons > 0.f)
+		if (DeltaNumPatrons > 0.f && NaganPatronsInInventory > 0.f)
 		{
 			float AnimLength = PlayAnimMontage(ReloadCyclePistol);
 			GetWorld()->GetTimerManager().SetTimer(CycleReloadTimer, this, &ASurvivalPlayer::PistolCycleReload, AnimLength, false);
 		}
-		if (DeltaNumPatrons <= 0.f)
+		if (DeltaNumPatrons <= 0.f || NaganPatronsInInventory <= 0.f)
 		{
 			PlayAnimMontage(ReloadEndPistol);
 		}
@@ -557,7 +562,6 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 			ShotgunDispenserMagazine = OldDispencerMagazine;
 		}
 	}
-
 	
 	FTransform SocketTransform = GetMesh()->GetSocketTransform(SocketName);
 	if (IsValid(SelectedWeaponClass))
@@ -572,7 +576,6 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 				ABaseRangeWeapon* NewRangeWeapon = Cast<ABaseRangeWeapon>(ActiveWeaponref);
 				if (SelectedWeapon == SHOTGUN)
 				{
-					//PistolDispenserMagazine = OldDispencerMagazine;
 					NewRangeWeapon->DispenserMagazine = ShotgunDispenserMagazine;
 				}
 				else
@@ -585,5 +588,4 @@ void ASurvivalPlayer::EquipBaseWeapon(EActiveWeapon SelectedWeapon, bool bHaveWe
 			ActiveWeapon = SelectedWeapon;
 		}
 	}
-	
 }

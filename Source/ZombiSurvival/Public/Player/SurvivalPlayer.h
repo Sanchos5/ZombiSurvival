@@ -130,6 +130,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void LoadPlayerStats(UBaseSaveGame* SaveObject);
 
+	UPROPERTY(BlueprintReadWrite)
+	int NaganPatronsInInventory;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -178,7 +181,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	int Combo;
 
+	UPROPERTY(BlueprintReadWrite)
 	int ShotgunDispenserMagazine;
+
+	UPROPERTY(BlueprintReadWrite)
 	int PistolDispenserMagazine;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon|Axe")
