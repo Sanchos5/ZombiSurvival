@@ -354,7 +354,15 @@ void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			PC->bShowMouseCursor = true;
 		}
+		else
+		{
+			PauseWidget->RemoveFromParent();
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			PC->bShowMouseCursor = false;
+		}
 	}
+	
 }
 
 void ASurvivalPlayer::Input_Interact(const FInputActionValue& InputActionValue)
