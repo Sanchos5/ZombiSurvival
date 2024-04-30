@@ -3,7 +3,9 @@
 #include "SaveGameSystem.h"
 #include "EngineUtils.h"
 #include "Actor/InventoryItem.h"
+#include "Components/ChestInventoryComponent.h"
 #include "Interface/SavalableObjectInterface.h"
+#include "Interface/SaveChestInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/SurvivalPlayer.h"
 #include "SaveSystem/BaseSaveGame.h"
@@ -89,6 +91,16 @@ void USaveGameSystem::SaveGameData()
 		{
 			ItemSaveData.Item = ItemObject->Item;
 		}
+
+		if (UKismetSystemLibrary::DoesImplementInterface(Actor, USaveChestInterface::StaticClass()))
+		{
+			UChestInventoryComponent* ChestInventory = Cast<UChestInventoryComponent>(Actor->GetComponentByClass(UChestInventoryComponent::StaticClass()));
+			FSaveChest ChestSaveData;
+			ChestSaveData.Inventory = ChestInventory->AllChestItem.MainInventory;
+			ChestSaveData.ChestName = Actor->GetName();
+			CurrentSaveGame->ChestSaveData.Add(ChestSaveData);
+		}
+		
 		
 		// Pass the array to fill with data from Actor
 		FMemoryWriter MemWriter(ItemSaveData.ByteData);
@@ -100,6 +112,7 @@ void USaveGameSystem::SaveGameData()
 		Actor->Serialize(Ar);
 
 		CurrentSaveGame->ItemSaveData.Add(ItemSaveData);
+		
 	}
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
@@ -170,11 +183,24 @@ void USaveGameSystem::LoadGameData()
 					Ar.ArIsSaveGame = true;
 					// Convert binary array back into actor's variables
 					Actor->Serialize(Ar);
-					
 
 					ISavalableObjectInterface::Execute_OnActorLoaded(Actor);
 					CurrentSaveGame->ItemSaveData.RemoveAt(i);
 					break;
+				}
+			}
+
+			for (int32 i = 0; i < CurrentSaveGame->ChestSaveData.Num(); i++)
+			{
+				FSaveChest ChestSaveData = CurrentSaveGame->ChestSaveData[i];
+				if (ChestSaveData.ChestName == Actor->GetName())
+				{
+					if (UKismetSystemLibrary::DoesImplementInterface(Actor, USaveChestInterface::StaticClass()))
+					{
+						UChestInventoryComponent* ChestInventory = Cast<UChestInventoryComponent>(Actor->GetComponentByClass(UChestInventoryComponent::StaticClass()));
+						ChestInventory->AllChestItem.MainInventory = CurrentSaveGame->ChestSaveData[i].Inventory;
+						break;
+					}
 				}
 			}
 		}

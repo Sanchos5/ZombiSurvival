@@ -37,6 +37,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString LastSaveGameName;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bSaveGame;
+
 	UFUNCTION(BlueprintCallable)
 	void SetSlotName(FString Name);
 
