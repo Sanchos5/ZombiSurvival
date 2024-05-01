@@ -116,11 +116,11 @@ public:
 	bool bIsSprinting = false;
 
 	// Sprinting
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Defaults | Move")
 	float SprintSpeed;
 
 	// Walking
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Move")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Defaults | Move")
 	float WalkSpeed;
 
 	// Save System
