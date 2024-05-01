@@ -11,7 +11,7 @@ UChestInventoryComponent::UChestInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	InventorySize = 10.f;
+	InventorySize = 4.f;
 }
 
 void UChestInventoryComponent::SetSizeForInventory()

@@ -292,27 +292,33 @@ void ASurvivalPlayer::Input_Jump(const FInputActionValue& InputActionValue)
 
 void ASurvivalPlayer::Input_StopJumping(const FInputActionValue& InputActionValue)
 {
-	PlayerStats->SprintingTimer(false);
+	if(!bIsSprinting)
+	{
+		PlayerStats->SprintingTimer(false);
+	}
 }
 
 void ASurvivalPlayer::Input_StartSprinting(const FInputActionValue& InputActionValue)
 {
-	if (PlayerStats->GetStamina() > 10.0f)
+	if(GetCharacterMovement()->GetLastInputVector().X != 0.0f)
 	{
-		bIsSprinting = true;
-		PlayerStats->SprintingTimer(true);
+		if (PlayerStats->GetStamina() > 10.0f)
+		{
+			bIsSprinting = true;
+			PlayerStats->SprintingTimer(true);
+		}
 	}
 }
 
 void ASurvivalPlayer::Input_TriggerSprinting(const FInputActionValue& InputActionValue)
 {
-	if (bIsSprinting == true)
+	if (bIsSprinting && GetCharacterMovement()->GetLastInputVector().X != 0.0f)
 	{
 		StaminaValue = 0.2f;
 		PlayerStats->DecrementStamina(StaminaValue);
 	}
 
-	if(PlayerStats->GetStamina() == 0.0f)
+	if (PlayerStats->GetStamina() == 0.0f)
 	{
 		bIsSprinting = false;
 	}
