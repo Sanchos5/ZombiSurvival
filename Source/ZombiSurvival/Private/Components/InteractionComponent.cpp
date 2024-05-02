@@ -14,6 +14,7 @@ UInteractionComponent::UInteractionComponent()
 	
 	TraceDistance = 150.0f;
 	CollisionChannel = ECC_WorldDynamic;
+	bHideWidget = false;
 }
 
 void UInteractionComponent::PrimaryInteract()
@@ -74,11 +75,11 @@ void UInteractionComponent::FindBestInteractable()
 	{
 		InteractionWidget->InteractionActor = FocusedActor;
 		
-		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport() && !Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
+		if (IsValid(InteractionWidget) && !InteractionWidget->IsInViewport() && !Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor) && bHideWidget == false)
 		{
 			InteractionWidget->AddToViewport();
 		}
-		else if (Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor))
+		else if (Cast<IInteractionInterface>(FocusedActor)->Execute_HideWidget(FocusedActor) || bHideWidget == true)
 		{
 			InteractionWidget->RemoveFromParent();
 		}
