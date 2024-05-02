@@ -8,9 +8,19 @@
 #include "Structes/PlayerSaveData.h"
 #include "BaseSaveGame.generated.h"
 
-/**
- * 
- */
+USTRUCT(BlueprintType)
+struct FSaveChest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSlot> Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ChestName;
+	
+};
+
 UCLASS()
 class ZOMBISURVIVAL_API UBaseSaveGame : public USaveGame
 {
@@ -22,6 +32,9 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, Category="Save Data")
 	TArray<FItemSaveData> ItemSaveData;
+
+	UPROPERTY(BlueprintReadWrite, Category="Save Data")
+	TArray<FSaveChest> ChestSaveData;
 
 	UPROPERTY(BlueprintReadWrite, Category="Save Data")
 	TArray<FString> ActorsToDestroy;

@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UChestInventoryWidget* ChestInventoryWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
+	FAllItem AllChestItem;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -32,9 +35,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	float InventorySize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory")
-	FAllItem AllChestItem;
 
 	// Update Slots in Inventory Widget
 
