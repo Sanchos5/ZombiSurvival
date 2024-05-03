@@ -18,6 +18,9 @@ public:
 	UInteractionComponent();
 	void PrimaryInteract();
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bHideWidget;
+
 protected:
 	virtual void BeginPlay() override;
 	void FindBestInteractable();
