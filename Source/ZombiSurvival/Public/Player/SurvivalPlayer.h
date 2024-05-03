@@ -16,6 +16,7 @@
 #include "QuestionSystem/QuestComponent.h"
 #include "SurvivalPlayer.generated.h"
 
+class USpringArmComponent;
 class UBaseSaveGame;
 class ABaseWeapon;
 
@@ -243,8 +244,11 @@ protected:
 	TSubclassOf<UUserWidget> DeathWidgetClass;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, Category = "Camera", meta=(AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera", meta=(AllowPrivateAccess = "true"))
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Defaults | Input")
 	mutable const UInputMappingContext* InputMappingContext;
