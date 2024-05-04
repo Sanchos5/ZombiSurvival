@@ -135,12 +135,12 @@ void ABaseRangeWeapon::ShotLineTrace()
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
 		if (Zombie)
 		{
-			float DamagetoZombie = UKismetMathLibrary::RandomFloatInRange(Damage - 2.f, Damage + 2.f);
+			float DamagetoZombie = UKismetMathLibrary::RandomFloatInRange(MinDamage, MaxDamage);
 			TSubclassOf<class UDamageType> DamageTypeClass;
 			
 			if(HitResultCollision.Component->GetFName() == FName("head"))
 			{
-				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageHead - 2.f, DamageHead + 2.f);
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (MinDamageHead, MaxDamageHead);
 			}
 			else if(HitResultCollision.Component->GetFName() == FName("upperarm_l")
 				|| HitResultCollision.Component->GetFName() == FName ("lowerarm_l")
@@ -155,11 +155,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 				|| HitResultCollision.Component->GetFName() == FName ("calf_r")
 				|| HitResultCollision.Component->GetFName() == FName ("foot_r"))
 			{
-				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageLimbs  - 2.f,DamageLimbs + 2.f);
-			}
-			else
-			{
-				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (Damage - 2.f, Damage + 2.f);
+				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (MinDamageLimbs,MaxDamageLimbs);
 			}
 
 			DamagetoZombie = CalculateDamage(Zombie, DamagetoZombie);
@@ -268,7 +264,7 @@ void ABaseRangeWeapon::WeaponRecoil()
 	if (IsValid(Player) && IsValid(CharacterRecoilMontage))
 	{
 		OldControlPitch = UKismetMathLibrary::NormalizeAxis(Player->GetControlRotation().Pitch);
-		Player->AddControllerPitchInput(FMath::RandRange(-RecoilRange/2.f, -RecoilRange));
+		Player->AddControllerPitchInput(FMath::RandRange(-MinRecoilRange, -MaxRecoilRange));
 		Player->PlayAnimMontage(CharacterRecoilMontage);
 		GetWorld()->GetTimerManager().SetTimer(RecoilTimerHandle, this, &ABaseRangeWeapon::BackCameraPosition, BackPositionFrequency, true);
 		GetWorld()->GetTimerManager().SetTimer(ClearTimerHandle, this, &ABaseRangeWeapon::ClearTimer, RecoilTimeClear, false);
