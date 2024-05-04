@@ -38,8 +38,7 @@ void ABaseRangeWeapon::Attack()
 void ABaseRangeWeapon::Shot_Implementation()
 {
 	UGameplayStatics::PlaySound2D(GetWorld(), ShotSound);
-	WeaponRecoil();
-
+	
 	//Interface to subtract patrons in UI
 	IPatronsInterface::Execute_SubtractPatron(PlayerInterface->PatronsBar);
 	for (int i = NumOfShotLine; i>0; i--)
@@ -47,6 +46,7 @@ void ABaseRangeWeapon::Shot_Implementation()
 		ShotLineTrace();
 	}
 	ShotLineTraceVFX();
+	WeaponRecoil();
 	MakeNoise((1.0f), UGameplayStatics::GetPlayerPawn(GetWorld(), 0), GetActorLocation(), MaxRangeNoise);
 }
 
@@ -96,12 +96,14 @@ void ABaseRangeWeapon::BeginPlay()
 void ABaseRangeWeapon::ShotLineTrace()
 {
 	ASurvivalBaseCharacter* SurvivalCharacter = Cast<ASurvivalBaseCharacter>(Owner);
+	APlayerCameraManager* PlayerCamera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0.f);
+	if (!IsValid(SurvivalCharacter) || !IsValid(PlayerCamera)) return;
 	FVector EyeLocation;
 	FRotator EyeRotation;
 	
-	if (SurvivalCharacter)
+	if (PlayerCamera)
 	{
-		SurvivalCharacter->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+		PlayerCamera->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	}
 	
 	const FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * AimAssistDistance);
@@ -111,8 +113,6 @@ void ABaseRangeWeapon::ShotLineTrace()
 
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(SurvivalCharacter);
-
-	FVector StartLocation = Start->GetComponentLocation();
 	
 	FHitResult HitResult;
 	FHitResult HitResultCollision;
@@ -120,18 +120,16 @@ void ABaseRangeWeapon::ShotLineTrace()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
-
 	
 	
-	
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), StartLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), ObjectTypes, true,
 		ActorsToIgnore, DrawDebugTrace, HitResult, true);
 
-	bool bCollisionHit = UKismetSystemLibrary::LineTraceSingleByProfile(GetWorld(), StartLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), FName("BoxCollision"),
+	bool bCollisionHit = UKismetSystemLibrary::LineTraceSingleByProfile(GetWorld(), EyeLocation, TraceEnd + FVector(SpreadX, SpreadY, SpreadZ), FName("BoxCollision"),
 		true, ActorsToIgnore, DrawDebugTrace, HitResultCollision, true);
 
 	
-	if (bHit && bCollisionHit)
+	if (bCollisionHit)
 	{
 		
 		ASurvZombiCharacter* Zombie = Cast<ASurvZombiCharacter>(HitResult.GetActor());
@@ -140,7 +138,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			float DamagetoZombie = UKismetMathLibrary::RandomFloatInRange(Damage - 2.f, Damage + 2.f);
 			TSubclassOf<class UDamageType> DamageTypeClass;
 			
-			if(HitResultCollision.Component->GetFName() == FName("upperarm_l"))
+			if(HitResultCollision.Component->GetFName() == FName("head"))
 			{
 				DamagetoZombie = UKismetMathLibrary::RandomFloatInRange (DamageHead - 2.f, DamageHead + 2.f);
 			}
@@ -172,7 +170,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			ShotLineTraceDecal (SpreadX, SpreadY, SpreadZ);
 			
 
-			if (DamagetoZombie > 0.f)
+			if (DamagetoZombie > 0.f  && bHit)
 			{
 				if (Cast<ICombatInterface>(Zombie))
 				{
@@ -193,11 +191,13 @@ void ABaseRangeWeapon::ShotLineTrace()
 					HitResult.BoneName,HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
 			}
 		}
-		else
+		else if (bHit)
 		{
 			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 		}
 	}
+
+	
 }
 void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float SpreadZ)
 {
