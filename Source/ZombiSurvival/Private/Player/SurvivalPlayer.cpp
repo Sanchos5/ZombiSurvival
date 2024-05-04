@@ -11,6 +11,7 @@
 #include "Components/InventoryComponent.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Weapon/BaseRangeWeapon.h"
@@ -28,11 +29,19 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
 
+	CameraSocketName = TEXT("CameraSocket");
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->TargetArmLength = 0.f;
+	CameraBoom->SetupAttachment(MeshComponent, CameraSocketName);
+
 	// Create a CameraComponent
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FPSCamera->bUsePawnControlRotation = true;
-	CameraSocketName = TEXT("CameraSocket");
-	FPSCamera->SetupAttachment(MeshComponent, CameraSocketName);
+	FPSCamera->bUsePawnControlRotation = false;
+	FPSCamera->SetupAttachment(CameraBoom);
+
+	
 
 	PlayerStats = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStats"));
 
