@@ -199,6 +199,7 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		if (IsValid(PlayerQuestComponent))
 		{
 			 PlayerData.CurrentQuestIndex  = PlayerQuestComponent->GetCurrentQuestIndex();
+			 PlayerData.CurrentStepIndex  = PlayerQuestComponent->GetInitialStepsAmount();
 		}
 
 		// Pass the array to fill with data from Actor
@@ -232,6 +233,13 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		bHaveShotgun = PlayerData.bHaveShotgun;
 		ShotgunDispenserMagazine = PlayerData.PatronsInShotgun;
 		PistolDispenserMagazine = PlayerData.PatronsInPistol;
+
+		UQuestComponent* PlayerQuestComponent = Cast<UQuestComponent>(GetComponentByClass(UQuestComponent::StaticClass()));
+		if (IsValid(PlayerQuestComponent))
+		{
+			PlayerQuestComponent->SetCurrentQuestIndex(PlayerData.CurrentQuestIndex);
+			PlayerQuestComponent->SetInitialStepsAmount(PlayerData.CurrentStepIndex);
+		}
 		
 		FMemoryReader MemReader(PlayerData.ByteData);
 
