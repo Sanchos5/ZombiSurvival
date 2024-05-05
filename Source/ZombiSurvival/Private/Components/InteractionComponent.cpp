@@ -51,6 +51,8 @@ void UInteractionComponent::FindBestInteractable()
 
 	bool bBlock = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), EyeLocation, End, TraceRadius, ObjectType, true,
 	ActorsToIgnore, DrawDebugTrace, HitResult, true);
+
+	AActor* LastActor = FocusedActor;
 	
 
 	// Clear ref before trying to fill
@@ -89,6 +91,12 @@ void UInteractionComponent::FindBestInteractable()
 		{
 			InteractionWidget->RemoveFromParent();
 		}
+	}
+
+	if (LastActor != FocusedActor)
+	{
+		if (LastActor) Cast<IInteractionInterface>(LastActor)->Execute_UnHighlightActor(LastActor);
+		if (FocusedActor) Cast<IInteractionInterface>(FocusedActor)->Execute_HighlightActor(FocusedActor);
 	}
 
 	StartInteractionTimer();	

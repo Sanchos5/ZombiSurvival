@@ -30,4 +30,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool HideWidget();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HighlightActor();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UnHighlightActor();
 };
