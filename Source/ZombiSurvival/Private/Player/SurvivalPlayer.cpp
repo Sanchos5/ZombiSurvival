@@ -11,6 +11,7 @@
 #include "Components/InventoryComponent.h"
 #include "Widget/InventoryWidget.h"
 #include "Components/TraceComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Weapon/BaseRangeWeapon.h"
@@ -28,11 +29,19 @@ ASurvivalPlayer::ASurvivalPlayer(const class FObjectInitializer& ObjectInitializ
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	MeshComponent->SetupAttachment(GetRootComponent());
 
+	CameraSocketName = TEXT("CameraSocket");
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->TargetArmLength = 0.f;
+	CameraBoom->SetupAttachment(MeshComponent, CameraSocketName);
+
 	// Create a CameraComponent
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FPSCamera->bUsePawnControlRotation = true;
-	CameraSocketName = TEXT("CameraSocket");
-	FPSCamera->SetupAttachment(MeshComponent, CameraSocketName);
+	FPSCamera->bUsePawnControlRotation = false;
+	FPSCamera->SetupAttachment(CameraBoom);
+
+	
 
 	PlayerStats = CreateDefaultSubobject<UPlayerStatsComponent>(TEXT("PlayerStats"));
 
@@ -190,6 +199,7 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		if (IsValid(PlayerQuestComponent))
 		{
 			 PlayerData.CurrentQuestIndex  = PlayerQuestComponent->GetCurrentQuestIndex();
+			 PlayerData.CurrentStepIndex  = PlayerQuestComponent->GetInitialStepsAmount();
 		}
 
 		// Pass the array to fill with data from Actor
@@ -223,6 +233,13 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		bHaveShotgun = PlayerData.bHaveShotgun;
 		ShotgunDispenserMagazine = PlayerData.PatronsInShotgun;
 		PistolDispenserMagazine = PlayerData.PatronsInPistol;
+
+		UQuestComponent* PlayerQuestComponent = Cast<UQuestComponent>(GetComponentByClass(UQuestComponent::StaticClass()));
+		if (IsValid(PlayerQuestComponent))
+		{
+			PlayerQuestComponent->SetCurrentQuestIndex(PlayerData.CurrentQuestIndex);
+			PlayerQuestComponent->SetInitialStepsAmount(PlayerData.CurrentStepIndex);
+		}
 		
 		FMemoryReader MemReader(PlayerData.ByteData);
 

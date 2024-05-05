@@ -55,7 +55,9 @@ public:
 	bool bCompleted = false;
 
 	int32 GetCurrentQuestIndex() { return CurrentQuestIndex; }
+	int32 GetInitialStepsAmount() { return InitialStepsAmount; }
 	void SetCurrentQuestIndex(int32 CurrentInt) { CurrentQuestIndex = CurrentInt; }
+	void SetInitialStepsAmount(int32 CurrentInt) { InitialStepsAmount = CurrentInt; }
 
 protected:
 

@@ -78,16 +78,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
 	UNiagaraSystem* BloodNiagaraSystem;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics")
-	float RecoilRange;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics|Recoil")
+	float MinRecoilRange;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon Mechanics|Recoil")
+	float MaxRecoilRange;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|Recoil")
 	float BackPositionFrequency = 0.f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|Recoil")
 	float DeltaPitchDivider = 0.f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics|Recoil")
 	float RecoilTimeClear = 0.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
