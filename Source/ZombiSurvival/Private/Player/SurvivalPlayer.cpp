@@ -434,7 +434,6 @@ void ASurvivalPlayer::MeleeAttacking()
 	{
 		if (PlayerStats->GetStamina() > 20.0f)
 		{
-			CanAttack = false;
 			StaminaValue = 20.0f;
 			PlayerStats->DecrementStamina(StaminaValue);
 			PlayerStats->SprintingTimer(false);
