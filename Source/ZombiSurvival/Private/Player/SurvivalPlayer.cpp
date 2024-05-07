@@ -372,12 +372,15 @@ void ASurvivalPlayer::Input_PauseGame(const FInputActionValue& InputActionValue)
 		if (!PC->IsPaused())
 		{
 			PauseWidget = CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass);
-			PauseWidget->AddToViewport();
-			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
-			PC->bShowMouseCursor = true;
+			if (IsValid(PauseWidget))
+			{
+				PauseWidget->AddToViewport();
+				UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC);
+				UGameplayStatics::SetGamePaused(GetWorld(), true);
+				PC->bShowMouseCursor = true;
+			}
 		}
-		else
+		else if (IsValid(PauseWidget))
 		{
 			PauseWidget->RemoveFromParent();
 			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
@@ -434,11 +437,10 @@ void ASurvivalPlayer::MeleeAttacking()
 	{
 		if (PlayerStats->GetStamina() > 20.0f)
 		{
-			CanAttack = false;
 			StaminaValue = 20.0f;
 			PlayerStats->DecrementStamina(StaminaValue);
 			PlayerStats->SprintingTimer(false);
-
+			
 			switch (Combo)
 			{
 			case 0:
@@ -452,6 +454,8 @@ void ASurvivalPlayer::MeleeAttacking()
 			default:
 				break;
 			}
+			
+			CanAttack = false;
 		}
 	}
 }
