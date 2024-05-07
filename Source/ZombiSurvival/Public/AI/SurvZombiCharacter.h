@@ -23,7 +23,7 @@ public:
 	// Sets default values for this character's properties
 	ASurvZombiCharacter(const class FObjectInitializer& ObjectInitializer);
 
-	virtual void GetHit_Implementation(FName BoxCollisionName) override;
+	virtual void GetAnimHit_Implementation(FName BoxCollisionName) override;
 
 	
 

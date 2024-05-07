@@ -94,7 +94,7 @@ void ASurvZombiCharacter::CreateLeftWeapon()
 	}
 }
 
-void ASurvZombiCharacter::GetHit_Implementation(FName BoxCollisionName)
+void ASurvZombiCharacter::GetAnimHit_Implementation(FName BoxCollisionName)
 {
 	const auto AIController = Cast<AAIController>(Controller);
 	if (!IsValid(GetHitAnim) || AIController->GetBlackboardComponent()->GetValueAsBool(FName("Damaged"))) return;

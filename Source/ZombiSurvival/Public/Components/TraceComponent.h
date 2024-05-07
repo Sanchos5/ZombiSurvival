@@ -31,6 +31,9 @@ protected:
 	void TraceHit();
 
 	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
+	TSubclassOf<AActor> BloodVFX;
+
+	UPROPERTY(EditDefaultsOnly, Category="TraceComponent")
 	float TraceRadius;
 
 	UPROPERTY(BlueprintReadWrite, Category="TraceComponent")

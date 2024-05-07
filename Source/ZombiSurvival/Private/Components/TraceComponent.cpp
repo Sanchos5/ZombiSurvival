@@ -51,7 +51,6 @@ void UTraceComponent::TraceHit()
 	
 	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, TraceRadius, Objects, false,
 		ActorsToIgnore, DrawDebugTrace, SphereHitResults, true);
-
 	
 	for (FHitResult HitResult : SphereHitResults)
 	{
@@ -71,7 +70,6 @@ void UTraceComponent::TraceHit()
 				}
 
 				MeleeWeapon->GetDynamicMaterial(1.0f);
-
 			}
 			
 			UGameplayStatics::ApplyDamage(Enemy, MeleeWeapon->GetDamage(),
@@ -82,11 +80,11 @@ void UTraceComponent::TraceHit()
 			{
 				UAISense_Damage::ReportDamageEvent(GetWorld(), Enemy, WeaponOwner,
 				MeleeWeapon->GetDamage(), WeaponOwner->GetActorLocation(), HitResult.Location);
-			}
-			
-			if (Cast<ICombatInterface>(Enemy))
-			{
-				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.PhysMaterial->GetFName());
+				
+				if (Cast<ICombatInterface>(Zombie))
+				{
+					Cast<ICombatInterface>(Zombie)->Execute_GetVFXHit(Zombie);
+				}
 			}
 			
 			if (bDoOnce)
@@ -96,6 +94,7 @@ void UTraceComponent::TraceHit()
 				{
 					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
 				}*/
+				
 				bDoOnce = false;
 			}
 			

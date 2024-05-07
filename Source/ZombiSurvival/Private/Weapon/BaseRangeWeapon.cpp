@@ -170,7 +170,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 			{
 				if (Cast<ICombatInterface>(Zombie))
 				{
-					Cast<ICombatInterface>(Zombie)->Execute_GetHit(Zombie, HitResultCollision.Component->GetFName());
+					Cast<ICombatInterface>(Zombie)->Execute_GetAnimHit(Zombie, HitResultCollision.Component->GetFName());
 				}
 				
 				// Report zombie that player damage him
