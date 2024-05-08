@@ -26,6 +26,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool WeaponActive = false;
 
+	bool bDoOnce = true;
+
 protected:
 	virtual void BeginPlay() override;
 	void TraceHit();
@@ -47,6 +49,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	USoundBase* HitSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Mechanics")
+
+	USoundBase* HitObjectSound;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float WeaponImpulse;

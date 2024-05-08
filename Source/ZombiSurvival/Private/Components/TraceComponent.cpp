@@ -2,7 +2,6 @@
 
 
 #include "Components/TraceComponent.h"
-
 #include "AIController.h"
 #include "GameplayLibrary.h"
 #include "AI/SurvZombiCharacter.h"
@@ -26,9 +25,7 @@ void UTraceComponent::BeginPlay()
 }
 
 void UTraceComponent::TraceHit()
-{
-	bool bDoOnce = true;
-	
+{	
 	if (MeleeWeapon == nullptr) return;
 
 	FVector Start = MeleeWeapon->GetStartLocation();
@@ -87,16 +84,8 @@ void UTraceComponent::TraceHit()
 				}
 			}
 			
-			if (bDoOnce)
-			{
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
-				/*if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Zombie)
-				{
-					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
-				}*/
-				
-				bDoOnce = false;
-			}
+			
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
 			
 			UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn,
 				HitResult.Component.Get (), HitResult.BoneName,HitResult.ImpactPoint,
@@ -106,7 +95,12 @@ void UTraceComponent::TraceHit()
 		}
 		else
 		{
-			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			if (bDoOnce) 
+			{				
+				UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitObjectSound, HitResult.Location);
+				bDoOnce = false;
+			}
 		}
 	}
 }
