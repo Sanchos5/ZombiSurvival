@@ -440,6 +440,12 @@ void ASurvivalPlayer::MeleeAttacking()
 			StaminaValue = 20.0f;
 			PlayerStats->DecrementStamina(StaminaValue);
 			PlayerStats->SprintingTimer(false);
+
+			if (Cast<UTraceComponent>(ActiveWeaponref->GetComponentByClass(UTraceComponent::StaticClass())))
+			{
+				Cast<UTraceComponent>(ActiveWeaponref->GetComponentByClass(UTraceComponent::StaticClass()))->bDoOnce = true;
+			}
+			
 			
 			switch (Combo)
 			{

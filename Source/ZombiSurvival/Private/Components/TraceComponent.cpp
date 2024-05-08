@@ -26,9 +26,7 @@ void UTraceComponent::BeginPlay()
 }
 
 void UTraceComponent::TraceHit()
-{
-	bool bDoOnce = true;
-	
+{	
 	if (MeleeWeapon == nullptr) return;
 
 	FVector Start = MeleeWeapon->GetStartLocation();
@@ -89,15 +87,14 @@ void UTraceComponent::TraceHit()
 				Cast<ICombatInterface>(Enemy)->Execute_GetHit(Enemy, HitResult.PhysMaterial->GetFName());
 			}
 			
-			if (bDoOnce)
+			
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
+			/*if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Zombie)
 			{
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitResult.Location);
-				/*if (Zombie->GetMesh()->IsSimulatingPhysics() == true && Zombie)
-				{
-					Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
-				}*/
-				bDoOnce = false;
-			}
+				Zombie->GetMesh()->AddImpulseAtLocation (-HitResult.ImpactNormal * WeaponImpulse, HitResult.Location);
+			}*/
+			
+			
 			
 			UGameplayStatics::SpawnDecalAttached(DecalBloodPawn, ScaleDecalBloodPawn,
 				HitResult.Component.Get (), HitResult.BoneName,HitResult.ImpactPoint,
@@ -107,10 +104,11 @@ void UTraceComponent::TraceHit()
 		}
 		else
 		{
-			if (bDoOnce) {
-				bDoOnce = false;
+			if (bDoOnce) 
+			{				
 				UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitObjectSound, HitResult.Location);
+				bDoOnce = false;
 			}
 		}
 	}

@@ -26,6 +26,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool WeaponActive = false;
 
+	bool bDoOnce = true;
+
 protected:
 	virtual void BeginPlay() override;
 	void TraceHit();
