@@ -45,6 +45,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	USoundBase* HitSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Mechanics")
+
+	USoundBase* HitObjectSound;
+
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Mechanics")
 	float WeaponImpulse;
 

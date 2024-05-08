@@ -107,7 +107,11 @@ void UTraceComponent::TraceHit()
 		}
 		else
 		{
-			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+			if (bDoOnce) {
+				bDoOnce = false;
+				UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitObjectSound, HitResult.Location);
+			}
 		}
 	}
 }
