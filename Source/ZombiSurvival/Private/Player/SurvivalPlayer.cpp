@@ -281,10 +281,10 @@ void ASurvivalPlayer::Input_Look(const FInputActionValue& InputActionValue)
 	if (Controller != nullptr)
 	{
 		const FVector2D LookValue = InputActionValue.Get<FVector2D>();
-		if (LookValue.IsNearlyZero(0.1))
-		{
-			return;
-		}
+		//if (LookValue.IsNearlyZero(0.01))
+		//{
+			//return;
+		//}
 
 		if (LookValue.X != 0.0f)
 		{
