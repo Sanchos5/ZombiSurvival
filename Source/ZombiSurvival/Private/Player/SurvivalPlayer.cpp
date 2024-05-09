@@ -85,12 +85,13 @@ void ASurvivalPlayer::EquipWeaponFromSave()
 
 void ASurvivalPlayer::InitPlayerSavedData()
 {
-	USaveGameSystem* GameInstance = GetGameInstance()->GetSubsystem<USaveGameSystem>();
-	if (GameInstance)
+	USaveGameSystem* SaveGameSystem = GetGameInstance()->GetSubsystem<USaveGameSystem>();
+	if (SaveGameSystem && SaveGameSystem->bSaveGame == true)
 	{
-		GameInstance->InitPlayerSavedData();
+		SaveGameSystem->InitPlayerSavedData();
+		EquipWeaponFromSave();
 	}
-	EquipWeaponFromSave();
+	
 }
 
 void ASurvivalPlayer::BeginPlay()

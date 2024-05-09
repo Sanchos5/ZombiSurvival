@@ -212,7 +212,6 @@ void USaveGameSystem::LoadGameData()
 				AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ItemSaveData.ActorClass);
 				if (SpawnedActor)
 				{
-					SpawnedActor->Rename(*ItemSaveData.ActorName);
 					SpawnedActor->SetActorTransform(ItemSaveData.Transform);
 
 					FMemoryReader MemReader(ItemSaveData.ByteData);
