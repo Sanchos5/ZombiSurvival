@@ -81,6 +81,7 @@ void UTraceComponent::TraceHit()
 				if (Cast<ICombatInterface>(Zombie))
 				{
 					Cast<ICombatInterface>(Zombie)->Execute_GetVFXHit(Zombie);
+					Cast<ICombatInterface>(Zombie)->Execute_GetAnimHit(Zombie, FName("head"));
 				}
 			}
 			
