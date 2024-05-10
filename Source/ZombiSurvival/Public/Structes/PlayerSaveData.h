@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Slot.h"
+#include "QuestionSystem/QuestInfo.h"
 #include "Player/SurvivalPlayer.h"
 #include "PlayerSaveData.generated.h"
 
@@ -48,6 +49,9 @@ struct ZOMBISURVIVAL_API FPlayerSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CurrentQuestIndex;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FQuest QuestData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CurrentStepIndex;

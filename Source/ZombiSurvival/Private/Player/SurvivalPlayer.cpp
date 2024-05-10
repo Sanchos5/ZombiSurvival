@@ -201,6 +201,7 @@ void ASurvivalPlayer::SavePlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		{
 			 PlayerData.CurrentQuestIndex  = PlayerQuestComponent->GetCurrentQuestIndex();
 			 PlayerData.CurrentStepIndex  = PlayerQuestComponent->GetInitialStepsAmount();
+			 PlayerData.QuestData = PlayerQuestComponent->GetQuestData();
 		}
 
 		// Pass the array to fill with data from Actor
@@ -240,6 +241,7 @@ void ASurvivalPlayer::LoadPlayerStats_Implementation(UBaseSaveGame* SaveObject)
 		{
 			PlayerQuestComponent->SetCurrentQuestIndex(PlayerData.CurrentQuestIndex);
 			PlayerQuestComponent->SetInitialStepsAmount(PlayerData.CurrentStepIndex);
+			PlayerQuestComponent->SetQuestData(PlayerData.QuestData);
 		}
 		
 		FMemoryReader MemReader(PlayerData.ByteData);

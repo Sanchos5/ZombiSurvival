@@ -14,6 +14,7 @@ FPlayerSaveData::FPlayerSaveData()
 	bHaveAxe = false;
 	bHavePistol = false;
 	bHaveShotgun = false;
+	CurrentStepIndex = 0;
 }
 
 FPlayerSaveData::~FPlayerSaveData()
