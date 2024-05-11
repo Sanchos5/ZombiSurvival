@@ -55,9 +55,9 @@ public:
 	bool bCompleted = false;
 
 	int32 GetCurrentQuestIndex() { return CurrentQuestIndex; }
-	int32 GetInitialStepsAmount() { return InitialStepsAmount; }
+	int32 GetInitialStepsAmount() { return CompletedStepsAmount; }
 	void SetCurrentQuestIndex(int32 CurrentInt) { CurrentQuestIndex = CurrentInt; }
-	void SetInitialStepsAmount(int32 CurrentInt) { InitialStepsAmount = CurrentInt; }
+	void SetInitialStepsAmount(int32 CurrentInt) { CompletedStepsAmount = CurrentInt; }
 
 	FQuest GetQuestData() { return QuestData; }
 	void SetQuestData(FQuest CurrentQuest) { QuestData = CurrentQuest; }
