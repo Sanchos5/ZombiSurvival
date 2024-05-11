@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
+	TSubclassOf<UUserWidget> FullInventoryWidgetClass;
+
 	// Update Slots in Inventory Widget	
 	UFUNCTION(BlueprintCallable)
 	void UpdateAllInventoryUI();

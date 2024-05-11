@@ -40,6 +40,14 @@ bool UInventoryComponent::AddToInventory(FSlot Item)
 	bSuccess = false;
 	
 	AddItemToExcistingItem(Item, AllItems.MainInventory);
+	if (bSuccess == false)
+	{
+		UUserWidget* FullInventory = CreateWidget<UUserWidget>(GetWorld(), FullInventoryWidgetClass);
+		if (IsValid(FullInventory))
+		{
+			FullInventory->AddToViewport();
+		}
+	}
 	return bSuccess;
 }
 

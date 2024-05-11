@@ -66,6 +66,7 @@ void USaveGameSystem::AddDestroyedActor(FString DestroyedActor)
 void USaveGameSystem::SaveGameData()
 {
 	CurrentSaveGame->ItemSaveData.Empty();
+	CurrentSaveGame->ChestSaveData.Empty();
 
 	ASurvivalPlayer* PlayerCharacter = Cast<ASurvivalPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0.f));
 	if (PlayerCharacter)
