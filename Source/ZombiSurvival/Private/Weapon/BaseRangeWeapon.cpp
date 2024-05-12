@@ -187,13 +187,12 @@ void ABaseRangeWeapon::ShotLineTrace()
 					HitResult.BoneName,HitResult.ImpactPoint, EyeRotation, EAttachLocation::KeepWorldPosition);
 			}
 		}
-		else if (bHit)
-		{
-			UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
-		}
+		
 	}
-
-	
+	if (bHit)
+	{
+		UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
+	}
 }
 void ABaseRangeWeapon::ShotLineTraceDecal(float SpreadX, float SpreadY, float SpreadZ)
 {
