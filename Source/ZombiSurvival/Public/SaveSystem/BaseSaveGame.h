@@ -41,4 +41,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category="Save Data")
 	TArray<uint8> ByteData;
+	
+	UPROPERTY(BlueprintReadWrite, Category="Save Data")
+	FDateTime DateTime;
 };
