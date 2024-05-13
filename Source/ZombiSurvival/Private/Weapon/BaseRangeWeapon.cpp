@@ -189,7 +189,7 @@ void ABaseRangeWeapon::ShotLineTrace()
 		}
 		
 	}
-	if (bHit)
+	if (bHit && !Cast<ASurvZombiCharacter>(HitResult.GetActor()))
 	{
 		UGameplayStatics::SpawnDecalAtLocation(GetWorld (), DecalMetal, ScaleDecalMetal, HitResult.Location, EyeRotation);
 	}
