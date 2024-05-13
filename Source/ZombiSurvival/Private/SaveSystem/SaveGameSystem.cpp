@@ -7,6 +7,7 @@
 #include "Interface/SavalableObjectInterface.h"
 #include "Interface/SaveChestInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Player/SurvivalPlayer.h"
 #include "SaveSystem/BaseSaveGame.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
@@ -115,6 +116,8 @@ void USaveGameSystem::SaveGameData()
 		CurrentSaveGame->ItemSaveData.Add(ItemSaveData);
 		
 	}
+
+	CurrentSaveGame->DateTime = UKismetMathLibrary::Now();
 	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 
