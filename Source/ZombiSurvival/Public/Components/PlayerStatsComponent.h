@@ -54,6 +54,12 @@ public:
 
 	void SprintingTimer(bool bIsRunning);
 
+	UFUNCTION(BlueprintCallable)
+	void StartHandleStats();
+
+	UFUNCTION(BlueprintCallable)
+	void StopHandleStats();
+
 	// Таймер для состояний голода, жажды, инфекции
 	FTimerHandle StaminaHandle;
 

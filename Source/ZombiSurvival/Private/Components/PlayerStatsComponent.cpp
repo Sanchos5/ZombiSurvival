@@ -48,8 +48,12 @@ void UPlayerStatsComponent::BeginPlay()
 	OnHungerChange.Broadcast(Hunger, MaxHunger);
 	OnThirstChange.Broadcast(Thirst, MaxThirst);
 	OnStaminaChange.Broadcast(Stamina, MaxStamina);
-
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
+	
+	USaveGameSystem* SaveGameSystem = GetOwner()->GetGameInstance()->GetSubsystem<USaveGameSystem>();
+	if (SaveGameSystem && SaveGameSystem->bSaveGame == true)
+	{
+		StartHandleStats();
+	}
 
 	//GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, 1.0f);
 	SprintingTimer(false);
@@ -65,6 +69,16 @@ void UPlayerStatsComponent::SprintingTimer(bool bIsRunning)
 	{
 		GetWorld()->GetTimerManager().SetTimer(StaminaHandle, this, &UPlayerStatsComponent::RegenerateStamina, 0.2f, true, StaminaRecoveryDelay);
 	}
+}
+
+void UPlayerStatsComponent::StartHandleStats()
+{
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UPlayerStatsComponent::HandleStats, 1.0f, true);
+}
+
+void UPlayerStatsComponent::StopHandleStats()
+{
+	GetWorld()->GetTimerManager().ClearTimer(Handle);
 }
 
 // Уменьшение переменных по таймеру
